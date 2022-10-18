@@ -1,6 +1,6 @@
 <?php
 
-class Whatsapp_scoring extends Core
+class Contact_scoring extends Core
 {
     public function run_scoring($scoring_id)
     {
@@ -12,7 +12,7 @@ class Whatsapp_scoring extends Core
             [
                 'UserID' => 'barvil',
                 'Password' => 'KsetM+H5',
-                'sources' => 'whatsapp',
+                'sources' => 'getcontact',
                 'PhoneReq' => [
                     'phone' => $phone
                 ]
@@ -30,14 +30,11 @@ class Whatsapp_scoring extends Core
             if (isset($request['Source'])) {
                 foreach ($request['Source'] as $source) {
                     foreach ($source['Field'] as $field) {
-                        if ($field['FieldName'] == 'StatusText')
-                            $update['array_result']['status'] = 'Статус: ' . $field['FieldValue'];
+                        if ($field['FieldName'] == 'Name')
+                            $update['array_result']['status'] = 'Имя: ' . $field['FieldValue'];
 
-                        if ($field['FieldName'] == 'StatusDate')
-                            $update['array_result']['statusDate'] = 'Время установки статуса: ' . date('d.m.Y', strtotime($field['FieldValue']));
-
-                        if ($field['FieldName'] == 'FullPhoto')
-                            $update['array_result']['image'] = 'Ссылка на фото: ' . $field['FieldValue'];
+                        if ($field['FieldName'] == 'TagsCount')
+                            $update['array_result']['image'] = 'Количество тегов: ' . $field['FieldValue'];
                     }
                 }
             }

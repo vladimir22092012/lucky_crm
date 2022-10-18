@@ -9,12 +9,12 @@ class TestController extends Controller
 
         $request =
             [
-                'UserID'   => 'barvil',
+                'UserID' => 'barvil',
                 'Password' => 'KsetM+H5',
-                'sources'  => 'whatsapp, getcontact',
+                'sources' => 'getcontact',
                 'PhoneReq' => [
-                        'phone' => 79276928586
-                    ]
+                    'phone' => 79276928586
+                ]
             ];
 
         $request = $this->XMLSerializer->serialize($request);
@@ -28,11 +28,24 @@ class TestController extends Controller
         $html = curl_exec($ch);
         $html = simplexml_load_string($html);
         $json = json_encode($html);
-        $array = json_decode($json,TRUE);
+        $array = json_decode($json, TRUE);
         curl_close($ch);
 
-        echo '<pre>';
-        var_dump($array);
+        if (isset($array['Source'])) {
+            foreach ($array['Source'] as $source) {
+                foreach ($source['Field'] as $field) {
+                    echo '<pre>';
+                    var_dump($field);
+                    if ($field['FieldName'] == 'Name')
+                        $scoring['status'] = 'Имя: ' . $field['FieldValue'];
+
+                    if ($field['FieldName'] == 'TagsCount')
+                        $scoring['image'] = 'Количество тегов: ' . $field['FieldValue'];
+                }
+            }
+        }
+
+        var_dump($scoring);
         exit;
     }
 }
