@@ -11,7 +11,7 @@ class TestController extends Controller
             [
                 'UserID'   => 'barvil',
                 'Password' => 'KsetM+H5',
-                'sources'  => 'whatsapp',
+                'sources'  => 'whatsapp, getcontact',
                 'PhoneReq' => [
                         'phone' => 79276928586
                     ]

@@ -5,8 +5,6 @@ ini_set('display_startup_errors', 'Off');
 
 session_start();
 
-$start_time = microtime(true);
-
 require 'autoload.php';
 require 'vendor/autoload.php';
 
@@ -46,12 +44,4 @@ try
 catch (Exception $e)
 {
     echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($e);echo '</pre><hr />'; 
-}
-
-$end_time = microtime(true);
-
-if (!empty($view->is_developer))
-{
-    $exec_time = round(($end_time - $start_time)*1000)/1000;
-    echo '<div style="position:fixed;right:0;bottom:0;background:#222;color:#fff;padding:10px;;width:200px;height:50px;z-index:999;">'.$exec_time.'</div>';
 }
