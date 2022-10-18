@@ -27,20 +27,20 @@ class Whatsapp_scoring extends Core
         );
 
         if (isset($request['Source'])) {
-            if (isset($request['Source'])) {
-                foreach ($request['Source'] as $source) {
-                    foreach ($source['Field'] as $field) {
-                        if ($field['FieldName'] == 'StatusText')
-                            $update['string_result']['status'] = 'Статус: ' . $field['FieldValue'];
+            foreach ($request['Source'] as $source) {
+                foreach ($source['Field'] as $field) {
+                    if ($field['FieldName'] == 'StatusText')
+                        $update['body']['status'] = 'Статус: ' . $field['FieldValue'];
 
-                        if ($field['FieldName'] == 'StatusDate')
-                            $update['string_result']['statusDate'] = 'Дата установки статуса: ' . date('d.m.Y', strtotime($field['FieldValue']));
+                    if ($field['FieldName'] == 'StatusDate')
+                        $update['body']['statusDate'] = 'Дата установки статуса: ' . date('d.m.Y', strtotime($field['FieldValue']));
 
-                        if ($field['FieldName'] == 'FullPhoto')
-                            $update['string_result']['image'] = 'Ссылка на фото: ' . $field['FieldValue'];
-                    }
+                    if ($field['FieldName'] == 'FullPhoto')
+                        $update['body']['image'] = 'Ссылка на фото: ' . $field['FieldValue'];
                 }
             }
+
+            $update['string_result'] = 'Клиент найден';
         } else
             $update['string_result'] = 'Клиент не найден';
 

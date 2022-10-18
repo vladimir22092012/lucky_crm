@@ -26,18 +26,18 @@ class Contact_scoring extends Core
             'success' => !isset($request['Source']) ? 0 : 1
         );
 
-        if (isset($request['Source'])) {
-            if (isset($request['Source'])) {
-                foreach ($request['Source'] as $source) {
-                    foreach ($source['Field'] as $field) {
-                        if ($field['FieldName'] == 'Name')
-                            $update['string_result']['status'] = 'Имя: ' . $field['FieldValue'];
 
-                        if ($field['FieldName'] == 'TagsCount')
-                            $update['string_result']['image'] = 'Количество тегов: ' . $field['FieldValue'];
-                    }
+        if (isset($request['Source'])) {
+            foreach ($request['Source'] as $source) {
+                foreach ($source['Field'] as $field) {
+                    if ($field['FieldName'] == 'Name')
+                        $update['body']['status'] = 'Имя: ' . $field['FieldValue'];
+
+                    if ($field['FieldName'] == 'TagsCount')
+                        $update['body']['image'] = 'Количество тегов: ' . $field['FieldValue'];
                 }
             }
+            $update['string_result'] = 'Клиент найден';
         } else
             $update['string_result'] = 'Клиент не найден';
 
