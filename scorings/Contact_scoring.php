@@ -34,7 +34,12 @@ class Contact_scoring extends Core
                         $name = 'Имя: ' . $field['FieldValue'];
 
                     if ($field['FieldName'] == 'TagsCount')
+                    {
                         $tags = 'Количество тегов: ' . $field['FieldValue'];
+
+                        if($field['FieldValue'] < 2)
+                            $update['success'] = 0;
+                    }
                 }
             }
             $update['string_result'] = 'Клиент найден';
