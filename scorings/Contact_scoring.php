@@ -31,10 +31,10 @@ class Contact_scoring extends Core
             foreach ($request['Source'] as $source) {
                 foreach ($source['Field'] as $field) {
                     if ($field['FieldName'] == 'Name')
-                        $update['body']['status'] = 'Имя: ' . $field['FieldValue'];
+                        $update['body']['Name'] = 'Имя: ' . $field['FieldValue'];
 
                     if ($field['FieldName'] == 'TagsCount')
-                        $update['body']['image'] = 'Количество тегов: ' . $field['FieldValue'];
+                        $update['body']['TagsCount'] = 'Количество тегов: ' . $field['FieldValue'];
                 }
             }
             $update['string_result'] = 'Клиент найден';
