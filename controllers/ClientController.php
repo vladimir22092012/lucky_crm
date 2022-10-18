@@ -86,8 +86,8 @@ class ClientController extends Controller
 
             $regaddress = $this->Addresses->get_address($client->regaddress_id);
             $faktaddress = $this->Addresses->get_address($client->faktaddress_id);
-            $this->design->assign('regaddress', $regaddress);
-            $this->design->assign('faktaddress', $faktaddress);
+            $this->design->assign('regaddress', $regaddress->adressfull);
+            $this->design->assign('faktaddress', $faktaddress->adressfull);
 
 
             $documents = $this->documents->get_documents(array('user_id'=>$client->id));
