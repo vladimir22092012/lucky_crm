@@ -79,6 +79,8 @@ class RunScoringsApp extends Core
                         case 'age':
                         case 'fssp2':
                         case 'ip':
+                        case 'whatsapp':
+                        case 'contact':
 
                             $add_scoring = array(
                                 'user_id' => $order->user_id,
