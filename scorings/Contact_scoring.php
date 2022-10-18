@@ -38,8 +38,11 @@ class Contact_scoring extends Core
                 }
             }
             $update['string_result'] = 'Клиент найден';
-        } else
+            $update['body'] = serialize($update['body']);
+        } else {
+            $update['body'] = null;
             $update['string_result'] = 'Клиент не найден';
+        }
 
 
         $this->scorings->update_scoring($scoring_id, $update);

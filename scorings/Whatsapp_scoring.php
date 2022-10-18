@@ -22,7 +22,6 @@ class Whatsapp_scoring extends Core
 
         $update = array(
             'status' => 'completed',
-            'body' => '',
             'success' => !isset($request['Source']) ? 0 : 1
         );
 
@@ -41,8 +40,12 @@ class Whatsapp_scoring extends Core
             }
 
             $update['string_result'] = 'Клиент найден';
+            $update['body'] = serialize($update['body']);
         } else
+        {
+            $update['body'] = null;
             $update['string_result'] = 'Клиент не найден';
+        }
 
 
         $this->scorings->update_scoring($scoring_id, $update);
