@@ -31,13 +31,13 @@ class Whatsapp_scoring extends Core
                 foreach ($request['Source'] as $source) {
                     foreach ($source['Field'] as $field) {
                         if ($field['FieldName'] == 'StatusText')
-                            $update['array_result']['status'] = 'Статус: ' . $field['FieldValue'];
+                            $update['string_result']['status'] = 'Статус: ' . $field['FieldValue'];
 
                         if ($field['FieldName'] == 'StatusDate')
-                            $update['array_result']['statusDate'] = 'Дата установки статуса: ' . date('d.m.Y', strtotime($field['FieldValue']));
+                            $update['string_result']['statusDate'] = 'Дата установки статуса: ' . date('d.m.Y', strtotime($field['FieldValue']));
 
                         if ($field['FieldName'] == 'FullPhoto')
-                            $update['array_result']['image'] = 'Ссылка на фото: ' . $field['FieldValue'];
+                            $update['string_result']['image'] = 'Ссылка на фото: ' . $field['FieldValue'];
                     }
                 }
             }
