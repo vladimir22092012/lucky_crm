@@ -375,14 +375,11 @@
                                                     {if $order->have_crm_closed}
                                                         <span class="label label-primary"
                                                               title="Клиент уже имеет погашенные займы в CRM">ПК CRM</span>
-                                                    {elseif $order->loan_history|count > 0}
-                                                        <span class="label label-success"
-                                                              title="Клиент уже имеет погашенные займы">ПК</span>
                                                     {elseif $order->first_loan}
                                                         <span class="label label-info" title="Новый клиент">Новая</span>
                                                     {else}
-                                                        <span class="label label-warning"
-                                                              title="Клиент уже подавал ранее заявки">Повтор</span>
+                                                        <span class="label label-success"
+                                                              title="Клиент уже имеет погашенные займы">ПК</span>
                                                     {/if}
                                                 {/if}
                                                 {if $order->autoretry}
