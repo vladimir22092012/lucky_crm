@@ -1397,34 +1397,11 @@
                                                             <table class="table table-hover mb-0">
                                                                 <tr>
                                                                     <td>Адрес прописки</td>
-                                                                    <td>
-                                                                        {if $order->Regindex}{$order->Regindex|escape}, {/if}
-                                                                        {$order->Regregion} {$order->Regregion_shorttype|escape}
-                                                                        ,
-                                                                        {if $order->Regcity}{$order->Regcity|escape} {$order->Regcity_shorttype|escape},{/if}
-                                                                        {if $order->Regdistrict}{$order->Regdistrict|escape} {$order->Regdistrict_shorttype|escape},{/if}
-                                                                        {if $order->Reglocality}{$order->Reglocality_shorttype|escape} {$order->Reglocality|escape},{/if}
-                                                                        {$order->Regstreet} {$order->Regstreet_shorttype|escape}
-                                                                        ,
-                                                                        д.{$order->Reghousing|escape},
-                                                                        {if $order->Regbuilding}стр. {$order->Regbuilding|escape},{/if}
-                                                                        {if $order->Regroom}кв.{$order->Regroom|escape}{/if}
-                                                                    </td>
+                                                                    <td>{$faktaddress}</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td>Адрес проживания</td>
-                                                                    <td>
-                                                                        {if $order->Faktindex}{$order->Faktindex|escape}, {/if}
-                                                                        {$order->Faktregion} {$order->Faktregion_shorttype|escape}
-                                                                        ,
-                                                                        {if $order->Faktcity}{$order->Faktcity|escape} {$order->Faktcity_shorttype|escape},{/if}
-                                                                        {if $order->Faktdistrict}{$order->Faktdistrict|escape} {$order->Faktdistrict_shorttype|escape},{/if}
-                                                                        {if $order->Faktlocality}{$order->Faktlocality_shorttype|escape} {$order->Faktlocality|escape},{/if}
-                                                                        {if $order->Faktstreet}{$order->Faktstreet|escape} {$order->Faktstreet_shorttype|escape},{/if}
-                                                                        д.{$order->Fakthousing|escape},
-                                                                        {if $order->Faktbuilding}стр. {$order->Faktbuilding|escape},{/if}
-                                                                        {if $order->Faktroom}кв.{$order->Faktroom|escape}{/if}
-                                                                    </td>
+                                                                    <td>{$regaddress}</td>
                                                                 </tr>
                                                             </table>
                                                         </div>

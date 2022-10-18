@@ -185,6 +185,11 @@ class OrderController extends Controller
                     $client = $this->users->get_user($order->user_id);
                     $this->design->assign('client', $client);
 
+                    $regaddress = $this->Addresses->get_address($client->regaddress_id);
+                    $faktaddress = $this->Addresses->get_address($client->faktaddress_id);
+                    $this->design->assign('regaddress', $regaddress->adressfull);
+                    $this->design->assign('faktaddress', $faktaddress->adressfull);
+
                     $communication_orders = array();
                     $communication_contracts = array();
                     $communications = array();
