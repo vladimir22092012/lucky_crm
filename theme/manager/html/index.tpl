@@ -277,77 +277,6 @@
 
                     {/if}
 
-                    {if in_array('my_contracts', $manager->permissions) || in_array('collection_report', $manager->permissions) || in_array('zvonobot', $manager->permissions)}
-                        <li class="nav-small-cap">Коллекшин</li>
-                        {if in_array('my_contracts', $manager->permissions)}
-                            <li {if in_array($module, ['CollectorContractsController'])}class="active"{/if}>
-                                <a class="" href="my_contracts/" aria-expanded="false"><i
-                                            class="mdi mdi-book-multiple"></i><span
-                                            class="hide-menu">Мои договоры</span></a>
-                            </li>
-                        {/if}
-                        {if in_array('collection_report', $manager->permissions)}
-                            <li {if in_array($module, ['CollectionReportController'])}class="active"{/if}>
-                                <a class="" href="collection_report/" aria-expanded="false"><i
-                                            class="mdi mdi-chart-histogram"></i><span class="hide-menu">Отчет</span></a>
-                            </li>
-                        {/if}
-                        {if in_array('collection_moving', $manager->permissions)}
-                            <li {if in_array($module, ['CollectorClientsController'])}class="active"{/if}>
-                                <a class="" href="collector_clients" aria-expanded="false"><i
-                                            class="mdi mdi-chart-histogram"></i><span class="hide-menu">Перебросы клиентов</span></a>
-                            </li>
-                        {/if}
-                        {if in_array('zvonobot', $manager->permissions)}
-                            <li {if in_array($module, ['ZvonobotController'])}class="active"{/if}>
-                                <a class="" href="zvonobot" aria-expanded="false"><i class="mdi mdi-deskphone"></i><span
-                                            class="hide-menu">Звонобот</span></a>
-                            </li>
-                        {/if}
-                        <li {if in_array($module, ['NotificationsController'])}class="active"{/if}>
-                            <a class="" href="collection_notifications" aria-expanded="false"><i
-                                        class="mdi-note-multiple-outline mdi"></i><span
-                                        class="hide-menu">Напоминания</span></a>
-                        </li>
-                        {if in_array('collector_mailing', $manager->permissions)}
-                            <li {if in_array($module, ['MailingController'])}class="active"{/if}>
-                                <a class="" href="mailing/list" aria-expanded="false"><i
-                                            class="mdi mdi-voicemail"></i><span class="hide-menu">Рассылка</span></a>
-                            </li>
-                        {/if}
-
-                    {/if}
-
-                    {if in_array('sudblock', $manager->permissions) || in_array('sudblock_settings', $manager->permissions)}
-                        <li class="nav-small-cap">Судблок</li>
-                        {if in_array('sudblock', $manager->permissions)}
-                            <li {if in_array($module, ['SudblockContractsController'])}class="active"{/if}>
-                                <a class="" href="sudblock_contracts" aria-expanded="false"><i
-                                            class="mdi mdi-clipboard"></i><span
-                                            class="hide-menu">Мои договоры</span></a>
-                            </li>
-                            <li {if in_array($module, ['SudblockNotificationsController'])}class="active"{/if}>
-                                <a class="" href="sudblock_notifications" aria-expanded="false"><i
-                                            class="mdi-note-multiple-outline mdi"></i><span class="hide-menu">Напоминания</span></a>
-                            </li>
-                        {/if}
-                        {if in_array('sudblock_settings', $manager->permissions)}
-                            <li {if in_array($module, ['SudblockStatusesController', 'SudblockDocumentsController, SudblockEventController'])}class="active"{/if}>
-                                <a class="has-arrow" href="settings" aria-expanded="false"><i
-                                            class="mdi mdi-settings"></i><span class="hide-menu">Справочники</span></a>
-                                <ul aria-expanded="false" class="collapse">
-                                    <li {if in_array($module, ['SudblockStatusesController'])}class="active"{/if}><a
-                                                href="sudblock_statuses">Статусы</a></li>
-                                    <li {if in_array($module, ['SudblockDocumentsController'])}class="active"{/if}><a
-                                                href="sudblock_documents">Документы</a></li>
-                                    <li {if in_array($module, ['SudblockEventController'])}class="active"{/if}><a
-                                                href="sudblock_event_types">Типы событий</a></li>
-                                </ul>
-                            </li>
-                        {/if}
-
-                    {/if}
-
                     {if  in_array('managers', $manager->permissions) ||  in_array('changelogs', $manager->permissions) ||  in_array('settings', $manager->permissions) ||  in_array('handbooks', $manager->permissions) ||  in_array('pages', $manager->permissions)}
                         <li class="nav-small-cap">Управление</li>
                         {if in_array('managers', $manager->permissions)}
@@ -416,23 +345,11 @@
                                 </ul>
                             </li>
                         {/if}
-                        {if in_array('pages', $manager->permissions)}
-                            <li {if in_array($module, ['PageController', 'PagesController'])}class="active"{/if}>
-                                <a class="" href="pages" aria-expanded="false"><i class="mdi mdi-application"></i><span
-                                            class="hide-menu">Страницы</span></a>
-                            </li>
-                        {/if}
                     {/if}
 
                     {if in_array('analitics', $manager->permissions) || in_array('penalty_statistics', $manager->permissions) || $manager->role == 'chief_sudblock'}
                         <li class="nav-small-cap">Аналитика</li>
                         {if $manager->role != 'chief_sudblock'}
-                        {if $manager->role != 'analitic_marketing'}
-                            <li {if in_array($module, ['DashboardController'])}class="active"{/if}>
-                                <a class="" href="dashboard" aria-expanded="false"><i class="mdi mdi-gauge"></i><span
-                                            class="hide-menu">Dashboard</span></a>
-                            </li>
-                        {/if}
                         <li {if in_array($module, ['ToolsController'])}class="active"{/if}>
                             <a class="" href="tools" aria-expanded="false"><i class="mdi mdi-settings"></i><span
                                         class="hide-menu">Инструменты</span></a>
