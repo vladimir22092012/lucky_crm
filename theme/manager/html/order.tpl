@@ -1,10 +1,10 @@
 {$meta_title="Заявка №`$order->order_id`" scope=parent}
 
 {capture name='page_scripts'}
-    
+
     <!--script src="theme/{$settings->theme|escape}/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script-->
     <script src="theme/{$settings->theme|escape}/assets/plugins/fancybox3/dist/jquery.fancybox.js"></script>
-    
+
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/order.js?v=1.28"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/movements.app.js"></script>
     <script>
@@ -73,7 +73,7 @@
         }
         }
     </script>
-    
+
 {/capture}
 
 {capture name='page_styles'}
@@ -97,18 +97,18 @@
     }
     .js-fancybox-reject.btn-danger {
         background: #f62d51;
-        border: 1px solid #f62d51        
+        border: 1px solid #f62d51
     }
     .js-fancybox-reject.btn-outline-danger {
         color: #f62d51;
         background-color: transparent;
-        border-color: #f62d51;    
+        border-color: #f62d51;
     }
     </style>
 {/capture}
 
 {function name='penalty_button'}
-    
+
     {if in_array('add_penalty', $manager->permissions)}
         {if !$penalties[$penalty_block]}
         <button type="button" class="pb-0 pt-0 mr-2 btn btn-sm btn-danger waves-effect js-add-penalty " data-block="{$penalty_block}">
@@ -141,7 +141,7 @@
 
 <div class="page-wrapper js-event-add-load" data-event="1" data-manager="{$manager->id}" data-order="{$order->order_id}" data-user="{$order->user_id}">
     <!-- ============================================================== -->
-    <!-- Container fluid  --> 
+    <!-- Container fluid  -->
     <!-- ============================================================== -->
     {if in_array($contract->status, [2,4]) && !in_array('collectors', $manager->permissions) && $contract->sold == 1}
     <div class="container-fluid">
@@ -186,7 +186,7 @@
     </div>
     {else}
     <div class="container-fluid">
-        
+
         <div class="row page-titles">
             <div class="col-md-6 col-8 align-self-center">
                 <h3 class="text-themecolor mb-0 mt-0"><i class="mdi mdi-animation"></i> Заявка №{$order->order_id}</h3>
@@ -204,7 +204,7 @@
                 </h1>
             </div>
         </div>
-        
+
         {if $alert}
         <div class="row">
             <div class="col-12">
@@ -217,13 +217,13 @@
             </div>
         </div>
         {/if}
-        
+
         <div class="row" id="order_wrapper">
             <div class="col-lg-12">
                 <div class="card card-outline-info">
-                    
+
                     <div class="card-body">
-                        
+
                             <div class="form-body">
                                 <div class="row">
                                     <div class="col-4 col-md-3 col-lg-2">
@@ -257,7 +257,7 @@
                                         </h5>
                                         {/if}
                                     </div>
-                                    
+
                                     <div class="col-12 col-md-6 col-lg-2 ">
                                         <h5 class="form-control-static">
                                             Источник:
@@ -288,7 +288,7 @@
                                                     {$managers[$order->manager_id]->name|escape}
                                                 {/if}
                                             {/if}
-                                        </h5>                                            
+                                        </h5>
                                     </div>
                                 </div>
                                 <div class="row pt-2">
@@ -298,7 +298,7 @@
                                             <input type="hidden" name="action" value="fio" />
                                             <input type="hidden" name="order_id" value="{$order->order_id}" />
                                             <input type="hidden" name="user_id" value="{$order->user_id}" />
-                                        
+
                                             <div class="border p-2 view-block">
                                                 <h5>
                                                     <a href="client/{$order->user_id}" title="Перейти в карточку клиента">
@@ -311,7 +311,7 @@
                                                     <span>{$order->phone_mobile|escape}</span>
                                                     <button class="js-mango-call mango-call js-event-add-click" data-phone="{$order->phone_mobile|escape}" title="Выполнить звонок" data-event="60" data-manager="{$manager->id}" data-order="{$order->order_id}" data-user="{$order->user_id}">
                                                         <i class="fas fa-mobile-alt"></i>
-                                                    </button>                                                
+                                                    </button>
                                                     <button class="js-open-sms-modal mango-call {if $order->contract->sold}js-yuk{/if}" data-user="{$order->user_id}" data-order="{$order->order_id}">
                                                         <i class=" far fa-share-square"></i>
                                                     </button>
@@ -324,7 +324,7 @@
                                                     </label>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="edit-block hide">
                                                 <div class="form-group mb-1">
                                                     <input type="text" name="lastname" value="{$order->lastname|escape}" class="form-control" placeholder="Фамилия" />
@@ -343,7 +343,7 @@
                                                     <button type="button" class="btn btn-inverse js-cancel-edit">Отмена</button>
                                                 </div>
                                             </div>
-                                            
+
                                         </form>
                                     </div>
                                     <div class="col-12 col-md-8 col-lg-6">
@@ -379,7 +379,7 @@
                                                 <a href="javascript:void(0);" class="text-info js-edit-form edit-amount js-event-add-click" data-event="31" data-manager="{$manager->id}" data-order="{$order->order_id}" data-user="{$order->user_id}"><i class=" fas fa-edit"></i></a></h3>
                                                 {/if}
                                             </div>
-                                            
+
                                             <div class="row edit-block hide">
                                                 <div class="col-6 col-md-3 text-center">
                                                     <h5>Сумма</h5>
@@ -394,10 +394,10 @@
                                                         <h5>&nbsp;</h5>
                                                         <button type="submit" class="btn btn-success js-event-add-click" data-event="41" data-manager="{$manager->id}" data-order="{$order->order_id}" data-user="{$order->user_id}"> <i class="fa fa-check"></i> Сохранить</button>
                                                         <button type="button" class="btn btn-inverse js-cancel-edit">Отмена</button>
-                                                    </div>                                                    
+                                                    </div>
                                                 </div>
                                             </div>
-                                            
+
                                         </form>
                                     </div>
                                     <div class="col-12 col-md-6 col-lg-3">
@@ -409,7 +409,7 @@
                                             </button>
                                         </div>
                                         {/if}
-                                        
+
                                         {if $order->status == 1 && $order->manager_id != $manager->id}
                                         <div class="pt-1 pb-2 js-accept-order-block">
                                             <button class="btn btn-info btn-block js-accept-order js-event-add-click" data-event="11" data-user="{$order->user_id}" data-order="{$order->order_id}" data-manager="{$manager->id}">
@@ -418,7 +418,7 @@
                                             </button>
                                         </div>
                                         {/if}
-                                        
+
                                         {if $order->status == 1}
                                         <div class="js-approve-reject-block {if !$order->manager_id}hide{/if}">
                                             <button class="btn btn-success btn-block js-approve-order js-event-add-click" data-event="12" data-user="{$order->user_id}" data-order="{$order->order_id}" data-manager="{$manager->id}">
@@ -431,7 +431,7 @@
                                             </button>
                                         </div>
                                         {/if}
-                                            
+
                                         <div class="js-order-status">
                                             {if $order->status == 2}
                                             <div class="card card-success mb-1">
@@ -494,8 +494,8 @@
                                                             Погашение: {$contract->loan_body_summ+$contract->loan_percents_summ+$contract->loan_charge_summ+$contract->loan_peni_summ} руб
                                                         </h6>
                                                         <h6 class="text-center text-white">
-                                                            Продление: 
-                                                            {if $contract->prolongation > 0 && !$contract->sold} 
+                                                            Продление:
+                                                            {if $contract->prolongation > 0 && !$contract->sold}
                                                                 {$settings->prolongation_amount+$contract->loan_percents_summ+$contract->loan_charge_summ} руб
                                                             {else}
                                                                 {$contract->loan_percents_summ+$contract->loan_charge_summ} руб
@@ -512,8 +512,8 @@
                                                             Погашение: {$contract->loan_body_summ+$contract->loan_percents_summ+$contract->loan_charge_summ+$contract->loan_peni_summ} руб
                                                         </h6>
                                                         <h6 class="text-center text-white">
-                                                            Продление: 
-                                                            {if $contract->prolongation > 0} 
+                                                            Продление:
+                                                            {if $contract->prolongation > 0}
                                                                 {$settings->prolongation_amount+$contract->loan_percents_summ} руб
                                                             {else}
                                                                 {$contract->loan_percents_summ} руб
@@ -530,8 +530,8 @@
                                                             Погашение: {$contract->loan_body_summ+$contract->loan_percents_summ+$contract->loan_charge_summ+$contract->loan_peni_summ} руб
                                                         </h6>
                                                         <h6 class="text-center text-white">
-                                                            Продление: 
-                                                            {if $contract->prolongation > 0} 
+                                                            Продление:
+                                                            {if $contract->prolongation > 0}
                                                                 {$settings->prolongation_amount+$contract->loan_percents_summ} руб
                                                             {else}
                                                                 {$contract->loan_percents_summ} руб
@@ -558,7 +558,7 @@
                                                             {elseif $p2p->response_xml->description}
                                                             <i><small>B2P: {$p2p->response_xml->description}</small></i>
                                                             {/if}
-                                                        {else} 
+                                                        {else}
                                                             <i><small>Нет ответа от B2P. <br />Если повторить выдачу, это может привести к двойной выдаче!</small></i>
                                                         {/if}
                                                     </div>
@@ -590,7 +590,7 @@
                                                 </div>
                                             </div>
                                             {/if}
-                                            
+
                                             {if $contract->status == 9}
                                             <div class="card border border-danger">
                                                 <div class="box text-center">
@@ -599,54 +599,54 @@
                                                 </div>
                                             </div>
                                             {/if}
-                                            
+
                                             {if $contract->accept_code}
                                             <h4 class="text-danger mb-0">АСП: {$contract->accept_code}</h4>
-                                            {/if}                                            
+                                            {/if}
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
-                            
+
+
                             <ul class="mt-2 nav nav-tabs" role="tablist" id="order_tabs">
-                                <li class="nav-item"> 
+                                <li class="nav-item">
                                     <a class="nav-link active js-event-add-click" data-toggle="tab" href="#info" role="tab" aria-selected="false" data-event="20" data-user="{$order->user_id}" data-order="{$order->order_id}" data-manager="{$manager->id}" >
-                                        <span class="hidden-sm-up"><i class="ti-home"></i></span> 
+                                        <span class="hidden-sm-up"><i class="ti-home"></i></span>
                                         <span class="hidden-xs-down">Персональная информация</span>
-                                    </a> 
+                                    </a>
                                 </li>
-                                <li class="nav-item"> 
+                                <li class="nav-item">
                                     <a class="nav-link js-event-add-click" data-toggle="tab" href="#comments" role="tab" aria-selected="false" data-event="21" data-user="{$order->user_id}" data-order="{$order->order_id}" data-manager="{$manager->id}" >
-                                        <span class="hidden-sm-up"><i class="ti-user"></i></span> 
+                                        <span class="hidden-sm-up"><i class="ti-user"></i></span>
                                         <span class="hidden-xs-down">
                                             Комментарии {if $comments|count > 0}<span class="label label-rounded label-primary">{$comments|count}</span>{/if}
                                         </span>
-                                    </a> 
+                                    </a>
                                 </li>
-                                <li class="nav-item"> 
+                                <li class="nav-item">
                                     <a class="nav-link js-event-add-click" data-toggle="tab" href="#documents" role="tab" aria-selected="true" data-event="22" data-user="{$order->user_id}" data-order="{$order->order_id}" data-manager="{$manager->id}" >
-                                        <span class="hidden-sm-up"><i class="ti-layers"></i></span> 
+                                        <span class="hidden-sm-up"><i class="ti-layers"></i></span>
                                         <span class="hidden-xs-down">Документы</span>
-                                    </a> 
+                                    </a>
                                 </li>
-                                <li class="nav-item"> 
+                                <li class="nav-item">
                                     <a class="nav-link js-event-add-click" data-toggle="tab" href="#logs" role="tab" aria-selected="true" data-event="23" data-user="{$order->user_id}" data-order="{$order->order_id}" data-manager="{$manager->id}" >
-                                        <span class="hidden-sm-up"><i class="ti-server"></i></span> 
+                                        <span class="hidden-sm-up"><i class="ti-server"></i></span>
                                         <span class="hidden-xs-down">Логирование</span>
-                                    </a> 
+                                    </a>
                                 </li>
-                                <li class="nav-item"> 
+                                <li class="nav-item">
                                     <a class="nav-link js-event-add-click" data-toggle="tab" href="#operations" role="tab" aria-selected="true" data-event="24" data-user="{$order->user_id}" data-order="{$order->order_id}" data-manager="{$manager->id}" >
-                                        <span class="hidden-sm-up"><i class="ti-list-ol"></i></span> 
+                                        <span class="hidden-sm-up"><i class="ti-list-ol"></i></span>
                                         <span class="hidden-xs-down">Операции</span>
-                                    </a> 
+                                    </a>
                                 </li>
-                                <li class="nav-item"> 
+                                <li class="nav-item">
                                     <a class="nav-link js-event-add-click" data-toggle="tab" href="#history" role="tab" aria-selected="true" data-event="25" data-user="{$order->user_id}" data-order="{$order->order_id}" data-manager="{$manager->id}" >
-                                        <span class="hidden-sm-up"><i class="ti-save-alt"></i></span> 
+                                        <span class="hidden-sm-up"><i class="ti-save-alt"></i></span>
                                         <span class="hidden-xs-down">Кредитная история</span>
-                                    </a> 
+                                    </a>
                                 </li>
                                 <li class="nav-item js-event-add-click">
                                     <a class="nav-link" data-toggle="tab" href="#connexions" role="tab" aria-selected="true" data-event="25" data-user="{$order->user_id}" data-order="{$order->order_id}" data-manager="{$manager->id}" >
@@ -654,11 +654,11 @@
                                         <span class="hidden-xs-down">Связанные лица</span>
                                     </a>
                                 </li>
-                                <li class="nav-item"> 
+                                <li class="nav-item">
                                     <a class="nav-link js-event-add-click" data-toggle="tab" href="#communications" role="tab" aria-selected="true" data-event="25" data-user="{$order->user_id}" data-order="{$order->order_id}" data-manager="{$manager->id}" >
-                                        <span class="hidden-sm-up"><i class="ti-mobile"></i></span> 
+                                        <span class="hidden-sm-up"><i class="ti-mobile"></i></span>
                                         <span class="hidden-xs-down">Коммуникации</span>
-                                    </a> 
+                                    </a>
                                 </li>
                             </ul>
 
@@ -666,17 +666,17 @@
                             <div class="tab-content tabcontent-border" id="order_tabs_content">
                                 <div class="tab-pane active" id="info" role="tabpanel">
                                     <div class="form-body p-2 pt-3">
-                                                
+
                                         <div class="row">
                                             <div class="col-md-8 ">
-                                                
+
                                                 <!-- Контакты -->
                                                 <form action="{url}" class="mb-3 border js-order-item-form {if $penalties['personal'] && $penalties['personal']->status!=3}card-outline-danger{/if}" id="personal_data_form">
-                                                
+
                                                     <input type="hidden" name="action" value="contactdata" />
                                                     <input type="hidden" name="order_id" value="{$order->order_id}" />
                                                     <input type="hidden" name="user_id" value="{$order->user_id}" />
-                                                    
+
                                                     <h5 class="card-header card-success">
                                                         <span class="text-white ">Контакты</span>
                                                         <span class="float-right"> 
@@ -684,9 +684,9 @@
                                                             <a href="javascript:void(0);" class=" text-white js-edit-form js-event-add-click" data-event="32" data-manager="{$manager->id}" data-order="{$order->order_id}" data-user="{$order->user_id}"><i class=" fas fa-edit"></i></a></h3>
                                                         </span>
                                                     </h5>
-                                                    
+
                                                     <div class="row pt-2 view-block {if $contactdata_error}hide{/if}">
-                                                        
+
                                                         {if $penalties['personal'] && (in_array($manager->permissions, ['add_penalty']) || $penalties['personal']->manager_id==$manager->id)}
                                                         <div class="col-md-12">
                                                             <div class="alert alert-danger m-2">
@@ -695,7 +695,7 @@
                                                             </div>
                                                         </div>
                                                         {/if}
-                                                        
+
                                                         <div class="col-md-12">
                                                             <div class="form-group row m-0">
                                                                 <label class="control-label col-md-4">Email:</label>
@@ -754,8 +754,8 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
-                                                    
+
+
                                                     <div class="row p-2 edit-block {if !$contactdata_error}hide{/if}">
                                                         {if $contactdata_error}
                                                         <div class="col-md-12">
@@ -769,7 +769,7 @@
                                                             </ul>
                                                         </div>
                                                         {/if}
-                                                        
+
                                                         <div class="col-md-6">
                                                             <div class="form-group mb-1 {if in_array('empty_email', (array)$contactdata_error)}has-danger{/if}">
                                                                 <label class="control-label">Email</label>
@@ -797,8 +797,8 @@
                                                                 {if in_array('empty_birth_place', (array)$contactdata_error)}<small class="form-control-feedback">Укажите место рождения!</small>{/if}
                                                             </div>
                                                         </div>
-                                                        
-                                                        
+
+
                                                         <div class="col-md-4">
                                                             <div class="form-group mb-1 {if in_array('empty_passport_serial', (array)$contactdata_error)}has-danger{/if}">
                                                                 <label class="control-label">Серия и номер паспорта</label>
@@ -827,8 +827,8 @@
                                                                 {if in_array('empty_passport_issued', (array)$contactdata_errors)}<small class="form-control-feedback">Укажите кем выдан паспорт!</small>{/if}
                                                             </div>
                                                         </div>
-                                                        
-                                                        
+
+
                                                         <div class="col-md-12">
                                                             <div class="form-actions">
                                                                 <button type="submit" class="btn btn-success js-event-add-click" data-event="42" data-manager="{$manager->id}" data-order="{$order->order_id}" data-user="{$order->user_id}"> <i class="fa fa-check"></i> Сохранить</button>
@@ -836,12 +836,12 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </form>        
+                                                </form>
                                                 <!-- / Контакты-->
 
                                                 <!-- Старые контакты-->
                                                 {if $changelogs }
-                                                
+
                                                     {foreach $changelogs as $changelog}
                                                         {if $changelog->type == 'contactdata'}
                                                            {assign var="contactdata_is_changed" value="1"}
@@ -855,34 +855,34 @@
                                                             <div id="myDIV" style="display:none">
                                                             {foreach $changelogs as $changelog}
                                                                 {if $changelog->type == 'contactdata'}
-                                                                    
+
                                                                     <div class="row pt-2 view-block {if $contactdata_error}hide{/if}">
                                                                         <div class="col-md-12">
                                                                         <label class="control-label col-md-4"><span>{$changelog->created|date}</span></label>
                                                                         </div>
                                                                         <div class="col-md-12">
                                                                             <div class="form-group row m-0">
-                                                                                
+
                                                                                     {foreach $changelog->old_values as $field => $old_value}
-                                                                                        {if ($field == 'passport_date' || $field == 'subdivision_code' || $field == 'passport_serial')} 
+                                                                                        {if ($field == 'passport_date' || $field == 'subdivision_code' || $field == 'passport_serial')}
                                                                                         <label class="control-label col-md-4">Паспорт:</label>
                                                                                         <div class="col-md-8">
                                                                                             <p class="form-control-static">
                                                                                             {if $field == 'passport_serial'}  {$old_value|escape}{else}{$order->passport_serial|escape}{/if}
-                                                                                            {if $field == 'subdivision_code'} {$old_value|escape}{else}{$order->subdivision_code|escape}{/if}, от 
+                                                                                            {if $field == 'subdivision_code'} {$old_value|escape}{else}{$order->subdivision_code|escape}{/if}, от
                                                                                             {if $field == 'passport_date'}    {$old_value|escape}{else}{$order->passport_date|escape}{/if}</p>
                                                                                         </div>
                                                                                         {/if}
-                                                                                    
+
                                                                                     {/foreach}
-                                                                                
+
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-md-12">
                                                                             <div class="form-group row m-0">
-                                                                                
+
                                                                                     {foreach $changelog->old_values as $field => $old_value}
-                                                                                    
+
                                                                                         {if $field == 'passport_issued'}
                                                                                         <label class="control-label col-md-4">Кем выдан:</label>
                                                                                         <div class="col-md-8">
@@ -890,14 +890,14 @@
                                                                                         </div>
                                                                                         {/if}
                                                                                     {/foreach}
-                                                                                
+
                                                                             </div>
                                                                         </div>
 
                                                                     </div>
-                                                                    
-                                                                    
-                                                                
+
+
+
                                                                 {/if}
                                                             {/foreach}
                                                             </div>
@@ -910,11 +910,11 @@
 
                                                 <!-- /Контактные лица -->
                                                 <form action="{url}" class="js-order-item-form mb-3 border {if $penalties['contactpersons'] && $penalties['contactpersons']->status!=3}card-outline-danger{/if}" id="contact_persons_form">
-                                                
+
                                                     <input type="hidden" name="action" value="contacts" />
                                                     <input type="hidden" name="order_id" value="{$order->order_id}" />
                                                     <input type="hidden" name="user_id" value="{$order->user_id}" />
-                                                
+
                                                     <h5 class="card-header">
                                                         <span class="text-white">Контактные лица</span>
                                                         <span class="float-right">
@@ -923,7 +923,7 @@
                                                             <a href="javascript:void(0);" class="text-white js-edit-form js-event-add-click" data-event="33" data-manager="{$manager->id}" data-order="{$order->order_id}" data-user="{$order->user_id}"><i class=" fas fa-edit"></i></a></h3>
                                                         </span>
                                                     </h5>
-                                                    
+
                                                     <div class="row view-block m-0 {if $contacts_error}hide{/if}">
                                                         <table class="table table-hover mb-0">
                                                             <tr>
@@ -948,7 +948,7 @@
                                                             </tr>
                                                         </table>
                                                     </div>
-                                                    
+
                                                     <div class="row m-0 pt-2 pb-2 edit-block {if !$contacts_error}hide{/if}">
                                                         {if $contacts_error}
                                                         <div class="col-md-12">
@@ -989,8 +989,8 @@
                                                                 {if in_array('empty_contact_person_phone', (array)$contacts_error)}<small class="form-control-feedback">Укажите тел. контакного лица!</small>{/if}
                                                             </div>
                                                         </div>
-                                                        
-                                                        
+
+
                                                         <div class="col-md-4">
                                                             <div class="form-group {if in_array('empty_contact_person2_name', (array)$contacts_error)}has-danger{/if}">
                                                                 <label class="control-label">ФИО контакного лица 2</label>
@@ -1020,8 +1020,8 @@
                                                                 {if in_array('empty_contact_person2_phone', (array)$contacts_error)}<small class="form-control-feedback">Укажите тел. контакного лица!</small>{/if}
                                                             </div>
                                                         </div>
-                                                        
-                                                        
+
+
                                                         <div class="col-md-12">
                                                             <div class="form-actions">
                                                                 <button type="submit" class="btn btn-success js-event-add-click"  data-event="43" data-manager="{$manager->id}" data-order="{$order->order_id}" data-user="{$order->user_id}"> <i class="fa fa-check"></i> Сохранить</button>
@@ -1029,14 +1029,14 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </form>        
+                                                </form>
 
                                                 <form action="{url}" class="js-order-item-form mb-3 border {if $penalties['addresses'] && $penalties['addresses']->status!=3}card-outline-danger{/if}" id="address_form">
-                                                
+
                                                     <input type="hidden" name="action" value="addresses" />
                                                     <input type="hidden" name="order_id" value="{$order->order_id}" />
                                                     <input type="hidden" name="user_id" value="{$order->user_id}" />
-                                                    
+
                                                     <h5 class="card-header">
                                                         <span class="text-white">Адрес</span>
                                                         <span class="float-right">
@@ -1044,7 +1044,7 @@
                                                             <a href="javascript:void(0);" class="text-white js-edit-form js-event-add-click" data-event="34" data-manager="{$manager->id}" data-order="{$order->order_id}" data-user="{$order->user_id}"><i class=" fas fa-edit"></i></a></h3>
                                                         </span>
                                                     </h5>
-                                                    
+
                                                     <div class="row view-block {if $addresses_error}hide{/if}">
                                                         <div class="col-md-12">
                                                             <table class="table table-hover mb-0">
@@ -1059,7 +1059,7 @@
                                                                         {$order->Regstreet} {$order->Regstreet_shorttype|escape},
                                                                         д.{$order->Reghousing|escape},
                                                                         {if $order->Regbuilding}стр. {$order->Regbuilding|escape},{/if}
-                                                                        {if $order->Regroom}кв.{$order->Regroom|escape}{/if}                                                                
+                                                                        {if $order->Regroom}кв.{$order->Regroom|escape}{/if}
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
@@ -1079,9 +1079,9 @@
                                                             </table>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="edit-block m-0 {if !$addresses_error}hide{/if}">
-                                                        
+
                                                         <div class="row m-0 mb-2 mt-2 js-dadata-address">
                                                             <h6 class="col-12 nav-small-cap">Адрес прописки</h6>
                                                             {if $addresses_error}
@@ -1205,7 +1205,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        
+
                                                         <div class="row m-0 js-dadata-address">
                                                             <h6 class="col-12 nav-small-cap">Адрес проживания</h6>
                                                             <div class="col-md-12">
@@ -1309,7 +1309,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        
+
                                                         <div class="row m-0 mt-2 mb-2">
                                                             <div class="col-md-12">
                                                                 <div class="form-actions">
@@ -1320,17 +1320,17 @@
                                                         </div>
                                                     </div>
                                                 </form>
-                                                
-                                                
-                                                
-                                                
+
+
+
+
                                                 <!-- Данные о работе -->
                                                 <form action="{url}" class="border js-order-item-form mb-3 {if $penalties['work'] && $penalties['work']->status!=3}card-outline-danger{/if}" id="work_data_form">
-                                                
+
                                                     <input type="hidden" name="action" value="work" />
                                                     <input type="hidden" name="order_id" value="{$order->order_id}" />
                                                     <input type="hidden" name="user_id" value="{$order->user_id}" />
-                                                    
+
                                                     <h5 class="card-header">
                                                         <span class="text-white">Данные о работе</span>
                                                         <span class="float-right">
@@ -1338,7 +1338,7 @@
                                                             <a href="javascript:void(0);" class="text-white float-right js-edit-form js-event-add-click" data-event="35" data-manager="{$manager->id}" data-order="{$order->order_id}" data-user="{$order->user_id}"><i class=" fas fa-edit"></i></a>
                                                         </span>
                                                     </h5>
-                                                    
+
                                                     <div class="row m-0 pt-2 view-block {if $work_error}hide{/if}">
                                                         {if $order->workplace || $order->workphone}
                                                         <div class="col-md-12">
@@ -1434,12 +1434,12 @@
                                                         </div>
                                                         {/if}
                                                     </div>
-                                                    
+
                                                     <div class="row m-0 pt-2 edit-block js-dadata-address {if !$work_error}hide{/if}">
                                                         {if $work_error}
                                                         <div class="col-md-12">
                                                             <ul class="alert alert-danger">
-                                                            
+
                                                                 {if in_array('empty_workplace', (array)$work_error)}<li>Укажите название организации!</li>{/if}
                                                                 {if in_array('empty_profession', (array)$work_error)}<li>Укажите должность!</li>{/if}
                                                                 {if in_array('empty_workphone', (array)$work_error)}<li>Укажите рабочий телефон!</li>{/if}
@@ -1448,7 +1448,7 @@
                                                                 {if in_array('empty_chief_name', (array)$work_error)}<li>Укажите ФИО начальника!</li>{/if}
                                                                 {if in_array('empty_chief_position', (array)$work_error)}<li>Укажите Должность начальника!</li>{/if}
                                                                 {if in_array('empty_chief_phone', (array)$work_error)}<li>Укажите Телефон начальника!</li>{/if}
-                                                                
+
                                                             </ul>
                                                         </div>
                                                         {/if}
@@ -1515,7 +1515,7 @@
                                                                 {if in_array('empty_chief_phone', (array)$work_error)}<small class="form-control-feedback">Укажите Телефон начальника!</small>{/if}
                                                             </div>
                                                         </div>
-                                                                                                                
+
                                                         <div class="col-md-12">
                                                             <div class="form-group mb-0">
                                                                 <label class="control-label">Комментарий к работе</label>
@@ -1532,16 +1532,16 @@
                                                     </div>
                                                 </form>
                                                 <!-- /Данные о работе -->
-                                                
-                                                
-                                                
+
+
+
                                                 <!--
                                                 <h3 class="box-title mt-5">UTM-метки</h3>
                                                 <hr>
                                                 -->
                                             </div>
                                             <div class="col-md-4 ">
-                                                
+
                                                 {if $order->autoretry_result}
                                                 <div class="card mb-1 {if $order->autoretry_summ}card-success{else}card-danger{/if}">
                                                     <div class="box ">
@@ -1559,7 +1559,7 @@
                                                     </div>
                                                 </div>
                                                 {/if}
-                                                
+
                                                 <div class="mb-3 border  {if $penalties['scorings'] && $penalties['scorings']->status!=3}card-outline-danger{/if}">
                                                     <h5 class=" card-header">
                                                         <span class="text-white ">Скоринги</span>
@@ -1573,7 +1573,7 @@
                                                         </span>
                                                     </h2>
                                                     <div class="message-box js-scorings-block {if $need_update_scorings}js-need-update{/if}" data-order="{$order->order_id}">
-                                                            
+
                                                             {foreach $scoring_types as $scoring_type}
                                                             <div class="pl-2 pr-2 {if $scorings[$scoring_type->name]->status == 'new'}bg-light-warning{elseif $scorings[$scoring_type->name]->success}bg-light-success{else}bg-light-danger{/if}">
                                                                 <div class="row {if !$scoring_type@last}border-bottom{/if}">
@@ -1585,9 +1585,9 @@
                                                                                 {if $scorings[$scoring_type->name]->found_47}<span class="label label-danger">47</span>{/if}
                                                                             {/if}
                                                                         </h5>
-                                                                        
+
                                                                         {if $scorings[$scoring_type->name]->status == 'new'}
-                                                                            <span class="label label-warning float-right">Ожидание</span> 
+                                                                            <span class="label label-warning float-right">Ожидание</span>
                                                                         {elseif $scorings[$scoring_type->name]->status == 'process'}
                                                                             <span class="label label-info label-sm float-right">Выполняется</span>
                                                                         {elseif $scorings[$scoring_type->name]->status == 'error'}
@@ -1600,7 +1600,7 @@
                                                                             {else}
                                                                                 <span class="label label-danger float-right">Не пройден</span>
                                                                             {/if}
-                                                                        {/if}                                                                    
+                                                                        {/if}
                                                                     </div>
                                                                     <div class="col-8 col-sm-8 pb-2">
                                                                         <span class="mail-desc" title="{$scorings[$scoring_type->name]->string_result}">
@@ -1620,7 +1620,7 @@
                                                                                 {else}
                                                                                     {assign var=recommended_amount value='???'}
                                                                                 {/if}
-                                                                                
+
                                                                                 <span class="mail-desc" title="{$scorings[$scoring_type->name]->body['number_of_active'][1]} - {$scorings[$scoring_type->name]->body['number_of_active'][0]}">
                                                                                     Рекомендуемая сумма: <b>{$recommended_amount}</b>
                                                                                 </span>
@@ -1629,6 +1629,11 @@
                                                                                 </span>
                                                                             {/if}
                                                                         <span class="time">
+                                                                            {if $scoring_type->name == 'whatsapp'}
+                                                                                <span>{$scorings[$scoring_type->name]->body['status']}<br>
+                                                                                <span>{$scorings[$scoring_type->name]->body['statusDate']}<br>
+                                                                                <a href="{$scorings[$scoring_type->name]->body['image']}" target="_blank">Ссылка на фото</a><br>
+                                                                            {/if}
                                                                             {if $scorings[$scoring_type->name]->created}
                                                                                 {$scorings[$scoring_type->name]->created|date} {$scorings[$scoring_type->name]->created|time}
                                                                             {/if}
@@ -1662,7 +1667,7 @@
                                                                             <a class="btn-load {if in_array($scoring_type->name, $audit_types)}loading{/if} text-info js-run-scorings run-scoring-btn float-right" data-type="{$scoring_type->name}" data-order="{$order->order_id}" href="javascript:void(0);">
                                                                                 <i class="far fa-play-circle"></i>
                                                                             </a>
-                                                                        {/if}                                                                    
+                                                                        {/if}
                                                                     {/if}
                                                                     </div>
                                                                 </div>
@@ -1670,14 +1675,14 @@
                                                             {/foreach}
                                                     </div>
                                                 </div>
-                                            
+
                                                 <form action="{url}" class="mb-3 border js-order-item-form {if $penalties['services'] && $penalties['services']->status!=3}card-outline-danger{/if}" id="services_form">
-                
+
                                                     <input type="hidden" name="action" value="services" />
                                                     <input type="hidden" name="order_id" value="{$order->order_id}" />
                                                     <input type="hidden" name="user_id" value="{$order->user_id}" />
-                                                    
-                                                    
+
+
                                                     <h5 class="card-header text-white">
                                                         <span>Услуги</span>
                                                         <span class="float-right ">
@@ -1685,7 +1690,7 @@
                                                             <a href="javascript:void(0);" class="js-edit-form text-white js-event-add-click" data-event="36" data-manager="{$manager->id}" data-order="{$order->order_id}" data-user="{$order->user_id}"><i class=" fas fa-edit"></i></a>
                                                         </span>
                                                     </h5>
-                                                    
+
                                                     <div class="row view-block p-2 {if $services_error}hide{/if}">
                                                         <div class="col-md-12">
                                                             {*}
@@ -1738,7 +1743,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="row p-2 edit-block {if !$services_error}hide{/if}">
                                                         <div class="col-md-12">
                                                             {*}
@@ -1769,17 +1774,17 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
-                                                
+
+
                                                 </form>
-                                            
+
                                                 <form action="{url}" class="mb-3 border js-order-item-form {if $penalties['cards'] && $penalties['cards']->status!=3}card-outline-danger{/if}" id="cards_form">
-                
+
                                                     <input type="hidden" name="action" value="cards" />
                                                     <input type="hidden" name="order_id" value="{$order->order_id}" />
                                                     <input type="hidden" name="user_id" value="{$order->user_id}" />
-                                                    
-                                                    
+
+
                                                     <h5 class="card-header text-white">
                                                         <span>Карта</span>
                                                         <span class="float-right">
@@ -1789,7 +1794,7 @@
                                                             {/if}
                                                         </span>
                                                     </h5>
-                                                    
+
                                                     <div class="row view-block p-2 {if $card_error}hide{/if}">
                                                         <div class="col-md-12">
                                                             <div class="form-group mb-0 row {if $cards[$order->card_id]->duplicates}text-danger{/if}">
@@ -1813,7 +1818,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="row p-2 edit-block {if !$card_error}hide{/if}">
                                                         <div class="col-md-12">
                                                             <div class="form-group mb-4 {if in_array('empty_card', (array)$card_error)}has-danger{/if}">
@@ -1826,7 +1831,7 @@
                                                                     </option>
                                                                     {/foreach}
                                                                 </select>
-                                                            </div>                                                            
+                                                            </div>
                                                         </div>
                                                         <div class="col-md-12">
                                                             <div class="form-actions">
@@ -1835,27 +1840,27 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
-                                                
+
+
                                                 </form>
-                                            
+
                                             </div>
                                         </div>
                                         <!-- -->
 
                                         <form action="{url}" class="border js-order-item-form mb-3 js-check-images {if $penalties['images'] && $penalties['images']->status!=3}card-outline-danger{/if}" id="images_form" data-user="{$order->user_id}">
-                                        
+
                                             <input type="hidden" name="action" value="images" />
                                             <input type="hidden" name="order_id" value="{$order->order_id}" />
                                             <input type="hidden" name="user_id" value="{$order->user_id}" />
-                                            
+
                                             <h5 class="card-header">
                                                 <span class="text-white">Фотографии</span>
                                                 <span class="float-right">
                                                     {penalty_button penalty_block='images'}
                                                 </span>
                                             </h5>
-                                            
+
                                             <div class="row p-2 view-block {if $socials_error}hide{/if}">
                                                 <ul class="col-md-12 list-inline order-images-list">
                                                 {foreach $files as $file}
@@ -1933,7 +1938,7 @@
                                                 {/foreach}
                                                 </ul>
                                             </div>
-                                            
+
                                             <div class="row edit-block {if !$images_error}hide{/if}">
                                                 {foreach $files as $file}
                                                 <div class="col-md-4 col-lg-3 col-xlg-3">
@@ -1959,7 +1964,7 @@
                                         </form>
                                         <!-- -->
                                         <form  method="POST" enctype="multipart/form-data">
-                                            
+
                                             <div class="form_file_item">
                                                 <input type="file" name="new_file" id="new_file" data-user="{$order->user_id}" value="" style="display:none" />
                                                 <label for="new_file" class="btn btn-large btn-primary">
@@ -1968,18 +1973,18 @@
                                                 </label>
                                             </div>
                                         </form>
-                                        
+
                                     </div>
                                 </div>
 
                                 <!-- Комментарии -->
                                 <div class="tab-pane p-3" id="comments" role="tabpanel">
-                                    
+
                                     <div class="row">
                                         <div class="col-12">
                                             <h4 class="float-left">Комментарии к клиенту</h4>
                                             <button class="btn float-right hidden-sm-down btn-success js-open-comment-form">
-                                                <i class="mdi mdi-plus-circle"></i> 
+                                                <i class="mdi mdi-plus-circle"></i>
                                                 Добавить
                                             </button>
                                         </div>
@@ -1988,35 +1993,35 @@
                                         {if $contract->premier && $manager->role == 'user'}
                                         <h1 class="text-danger">ДОГОВОР ПРОДАН в КА "Премьер".</h1>
                                         {elseif  $contract->sold && $manager->role == 'user'}
-                                        <h1 class="text-danger">ДОГОВОР ПРОДАН в КА "ЮК1".</h1>                                        
+                                        <h1 class="text-danger">ДОГОВОР ПРОДАН в КА "ЮК1".</h1>
                                         {else}
                                             {if $comments}
                                             <div class="message-box">
                                                 <div class="message-widget">
                                                     {foreach $comments as $comment}
                                                     <a href="javascript:void(0);">
-                                                        <div class="user-img"> 
+                                                        <div class="user-img">
                                                             <span class="round">{$comment->letter|escape}</span>
                                                         </div>
                                                         <div class="mail-contnet">
                                                             <div class="clearfix">
-                                                                <h5>{$managers[$comment->manager_id]->name|escape}</h5> 
+                                                                <h5>{$managers[$comment->manager_id]->name|escape}</h5>
                                                                 {if $comment->official}<span class="label label-success">Оффициальный</span>{/if}
                                                                 {if $comment->organization=='mkk'}<span class="label label-info">МКК</span>{/if}
                                                                 {if $comment->organization=='yuk'}<span class="label label-danger">ЮК</span>{/if}
                                                             </div>
                                                             <span class="mail-desc">
                                                                 {$comment->text|nl2br}
-                                                            </span> 
-                                                            <span class="time">{$comment->created|date} {$comment->created|time}</span> 
+                                                            </span>
+                                                            <span class="time">{$comment->created|date} {$comment->created|time}</span>
                                                         </div>
-                                        
+
                                                     </a>
                                                     {/foreach}
                                                 </div>
                                             </div>
                                             {/if}
-                                            
+
                                             {if $comments_1c}
                                             <h3>Комментарии из 1С</h3>
                                             <table class="table">
@@ -2068,10 +2073,10 @@
                                     {/if}
                                 </div>
                                 <!-- /Документы -->
-                                
-                                
+
+
                                 <div class="tab-pane p-3" id="logs" role="tabpanel">
-                                    
+
                                     <ul class="nav nav-pills mt-4 mb-4">
                                         <li class=" nav-item"> <a href="#eventlogs" class="nav-link active" data-toggle="tab" aria-expanded="false">События</a> </li>
                                         <li class="nav-item"> <a href="#changelogs" class="nav-link" data-toggle="tab" aria-expanded="false">Данные</a> </li>
@@ -2085,7 +2090,7 @@
                                                     <tbody>
                                                         {foreach $eventlogs as $eventlog}
                                                         <tr class="">
-                                                            <td >                                                
+                                                            <td >
                                                                 <span>{$eventlog->created|date}</span>
                                                                 {$eventlog->created|time}
                                                             </td>
@@ -2102,10 +2107,10 @@
                                                     <a href="http://45.147.176.183/get/html_to_sheet?name={$order->order_id}&code=3Tfiikdfg6">...</a>
                                             {else}
                                                 Нет записей
-                                            {/if}    
-                                                                             
+                                            {/if}
+
                                         </div>
-                                        
+
                                         <div id="changelogs" class="tab-pane">
                                             <h3>Изменение данных</h3>
                                             {if $changelogs}
@@ -2113,7 +2118,7 @@
                                                     <tbody>
                                                         {foreach $changelogs as $changelog}
                                                         <tr class="">
-                                                            <td >                                                
+                                                            <td >
                                                                 <div class="button-toggle-wrapper">
                                                                     <button class="js-open-order button-toggle" data-id="{$changelog->id}" type="button" title="Подробнее"></button>
                                                                 </div>
@@ -2129,8 +2134,8 @@
                                                             </td>
                                                             <td >
                                                                 <a href="client/{$changelog->user->id}">
-                                                                    {$changelog->user->lastname|escape} 
-                                                                    {$changelog->user->firstname|escape} 
+                                                                    {$changelog->user->lastname|escape}
+                                                                    {$changelog->user->firstname|escape}
                                                                     {$changelog->user->patronymic|escape}
                                                                 </a>
                                                             </td>
@@ -2141,7 +2146,7 @@
                                                                     <ul class="dtr-details col-md-6 list-unstyled">
                                                                         {foreach $changelog->old_values as $field => $old_value}
                                                                         <li>
-                                                                            <strong>{$field}: </strong> 
+                                                                            <strong>{$field}: </strong>
                                                                             <span>{$old_value}</span>
                                                                         </li>
                                                                         {/foreach}
@@ -2149,11 +2154,11 @@
                                                                     <ul class="col-md-6 dtr-details list-unstyled">
                                                                         {foreach $changelog->new_values as $field => $new_value}
                                                                         <li>
-                                                                            <strong>{$field}: </strong> 
+                                                                            <strong>{$field}: </strong>
                                                                             <span>{$new_value}</span>
                                                                         </li>
                                                                         {/foreach}
-                                                                    </ul> 
+                                                                    </ul>
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -2162,14 +2167,14 @@
                                                 </table>
                                             {else}
                                                 Нет записей
-                                            {/if}    
-                                                    
+                                            {/if}
+
                                         </div>
 
                                     </div>
-                        
+
                                 </div>
-                                
+
                                 <div class="tab-pane p-3" id="operations" role="tabpanel">
                                     {if $contract_operations}
                                         <table class="table table-hover table-condense">
@@ -2192,7 +2197,7 @@
                                                     {if in_array($operation->type, ['INSURANCE'])}table-warning{/if}
                                                     {if in_array($operation->type, ['CORRECT'])}table-primary{/if}
                                                 ">
-                                                    <td > 
+                                                    <td >
                                                         {*}                                               
                                                         <div class="button-toggle-wrapper">
                                                             <button class="js-open-order button-toggle" data-id="{$changelog->id}" type="button" title="Подробнее"></button>
@@ -2231,9 +2236,9 @@
                                         </table>
                                     {else}
                                         <h4>Нет операций</h4>
-                                    {/if}    
+                                    {/if}
                                 </div>
-                                
+
                                 <div id="history" class="tab-pane" role="tabpanel">
                                     <div class="row">
                                         <div class="col-12">
@@ -2360,9 +2365,9 @@
                                     </div>
                                 </div>
 
-                                
+
                                 <div class="tab-pane p-3" id="communications" role="tabpanel">
-                                    
+
                                     <h3>Коммуникации с клиентом</h3>
                                     {if $communications}
                                         <table class="table table-hover table-bordered">
@@ -2379,7 +2384,7 @@
                                                 </tr>
                                                 {foreach $communications as $communication}
                                                 <tr class="communication-{$communication->order_id}">
-                                                    <td > 
+                                                    <td >
                                                         <small>{$communication->created|date}</small>
                                                         <br />
                                                         <small>{$communication->created|time}</small>
@@ -2411,57 +2416,57 @@
                                                         {$communication->content}
                                                     </td>
                                                 </tr>
-                                                
+
                                                 {/foreach}
                                             </tbody>
                                         </table>
                                     {else}
                                         <h4>Нет коммуникаций</h4>
-                                    {/if}    
+                                    {/if}
                                 </div>
-                                
+
                             </div>
-                            
-      
+
+
                     </div>
                 </div>
             </div>
         </div>
-        
+
     </div>
     {/if}
     <!-- ============================================================== -->
     <!-- End Container fluid  -->
     <!-- ============================================================== -->
-    
+
     {include file='footer.tpl'}
-    
+
 </div>
 
 
 <div id="modal_reject_reason" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
-            
+
             <div class="modal-header">
                 <h4 class="modal-title">Отказать в выдаче кредита?</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body">
-                
-                
+
+
                 <div class="card">
                     <div class="card-body">
                         <ul class="nav nav-tabs" id="myTab" role="tablist">
-                            <li class="nav-item"> 
+                            <li class="nav-item">
                                 <a class="nav-link active" id="home-tab" data-toggle="tab" href="#reject_mko" role="tab" aria-controls="home5" aria-expanded="true" aria-selected="true">
-                                    <span class="hidden-sm-up"><i class="ti-home"></i></span> 
+                                    <span class="hidden-sm-up"><i class="ti-home"></i></span>
                                     <span class="hidden-xs-down">Отказ МКО</span>
-                                </a> 
+                                </a>
                             </li>
-                            <li class="nav-item"> 
+                            <li class="nav-item">
                                 <a class="nav-link" id="profile-tab" data-toggle="tab" href="#reject_client" role="tab" aria-controls="profile" aria-selected="false">
-                                    <span class="hidden-sm-up"><i class="ti-user"></i></span> 
+                                    <span class="hidden-sm-up"><i class="ti-user"></i></span>
                                     <span class="hidden-xs-down">Отказ клиента</span>
                                 </a>
                             </li>
@@ -2520,21 +2525,21 @@
 <div id="modal_add_comment" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
-            
+
             <div class="modal-header">
                 <h4 class="modal-title">Добавить комментарий</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body">
                 <form method="POST" id="form_add_comment" action="order/{$order->order_id}">
-                    
+
                     <input type="hidden" name="order_id" value="{$order->order_id}" />
                     <input type="hidden" name="user_id" value="{$order->user_id}" />
                     <input type="hidden" name="block" value="" />
                     <input type="hidden" name="action" value="add_comment" />
-                    
+
                     <div class="alert" style="display:none"></div>
-                    
+
                     <div class="form-group">
                         <label for="name" class="control-label">Комментарий:</label>
                         <textarea class="form-control" name="text"></textarea>
@@ -2558,20 +2563,20 @@
 <div id="modal_close_contract" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
-            
+
             <div class="modal-header">
                 <h4 class="modal-title">Закрыть договор</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body">
                 <form method="POST" id="form_close_contract" action="order/{$order->order_id}">
-                    
+
                     <input type="hidden" name="order_id" value="{$order->order_id}" />
                     <input type="hidden" name="user_id" value="{$order->user_id}" />
                     <input type="hidden" name="action" value="close_contract" />
-                    
+
                     <div class="alert" style="display:none"></div>
-                    
+
                     <div class="form-group">
                         <label for="close_date" class="control-label">Дата закрытия:</label>
                         <input type="text" class="form-control" name="close_date" required="" placeholder="ДД.ММ.ГГГГ" value="{''|date}" />
@@ -2593,20 +2598,20 @@
 <div id="modal_correct" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
-            
+
             <div class="modal-header bg-info">
                 <h3 class="modal-title text-white text-center">Корректировка</h3>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body">
                 <form method="POST" id="form_correct" action="order/{$order->order_id}">
-                    
+
                     <input type="hidden" name="order_id" value="{$order->order_id}" />
                     <input type="hidden" name="user_id" value="{$order->user_id}" />
                     <input type="hidden" name="action" value="correct" />
-                    
+
                     <div class="alert" style="display:none"></div>
-                    
+
                     <div class="form-group">
                         <div class="row">
                             <div class="col-6">
@@ -2664,7 +2669,7 @@
 <div id="modal_fssp_info" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
-            
+
             <div class="modal-header">
                 <h4 class="modal-title">Результаты проверки</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -2679,7 +2684,7 @@
                         <th>Закрыт</th>
                     </tr>
                     <tbody class="js-fssp-info-result">
-                        
+
                     </tbody>
                 </table>
             </div>
@@ -2705,22 +2710,22 @@
 <div id="modal_add_penalty" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
-            
+
             <div class="modal-header">
                 <h4 class="modal-title">Оштрафовать</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body">
                 <form method="POST" id="form_add_penalty" action="order/{$order->order_id}">
-                    
+
                     <input type="hidden" name="order_id" value="{$order->order_id}" />
                     <input type="hidden" name="manager_id" value="{$order->manager_id}" />
                     <input type="hidden" name="control_manager_id" value="{$manager->id}" />
                     <input type="hidden" name="block" value="" />
                     <input type="hidden" name="action" value="add_penalty" />
-                    
+
                     <div class="alert" style="display:none"></div>
-                    
+
                     <div class="form-group">
                         <label for="close_date" class="control-label">Причина:</label>
                         <select name="type_id" class="form-control">
@@ -2747,17 +2752,17 @@
 <div id="modal_send_sms" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
-            
+
             <div class="modal-header">
                 <h4 class="modal-title">Отправить смс-сообщение?</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body">
-                
-                
+
+
                 <div class="card">
                     <div class="card-body">
-                        
+
                         <div class="tab-content tabcontent-border p-3" id="myTabContent">
                             <div role="tabpanel" class="tab-pane fade active show" id="waiting_reason" aria-labelledby="home-tab">
                                 <form class="js-sms-form">
@@ -2769,7 +2774,7 @@
                                         <label for="name" class="control-label">Выберите шаблон сообщения:</label>
                                         <select name="template_id" class="form-control">
                                             {foreach $sms_templates as $sms_template}
-                                            
+
                                             <option value="{$sms_template->id}" title="{$sms_template->template|escape}">
                                                 {$sms_template->name|escape} ({$sms_template->template})
                                             </option>

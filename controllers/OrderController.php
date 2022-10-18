@@ -3,171 +3,168 @@
 class OrderController extends Controller
 {
     private $ordertimer_delay = 480;
-    
+
     public function fetch()
     {
-        if ($this->request->method('post'))
-        {
+        if ($this->request->method('post')) {
             $order_id = $this->request->post('order_id', 'integer');
             $action = $this->request->post('action', 'string');
 
-            switch($action):
+            switch ($action):
 
                 case 'change_manager':
                     $this->change_manager_action();
-                break;
+                    break;
 
                 case 'fio':
                     $this->fio_action();
-                break;
+                    break;
 
                 case 'contactdata':
                     $this->contactdata_action();
-                break;
+                    break;
 
                 case 'contacts':
                     $this->contacts_action();
-                break;
+                    break;
 
                 case 'addresses':
                     $this->addresses_action();
-                break;
+                    break;
 
                 case 'work':
                     $this->work_action();
-                break;
+                    break;
 
                 case 'amount':
                     $this->action_amount();
-                break;
+                    break;
 
                 case 'cards':
                     $this->action_cards();
-                break;
+                    break;
 
                 case 'contact_status':
                     $response = $this->action_contact_status();
                     $this->json_output($response);
-                break;
+                    break;
 
                 case 'contactperson_status':
                     $response = $this->action_contactperson_status();
                     $this->json_output($response);
-                break;
+                    break;
 
                 case 'status':
                     $status = $this->request->post('status', 'integer');
                     $response = $this->status_action($status);
                     $this->json_output($response);
-                break;
+                    break;
 
                 // принять заявку
                 case 'accept_order':
                     $response = $this->accept_order_action();
                     $this->json_output($response);
-                break;
+                    break;
 
                 // одобрить заявку
                 case 'approve_order':
                     $response = $this->approve_order_action();
                     $this->json_output($response);
-                break;
+                    break;
 
                 // одобрить заявку
                 case 'autoretry_accept':
                     $response = $this->autoretry_accept_action();
                     $this->json_output($response);
-                break;
+                    break;
 
                 // отказать в заявке
                 case 'reject_order':
                     $response = $this->reject_order_action();
                     $this->json_output($response);
-                break;
+                    break;
 
                 // подтвердить контракт
                 case 'confirm_contract':
                     $response = $this->confirm_contract_action();
                     $this->json_output($response);
-                break;
+                    break;
 
                 // отменить заявку "Не удалось выдать"
                 case 'cancel_contract':
                     $response = $this->cancel_contract_action();
                     $this->json_output($response);
-                break;
+                    break;
 
                 case 'add_comment':
                     $this->action_add_comment();
-                break;
+                    break;
 
                 case 'close_contract':
                     $this->action_close_contract();
-                break;
+                    break;
 
                 case 'correct':
                     $this->action_correct();
-                break;
+                    break;
 
                 case 'repay':
                     $this->action_repay();
-                break;
+                    break;
 
                 case 'send_sms':
                     $this->send_sms_action();
-                break;
+                    break;
 
 
                 case 'personal':
                     $this->action_personal();
-                break;
+                    break;
 
                 case 'passport':
                     $this->action_passport();
-                break;
+                    break;
 
                 case 'reg_address':
                     $this->reg_address_action();
-                break;
+                    break;
 
                 case 'fakt_address':
                     $this->fakt_address_action();
-                break;
+                    break;
 
                 case 'workdata':
                     $this->workdata_action();
-                break;
+                    break;
 
                 case 'work_address':
                     $this->work_address_action();
-                break;
+                    break;
 
                 case 'socials':
                     $this->socials_action();
-                break;
+                    break;
 
                 case 'images':
                     $this->action_images();
-                break;
+                    break;
 
                 case 'services':
                     $this->action_services();
-                break;
+                    break;
 
                 case 'workout':
                     $this->action_workout();
-                break;
+                    break;
 
                 case 'return_insure':
                     $this->action_return_insure();
-                break;
+                    break;
 
 
             endswitch;
 
-        }
-        else
-        {
+        } else {
             $managers = array();
             foreach ($this->managers->get_managers() as $m)
                 $managers[$m->id] = $m;
@@ -177,10 +174,8 @@ class OrderController extends Controller
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scoring_types);echo '</pre><hr />';
             $this->design->assign('scoring_types', $scoring_types);
 
-            if ($order_id = $this->request->get('id', 'integer'))
-            {
-                if ($order = $this->orders->get_order($order_id))
-                {
+            if ($order_id = $this->request->get('id', 'integer')) {
+                if ($order = $this->orders->get_order($order_id)) {
                     // сохраняем историю займов из 1с
                     $client = $this->users->get_user($order->user_id);
 
@@ -193,31 +188,25 @@ class OrderController extends Controller
                     $communication_orders = array();
                     $communication_contracts = array();
                     $communications = array();
-                    foreach ($this->communications->get_communications(array('user_id' => $client->id)) as $comm)
-                    {
+                    foreach ($this->communications->get_communications(array('user_id' => $client->id)) as $comm) {
                         if (!empty($comm->order_id))
                             $communication_orders[$comm->order_id] = '';
                         $communications[] = $comm;
                     }
-                    if (!empty($communication_orders))
-                    {
-                        foreach ($this->orders->get_orders(array('id'=>array_keys($communication_orders))) as $co)
-                        {
+                    if (!empty($communication_orders)) {
+                        foreach ($this->orders->get_orders(array('id' => array_keys($communication_orders))) as $co) {
                             $communication_orders[$co->order_id] = $co;
                             if (!empty($co->contract_id))
                                 $communication_contracts[$co->contract_id] = '';
                         }
-                        
-                        if (!empty($communication_contracts))
-                        {
-                            foreach ($this->contracts->get_contracts(array('id'=>array_keys($communication_contracts))) as $cc)
+
+                        if (!empty($communication_contracts)) {
+                            foreach ($this->contracts->get_contracts(array('id' => array_keys($communication_contracts))) as $cc)
                                 $communication_contracts[$cc->id] = $cc;
                         }
-                        
-                        foreach ($communications as $communication)
-                        {
-                            if (!empty($communication->order_id) && !empty($communication_orders[$communication->order_id]))
-                            {
+
+                        foreach ($communications as $communication) {
+                            if (!empty($communication->order_id) && !empty($communication_orders[$communication->order_id])) {
                                 $communication->order = $communication_orders[$communication->order_id];
                                 if (!empty($communication_contracts[$communication->order->contract_id]))
                                     $communication->contract = $communication_contracts[$communication->order->contract_id];
@@ -226,12 +215,10 @@ class OrderController extends Controller
                     }
                     $this->design->assign('communications', $communications);
                     $this->design->assign('communication_orders', $communication_orders);
-                    
+
                     // причина "не удалось выдать"
-                    if ($order->status == 6)
-                    {
-                        if ($p2p = $this->best2pay->get_contract_p2pcredit($order->contract_id))
-                        {
+                    if ($order->status == 6) {
+                        if ($p2p = $this->best2pay->get_contract_p2pcredit($order->contract_id)) {
                             $p2p->response = unserialize($p2p->response);
                             if (!empty($p2p->response))
                                 $p2p->response_xml = simplexml_load_string($p2p->response);
@@ -239,11 +226,9 @@ class OrderController extends Controller
                             $this->design->assign('p2p', $p2p);
                         }
 
-                        if ($client_orders = $this->orders->get_orders(array('user_id' => $order->user_id)))
-                        {
+                        if ($client_orders = $this->orders->get_orders(array('user_id' => $order->user_id))) {
                             $have_newest_order = 0;
-                            foreach ($client_orders as $co)
-                            {
+                            foreach ($client_orders as $co) {
                                 if ($co->order_id != $order->order_id && (strtotime($order->date) < strtotime($co->date)))
                                     $have_newest_order = $co->order_id;
                             }
@@ -252,9 +237,8 @@ class OrderController extends Controller
                     }
 
                     $penalties = array();
-                    foreach ($this->penalties->get_penalties(array('order_id'=>$order_id)) as $p)
-                    {
-                        if (in_array($p->status, array(1,2,4)))
+                    foreach ($this->penalties->get_penalties(array('order_id' => $order_id)) as $p) {
+                        if (in_array($p->status, array(1, 2, 4)))
                             $penalties[$p->block] = $p;
                     }
                     $this->design->assign('penalties', $penalties);
@@ -262,19 +246,17 @@ class OrderController extends Controller
                     $this->design->assign('order', $order);
 
                     $comments = $this->comments->get_comments(array('user_id' => $order->user_id));
-                    foreach ($comments as $comment)
-                    {
+                    foreach ($comments as $comment) {
                         if (isset($managers[$comment->manager_id]))
                             $comment->letter = mb_substr($managers[$comment->manager_id]->name, 0, 1);
                     }
                     $this->design->assign('comments', $comments);
 
-                    $files = $this->users->get_files(array('user_id'=>$order->user_id));
+                    $files = $this->users->get_files(array('user_id' => $order->user_id));
                     $this->design->assign('files', $files);
 
                     $documents = array();
-                    foreach ($this->documents->get_documents(array('user_id'=>$order->user_id)) as $doc)
-                    {
+                    foreach ($this->documents->get_documents(array('user_id' => $order->user_id)) as $doc) {
                         if (empty($doc->order_id) || $doc->order_id == $order_id)
                             $documents[] = $doc;
                     }
@@ -292,9 +274,8 @@ class OrderController extends Controller
                     $d = date_diff(date_create(date('Y-m-d', strtotime($order->birth))), date_create(date('Y-m-d')));
                     $order->age = $d->format('%y');
 
-                    if (!empty($order->contract_id))
-                    {
-                        if ($contract_operations = $this->operations->get_operations(array('contract_id'=>$order->contract_id)))
+                    if (!empty($order->contract_id)) {
+                        if ($contract_operations = $this->operations->get_operations(array('contract_id' => $order->contract_id)))
                             foreach ($contract_operations as $contract_operation)
                                 if (!empty($contract_operation->transaction_id))
                                     $contract_operation->transaction = $this->transactions->get_transaction($contract_operation->transaction_id);
@@ -304,8 +285,7 @@ class OrderController extends Controller
                         $this->design->assign('contract', $contract);
                     }
 
-                    if (!empty($contract->insurance_id))
-                    {
+                    if (!empty($contract->insurance_id)) {
                         $contract_insurance = $this->insurances->get_insurance($contract->insurance_id);
                         $this->design->assign('contract_insurance', $contract_insurance);
                     }
@@ -313,38 +293,23 @@ class OrderController extends Controller
                     $need_update_scorings = 0;
                     $inactive_run_scorings = 0;
                     $scorings = array();
-                    if ($result_scorings = $this->scorings->get_scorings(array('order_id'=>$order->order_id)))
-                    {
-                        foreach ($result_scorings as $scoring)
-                        {
-                            if ($scoring->type == 'juicescore')
-                            {
+                    if ($result_scorings = $this->scorings->get_scorings(array('order_id' => $order->order_id))) {
+                        foreach ($result_scorings as $scoring) {
+                            if (in_array($scoring->type, ['juicescore', 'efrsb', 'whatsapp', 'contact']))
                                 $scoring->body = unserialize($scoring->body);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scoring->body);echo '</pre><hr />';
-                            }
 
-                            if ($scoring->type == 'efrsb')
-                            {
-                                $scoring->body = @unserialize($scoring->body);
-                            }
-
-                            if ($scoring->type == 'scorista')
-                            {
+                            if ($scoring->type == 'scorista') {
                                 $scoring->body = json_decode($scoring->body);
                                 if (!empty($scoring->body->equifaxCH))
                                     $scoring->body->equifaxCH = iconv('cp1251', 'utf8', base64_decode($scoring->body->equifaxCH));
                             }
-                            if ($scoring->type == 'fssp')
-                            {
+                            if ($scoring->type == 'fssp') {
                                 $scoring->body = @unserialize($scoring->body);
                                 $scoring->found_46 = 0;
                                 $scoring->found_47 = 0;
-                                if (!empty($scoring->body->result[0]->result))
-                                {
-                                    foreach ($scoring->body->result[0]->result as $result)
-                                    {
-                                        if (!empty($result->ip_end))
-                                        {
+                                if (!empty($scoring->body->result[0]->result)) {
+                                    foreach ($scoring->body->result[0]->result as $result) {
+                                        if (!empty($result->ip_end)) {
                                             $ip_end = array_map('trim', explode(',', $result->ip_end));
                                             if (in_array(46, $ip_end))
                                                 $scoring->found_46 = 1;
@@ -361,8 +326,7 @@ class OrderController extends Controller
 
                             $scorings[$scoring->type] = $scoring;
 
-                            if ($scoring->status == 'new' || $scoring->status == 'process' || $scoring->status == 'repeat')
-                            {
+                            if ($scoring->status == 'new' || $scoring->status == 'process' || $scoring->status == 'repeat') {
                                 $need_update_scorings = 1;
                                 if (isset($scoring_types[$scoring->type]->type) && $scoring_types[$scoring->type]->type == 'first')
                                     $inactive_run_scorings = 1;
@@ -384,9 +348,8 @@ class OrderController extends Controller
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scorings, $scoring_types);echo '</pre><hr />';
 
                     $user = $this->users->get_user((int)$order->user_id);
-                    $changelogs = $this->changelogs->get_changelogs(array('order_id'=>$order_id));
-                    foreach ($changelogs as $changelog)
-                    {
+                    $changelogs = $this->changelogs->get_changelogs(array('order_id' => $order_id));
+                    foreach ($changelogs as $changelog) {
                         $changelog->user = $user;
                         if (!empty($changelog->manager_id) && !empty($managers[$changelog->manager_id]))
                             $changelog->manager = $managers[$changelog->manager_id];
@@ -403,7 +366,6 @@ class OrderController extends Controller
                     $this->design->assign('events', $events);
 
 
-
                     if ($eventlogs) {
                         $html = '';
                         foreach ($eventlogs as $eventlog) {
@@ -418,9 +380,8 @@ class OrderController extends Controller
                     }
 
 
-
                     $cards = array();
-                    foreach ($this->cards->get_cards(array('user_id'=>$order->user_id)) as $card)
+                    foreach ($this->cards->get_cards(array('user_id' => $order->user_id)) as $card)
                         $cards[$card->id] = $card;
                     foreach ($cards as $card)
                         $card->duplicates = $this->cards->find_duplicates($order->user_id, $card->pan, $card->expdate);
@@ -428,16 +389,12 @@ class OrderController extends Controller
                     $this->design->assign('cards', $cards);
 
 
-
                     // получаем комменты из 1С
                     $client = $this->users->get_user((int)$order->user_id);
-                    if ($comments_1c_response = $this->soap1c->get_comments($client->UID))
-                    {
+                    if ($comments_1c_response = $this->soap1c->get_comments($client->UID)) {
                         $comments_1c = array();
-                        if (!empty($comments_1c_response->Комментарии))
-                        {
-                            foreach ($comments_1c_response->Комментарии as $comm)
-                            {
+                        if (!empty($comments_1c_response->Комментарии)) {
+                            foreach ($comments_1c_response->Комментарии as $comm) {
                                 $comment_1c_item = new StdClass();
 
                                 $comment_1c_item->created = date('Y-m-d H:i:s', strtotime($comm->Дата));
@@ -448,17 +405,15 @@ class OrderController extends Controller
                             }
                         }
 
-                        usort($comments_1c, function($a, $b){
+                        usort($comments_1c, function ($a, $b) {
                             return strtotime($b->created) - strtotime($a->created);
                         });
 
                         $this->design->assign('comments_1c', $comments_1c);
 
                         $blacklist_comments = array();
-                        if (!empty($comments_1c_response->Комментарии))
-                        {
-                            foreach ($comments_1c_response->Комментарии as $comm)
-                            {
+                        if (!empty($comments_1c_response->Комментарии)) {
+                            foreach ($comments_1c_response->Комментарии as $comm) {
                                 $blacklist_comment = new StdClass();
 
                                 $blacklist_comment->created = date('Y-m-d H:i:s', strtotime($comm->Дата));
@@ -469,17 +424,15 @@ class OrderController extends Controller
                             }
                         }
 
-                        usort($blacklist_comments, function($a, $b){
+                        usort($blacklist_comments, function ($a, $b) {
                             return strtotime($b->created) - strtotime($a->created);
                         });
 
                         $this->design->assign('blacklist_comments', $blacklist_comments);
 
 
-
                         $orders = array();
-                        foreach ($this->orders->get_orders(array('user_id' => $order->user_id)) as $o)
-                        {
+                        foreach ($this->orders->get_orders(array('user_id' => $order->user_id)) as $o) {
                             if (!empty($o->contract_id))
                                 $o->contract = $this->contracts->get_contract($o->contract_id);
 
@@ -487,31 +440,28 @@ class OrderController extends Controller
                         }
                         $this->design->assign('orders', $orders);
 
-        //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($comments_1c_response);echo '</pre><hr />';
+                        //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($comments_1c_response);echo '</pre><hr />';
                     }
 
-                    if (in_array('looker_link', $this->manager->permissions))
-                    {
+                    if (in_array('looker_link', $this->manager->permissions)) {
                         $looker_link = $this->users->get_looker_link($order->user_id);
                         $this->design->assign('looker_link', $looker_link);
                     }
 
-                }
-                else
-                {
+                } else {
                     return false;
                 }
             }
         }
 
         $scoring_types = array();
-        foreach ($this->scorings->get_types(array('active'=>true)) as $type)
+        foreach ($this->scorings->get_types(array('active' => true)) as $type)
             $scoring_types[$type->name] = $type;
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scoring_types);echo '</pre><hr />';
         $this->design->assign('scoring_types', $scoring_types);
 
         $reject_reasons = array();
-        foreach ($this->reasons->get_reasons(array('type'=>['mko', 'client'])) as $r)
+        foreach ($this->reasons->get_reasons(array('type' => ['mko', 'client'])) as $r)
             $reject_reasons[$r->id] = $r;
         $this->design->assign('reject_reasons', $reject_reasons);
 
@@ -524,35 +474,31 @@ class OrderController extends Controller
         $sms_templates = $this->sms->get_templates(array('type' => 'order'));
         $this->design->assign('sms_templates', $sms_templates);
 
-        if (!empty($order) && $order->status == 1)
-        {
-            if ($ordertimer = $this->ordertimers->get_ordertimer($order_id))
-            {
-                if (!empty($ordertimer) && empty($ordertimer->pause))
-                {
+        if (!empty($order) && $order->status == 1) {
+            if ($ordertimer = $this->ordertimers->get_ordertimer($order_id)) {
+                if (!empty($ordertimer) && empty($ordertimer->pause)) {
                     $ordertimer->last_time = strtotime($ordertimer->border_date) - time();
-                
-                    if ($ordertimer->last_time < 0)
-                    {
-/* временно отключил сброс менджера таймер 
-                        $this->orders->update_order($order_id, array(
-                            'status' => 0,
-                            'manager_id' => 0
-                        ));
-                        
-                        $this->changelogs->add_changelog(array(
-                            'manager_id' => 100, // System
-                            'created' => date('Y-m-d H:i:s'),
-                            'type' => 'status',
-                            'old_values' => serialize(array('status'=>$order->status, 'manager_id'=>$ordertimer->manager_id)),
-                            'new_values' => serialize(array('status'=>0, 'manager_id'=>0)),
-                            'order_id' => $order_id,
-                            'user_id' => $order->user_id,
-                        ));
-    
-                        $order = $this->orders->get_order($order_id);
-                        $this->design->assign('order', $order);
-*/    
+
+                    if ($ordertimer->last_time < 0) {
+                        /* временно отключил сброс менджера таймер
+                                                $this->orders->update_order($order_id, array(
+                                                    'status' => 0,
+                                                    'manager_id' => 0
+                                                ));
+
+                                                $this->changelogs->add_changelog(array(
+                                                    'manager_id' => 100, // System
+                                                    'created' => date('Y-m-d H:i:s'),
+                                                    'type' => 'status',
+                                                    'old_values' => serialize(array('status'=>$order->status, 'manager_id'=>$ordertimer->manager_id)),
+                                                    'new_values' => serialize(array('status'=>0, 'manager_id'=>0)),
+                                                    'order_id' => $order_id,
+                                                    'user_id' => $order->user_id,
+                                                ));
+
+                                                $order = $this->orders->get_order($order_id);
+                                                $this->design->assign('order', $order);
+                        */
                     }
                 }
                 $this->design->assign('ordertimer', $ordertimer);
@@ -562,8 +508,7 @@ class OrderController extends Controller
 
         $body = $this->design->fetch('order.tpl');
 
-        if ($this->request->get('ajax', 'integer'))
-        {
+        if ($this->request->get('ajax', 'integer')) {
             echo $body;
             exit;
         }
@@ -654,18 +599,15 @@ class OrderController extends Controller
         $phone = $this->request->post('phone');
 
         if (!($contract = $this->contracts->get_contract($contract_id)))
-            return array('error'=>'Договор не найден');
+            return array('error' => 'Договор не найден');
 
         if ($contract->status != 0)
-            return array('error'=>'Договор не находится в статусе Новый!');
+            return array('error' => 'Договор не находится в статусе Новый!');
 
         $db_code = $this->sms->get_code($phone);
-        if ($contract->accept_code != $code)
-        {
-            return array('error'=>'Код не совпадает');
-        }
-        else
-        {
+        if ($contract->accept_code != $code) {
+            return array('error' => 'Код не совпадает');
+        } else {
             $this->contracts->update_contract($contract_id, array(
                 'status' => 1,
                 'accept_code' => $code,
@@ -700,10 +642,10 @@ class OrderController extends Controller
         $contract_id = $this->request->post('contract_id', 'integer');
 
         if (!($contract = $this->contracts->get_contract((int)$contract_id)))
-            return array('error'=>'Договор не найден');
+            return array('error' => 'Договор не найден');
 
         if (!($order = $this->orders->get_order((int)$contract->order_id)))
-            return array('error'=>'Неизвестный ордер');
+            return array('error' => 'Неизвестный ордер');
 
         $update = array(
             'status' => $status,
@@ -733,13 +675,12 @@ class OrderController extends Controller
             'status' => $status
         ));
 
-        if (!empty($order->id_1c))
-        {
+        if (!empty($order->id_1c)) {
             $resp = $this->soap1c->block_order_1c($order->id_1c, 0);
             $this->soap1c->send_order_status($order->id_1c, 'Отказано');
         }
 
-        return array('success'=>1, 'status'=>$status);
+        return array('success' => 1, 'status' => $status);
     }
 
     private function change_manager_action()
@@ -748,25 +689,19 @@ class OrderController extends Controller
         $manager_id = $this->request->post('manager_id', 'integer');
 
         if (!($order = $this->orders->get_order((int)$order_id)))
-            return array('error'=>'Неизвестный ордер');
+            return array('error' => 'Неизвестный ордер');
 
         if (!in_array($this->manager->role, array('admin', 'developer', 'big_user')))
-            return array('error'=>'Не хватает прав для выполнения операции', 'manager_id'=>$order->manager_id);
+            return array('error' => 'Не хватает прав для выполнения операции', 'manager_id' => $order->manager_id);
 
-        if (!empty($order->id_1c))
-        {
+        if (!empty($order->id_1c)) {
             $check_block = $this->soap1c->check_block_order_1c($order->id_1c);
 
-            if ($check_block == 'Block_1c')
-            {
-                return array('error'=>'Заявка заблокирована в 1С', 'check_block'=>$check_block);
-            }
-            elseif ($check_block == 'Block_CRM' && empty($manager_id))
-            {
+            if ($check_block == 'Block_1c') {
+                return array('error' => 'Заявка заблокирована в 1С', 'check_block' => $check_block);
+            } elseif ($check_block == 'Block_CRM' && empty($manager_id)) {
                 $this->soap1c->block_order_1c($order->id_1c, 0);
-            }
-            elseif ($check_block != 'Block_CRM' && !empty($manager_id))
-            {
+            } elseif ($check_block != 'Block_CRM' && !empty($manager_id)) {
                 $this->soap1c->block_order_1c($order->id_1c, 1);
             }
         }
@@ -788,7 +723,7 @@ class OrderController extends Controller
             'order_id' => $order_id,
             'user_id' => $order->user_id,
         ));
-        
+
         $this->ordertimers->add_ordertimer(array(
             'order_id' => $order_id,
             'manager_id' => $manager->id,
@@ -796,7 +731,7 @@ class OrderController extends Controller
             'last_active_date' => date('Y-m-d H:i:s'),
             'border_date' => date('Y-m-d H:i:s', time() + $this->ordertimer_delay),
         ));
-        
+
         return array('success' => 1, 'status' => 1, 'manager' => $this->manager->name);
 
     }
@@ -812,15 +747,15 @@ class OrderController extends Controller
         $order_id = $this->request->post('order_id', 'integer');
 
         if (!($order = $this->orders->get_order((int)$order_id)))
-            return array('error'=>'Неизвестный ордер');
+            return array('error' => 'Неизвестный ордер');
 
-        if (!empty($order->manager_id) && $order->manager_id != $this->manager->id  && !in_array($this->manager->role, array('admin', 'developer')))
-            return array('error'=>'Ордер уже принят другим пользователем', 'manager_id'=>$order->manager_id);
+        if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer')))
+            return array('error' => 'Ордер уже принят другим пользователем', 'manager_id' => $order->manager_id);
 
         $update = array(
             'status' => 1,
             'manager_id' => $this->manager->id,
-            'uid' => exec($this->config->root_dir.'generic/uidgen'),
+            'uid' => exec($this->config->root_dir . 'generic/uidgen'),
             'accept_date' => date('Y-m-d H:i:s'),
         );
         $this->orders->update_order($order_id, $update);
@@ -834,7 +769,7 @@ class OrderController extends Controller
             'order_id' => $order_id,
             'user_id' => $order->user_id,
         ));
-        
+
         $this->ordertimers->add_ordertimer(array(
             'order_id' => $order_id,
             'manager_id' => $this->manager->id,
@@ -842,17 +777,13 @@ class OrderController extends Controller
             'last_active_date' => date('Y-m-d H:i:s'),
             'border_date' => date('Y-m-d H:i:s', time() + $this->ordertimer_delay),
         ));
-        
-        if (!empty($order->id_1c))
-        {
+
+        if (!empty($order->id_1c)) {
             $check_block = $this->soap1c->check_block_order_1c($order->id_1c);
 
-            if ($check_block == 'Block_1c')
-            {
-                return array('error'=>'Заявка заблокирована в 1С', 'check_block'=>$check_block);
-            }
-            elseif ($check_block != 'Block_CRM')
-            {
+            if ($check_block == 'Block_1c') {
+                return array('error' => 'Заявка заблокирована в 1С', 'check_block' => $check_block);
+            } elseif ($check_block != 'Block_CRM') {
                 $this->soap1c->block_order_1c($order->id_1c, 1);
             }
         }
@@ -870,9 +801,9 @@ class OrderController extends Controller
         $order_id = $this->request->post('order_id', 'integer');
 
         if (!($order = $this->orders->get_order((int)$order_id)))
-            return array('error'=>'Неизвестный ордер');
+            return array('error' => 'Неизвестный ордер');
 
-        if (!empty($order->manager_id) && $order->manager_id != $this->manager->id  && !in_array($this->manager->role, array('admin', 'developer')))
+        if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer')))
             return array('error' => 'Не хватает прав для выполнения операции');
 
         if ($order->amount > 15000)
@@ -931,13 +862,12 @@ class OrderController extends Controller
 
         $this->orders->update_order($order_id, array('contract_id' => $contract_id));
 
-        if (!empty($order->id_1c))
-        {
+        if (!empty($order->id_1c)) {
             $resp = $this->soap1c->block_order_1c($order->id_1c, 0);
         }
 
         // отправялем смс
-        $msg = 'Активируй займ '.($order->amount*1).' в личном кабинете, код '.$accept_code.' finfive.ru/lk';
+        $msg = 'Активируй займ ' . ($order->amount * 1) . ' в личном кабинете, код ' . $accept_code . ' finfive.ru/lk';
         $this->sms->send($order->phone_mobile, $msg);
 
 //        ящик: sale@nalichnoeplus.com
@@ -946,7 +876,7 @@ class OrderController extends Controller
         $this->notify->email('sale@nalichnoeplus.com', 'Подтверждение выдачи', $msg);
 
 
-        return array('success'=>1, 'status'=>2);
+        return array('success' => 1, 'status' => 2);
 
     }
 
@@ -955,9 +885,9 @@ class OrderController extends Controller
         $order_id = $this->request->post('order_id', 'integer');
 
         if (!($order = $this->orders->get_order((int)$order_id)))
-            return array('error'=>'Неизвестный ордер');
+            return array('error' => 'Неизвестный ордер');
 
-        if (!empty($order->manager_id) && $order->manager_id != $this->manager->id  && !in_array($this->manager->role, array('admin', 'developer')))
+        if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer')))
             return array('error' => 'Не хватает прав для выполнения операции');
 
         if ($order->amount > 15000)
@@ -976,49 +906,49 @@ class OrderController extends Controller
             'amount' => $order->amount,
             'manager_id' => $order->manager_id
         );
-/*
-        $this->orders->update_order($order_id, $update);
+        /*
+                $this->orders->update_order($order_id, $update);
 
-        $this->changelogs->add_changelog(array(
-            'manager_id' => $this->manager->id,
-            'created' => date('Y-m-d H:i:s'),
-            'type' => 'order_status',
-            'old_values' => serialize($old_values),
-            'new_values' => serialize($update),
-            'order_id' => $order_id,
-            'user_id' => $order->user_id,
-        ));
+                $this->changelogs->add_changelog(array(
+                    'manager_id' => $this->manager->id,
+                    'created' => date('Y-m-d H:i:s'),
+                    'type' => 'order_status',
+                    'old_values' => serialize($old_values),
+                    'new_values' => serialize($update),
+                    'order_id' => $order_id,
+                    'user_id' => $order->user_id,
+                ));
 
-        $accept_code = rand(1000, 9999);
+                $accept_code = rand(1000, 9999);
 
-        $new_contract = array(
-            'order_id' => $order_id,
-            'user_id' => $order->user_id,
-            'card_id' => $order->card_id,
-            'type' => 'base',
-            'amount' => $order->amount,
-            'period' => $order->period,
-            'create_date' => date('Y-m-d H:i:s'),
-            'status' => 0,
-            'base_percent' => $this->settings->loan_default_percent,
-            'charge_percent' => $this->settings->loan_charge_percent,
-            'peni_percent' => $this->settings->loan_peni,
-            'service_reason' => $order->service_reason,
-            'service_insurance' => $order->service_insurance,
-            'accept_code' => $accept_code,
-        );
-        $contract_id = $this->contracts->add_contract($new_contract);
+                $new_contract = array(
+                    'order_id' => $order_id,
+                    'user_id' => $order->user_id,
+                    'card_id' => $order->card_id,
+                    'type' => 'base',
+                    'amount' => $order->amount,
+                    'period' => $order->period,
+                    'create_date' => date('Y-m-d H:i:s'),
+                    'status' => 0,
+                    'base_percent' => $this->settings->loan_default_percent,
+                    'charge_percent' => $this->settings->loan_charge_percent,
+                    'peni_percent' => $this->settings->loan_peni,
+                    'service_reason' => $order->service_reason,
+                    'service_insurance' => $order->service_insurance,
+                    'accept_code' => $accept_code,
+                );
+                $contract_id = $this->contracts->add_contract($new_contract);
 
-        $this->orders->update_order($order_id, array('contract_id' => $contract_id));
+                $this->orders->update_order($order_id, array('contract_id' => $contract_id));
 
-        if (!empty($order->id_1c))
-            $resp = $this->soap1c->block_order_1c($order->id_1c, 0);
+                if (!empty($order->id_1c))
+                    $resp = $this->soap1c->block_order_1c($order->id_1c, 0);
 
-        // отправялем смс
-        $msg = 'Активируй займ '.($order->autoretry_summ*1).' в личном кабинете, код'.$accept_code.' nalichnoeplus.com/lk';
-        $this->sms->send($order->phone_mobile, $msg);
-*/
-        return array('success'=>1, 'status'=>2);
+                // отправялем смс
+                $msg = 'Активируй займ '.($order->autoretry_summ*1).' в личном кабинете, код'.$accept_code.' nalichnoeplus.com/lk';
+                $this->sms->send($order->phone_mobile, $msg);
+        */
+        return array('success' => 1, 'status' => 2);
 
     }
 
@@ -1029,7 +959,7 @@ class OrderController extends Controller
         $status = $this->request->post('status', 'integer');
 
         if (!($order = $this->orders->get_order((int)$order_id)))
-            return array('error'=>'Неизвестный ордер');
+            return array('error' => 'Неизвестный ордер');
 
         $reason = $this->reasons->get_reason($reason_id);
 
@@ -1073,14 +1003,12 @@ class OrderController extends Controller
         ));
 
         // Снимаем за причину отказа
-        if (empty($reject_operations))
-        {
+        if (empty($reject_operations)) {
             if (!empty($order->service_reason) && $status == 3)
                 $this->best2pay->reject_reason($order);
         }
 
-        if (!empty($order->id_1c))
-        {
+        if (!empty($order->id_1c)) {
             $resp = $this->soap1c->block_order_1c($order->id_1c, 0);
             $this->soap1c->send_order_status($order->id_1c, 'Отказано');
         }
@@ -1115,7 +1043,7 @@ class OrderController extends Controller
         }
 
 
-        return array('success'=>1, 'status'=>$status);
+        return array('success' => 1, 'status' => $status);
     }
 
     private function status_action($status)
@@ -1123,7 +1051,7 @@ class OrderController extends Controller
         $order_id = $this->request->post('order_id', 'integer');
 
         if (!($order = $this->orders->get_order((int)$order_id)))
-            return array('error'=>'Неизвестный ордер');
+            return array('error' => 'Неизвестный ордер');
 
         $update = array(
             'status' => $status,
@@ -1132,10 +1060,9 @@ class OrderController extends Controller
             'status' => $order->status,
         );
 
-        if ($status == 1)
-        {
+        if ($status == 1) {
             if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer')))
-                return array('error'=>'Ордер уже принят другим пользователем', 'manager_id'=>$order->manager_id);
+                return array('error' => 'Ордер уже принят другим пользователем', 'manager_id' => $order->manager_id);
 
             $update['manager_id'] = $this->manager->id;
             $old_values['manager_id'] = '';
@@ -1157,14 +1084,14 @@ class OrderController extends Controller
             'user_id' => $order->user_id,
         ));
 
-        return array('success'=>1, 'status'=>$status);
+        return array('success' => 1, 'status' => $status);
     }
 
     private function action_cards()
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
-    	$card_id = $this->request->post('card_id', 'integer');
+        $card_id = $this->request->post('card_id', 'integer');
 
         $order = new StdClass();
         $order->order_id = $order_id;
@@ -1183,8 +1110,7 @@ class OrderController extends Controller
         if (empty($card_id))
             $card_error[] = 'empty_card';
 
-        if (empty($card_error))
-        {
+        if (empty($card_error)) {
             $update = array(
                 'card_id' => $card_id
             );
@@ -1220,7 +1146,7 @@ class OrderController extends Controller
         ));
 
         $cards = array();
-        foreach ($this->cards->get_cards(array('user_id'=>$order->user_id)) as $card)
+        foreach ($this->cards->get_cards(array('user_id' => $order->user_id)) as $card)
             $cards[$card->id] = $card;
         $this->design->assign('cards', $cards);
 
@@ -1230,8 +1156,8 @@ class OrderController extends Controller
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
-    	$amount = $this->request->post('amount', 'integer');
-    	$period = $this->request->post('period', 'integer');
+        $amount = $this->request->post('amount', 'integer');
+        $period = $this->request->post('period', 'integer');
 
         $order = new StdClass();
         $order->order_id = $order_id;
@@ -1251,8 +1177,7 @@ class OrderController extends Controller
         if (empty($period))
             $amount_error[] = 'empty_period';
 
-        if ($isset_order->status > 2 && !in_array($this->manager->role, array('admin', 'developer')))
-        {
+        if ($isset_order->status > 2 && !in_array($this->manager->role, array('admin', 'developer'))) {
             $amount_error[] = 'Невозможно изменить сумму в этом статусе заявки';
             $order->amount = $isset_order->amount;
             $order->period = $isset_order->period;
@@ -1260,8 +1185,7 @@ class OrderController extends Controller
 
         $this->design->assign('order', $order);
 
-        if (empty($amount_error))
-        {
+        if (empty($amount_error)) {
             $update = array(
                 'amount' => $amount,
                 'period' => $period
@@ -1289,8 +1213,7 @@ class OrderController extends Controller
 
             $this->orders->update_order($order_id, $update);
 
-            if (!empty($old_order->contract_id))
-            {
+            if (!empty($old_order->contract_id)) {
                 $this->contracts->update_contract($old_order->contract_id, array(
                     'amount' => $amount,
                     'period' => $period
@@ -1343,8 +1266,7 @@ class OrderController extends Controller
             $personal_error[] = 'empty_socials';
 
 
-        if (empty($contactdata_error))
-        {
+        if (empty($contactdata_error)) {
             $update = array(
                 'email' => $order->email,
                 'birth' => $order->birth,
@@ -1382,11 +1304,9 @@ class OrderController extends Controller
             $this->users->update_user($user_id, $update);
 
             // редактирование в документах
-            if (!empty($user_id))
-            {
+            if (!empty($user_id)) {
                 $documents = $this->documents->get_documents(array('user_id' => $user_id));
-                foreach ($documents as $doc)
-                {
+                foreach ($documents as $doc) {
                     if (isset($doc->params['email']))
                         $doc->params['email'] = $order->email;
                     if (isset($doc->params['birth']))
@@ -1450,8 +1370,7 @@ class OrderController extends Controller
         if (empty($order->contact_person2_phone))
             $contacts_error[] = 'empty_contact_person2_phone';
 
-        if (empty($contacts_error))
-        {
+        if (empty($contacts_error)) {
             $update = array(
                 'contact_person_name' => $order->contact_person_name,
                 'contact_person_phone' => $order->contact_person_phone,
@@ -1525,8 +1444,7 @@ class OrderController extends Controller
         if (empty($order->phone_mobile))
             $contacts_error[] = 'empty_phone_mobile';
 
-        if (empty($fio_error))
-        {
+        if (empty($fio_error)) {
             $update = array(
                 'lastname' => $order->lastname,
                 'firstname' => $order->firstname,
@@ -1556,18 +1474,16 @@ class OrderController extends Controller
             ));
 
             $this->users->update_user($user_id, $update);
-            
+
             $this->ordertimers->update_ordertimer($order_id, array(
                 'last_active_date' => date('Y-m-d H:i:s'),
                 'border_date' => date('Y-m-d H:i:s', time() + $this->ordertimer_delay),
             ));
 
             // редактирование в документах
-            if (!empty($user_id))
-            {
+            if (!empty($user_id)) {
                 $documents = $this->documents->get_documents(array('user_id' => $user_id));
-                foreach ($documents as $doc)
-                {
+                foreach ($documents as $doc) {
                     if (isset($doc->params['lastname']))
                         $doc->params['lastname'] = $order->lastname;
                     if (isset($doc->params['firstname']))
@@ -1575,7 +1491,7 @@ class OrderController extends Controller
                     if (isset($doc->params['patronymic']))
                         $doc->params['patronymic'] = $order->patronymic;
                     if (isset($doc->params['fio']))
-                        $doc->params['fio'] = $order->lastname.' '.$order->firstname.' '.$order->patronymic;
+                        $doc->params['fio'] = $order->lastname . ' ' . $order->firstname . ' ' . $order->patronymic;
                     if (isset($doc->params['phone']))
                         $doc->params['phone'] = $order->phone_mobile;
 
@@ -1646,8 +1562,7 @@ class OrderController extends Controller
         if (empty($order->Faktregion))
             $addresses_error[] = 'empty_faktregion';
 
-        if (empty($addresses_error))
-        {
+        if (empty($addresses_error)) {
             $update = array(
                 'Regregion' => $order->Regregion,
                 'Regregion_shorttype' => $order->Regregion_shorttype,
@@ -1789,8 +1704,7 @@ class OrderController extends Controller
             $work_error[] = 'empty_chief_phone';
 
 
-        if (empty($work_error))
-        {
+        if (empty($work_error)) {
             $update = array(
                 'workplace' => $order->workplace,
                 'workaddress' => $order->workaddress,
@@ -1843,16 +1757,13 @@ class OrderController extends Controller
 
         $order->status = $isset_order->status;
         $order->manager_id = $isset_order->manager_id;
-        
+
         if (!empty($update))
             $this->soap1c->update_fields($update, '', $isset_order->id_1c);
 
         $this->design->assign('order', $order);
 
     }
-
-
-
 
 
     private function action_personal()
@@ -1883,8 +1794,7 @@ class OrderController extends Controller
         if (empty($order->birth_place))
             $personal_error[] = 'empty_birth_place';
 
-        if (empty($personal_error))
-        {
+        if (empty($personal_error)) {
             $update = array(
                 'lastname' => $order->lastname,
                 'firstname' => $order->firstname,
@@ -1961,8 +1871,7 @@ class OrderController extends Controller
         if (empty($order->passport_issued))
             $passport_error[] = 'empty_passport_issued';
 
-        if (empty($passport_error))
-        {
+        if (empty($passport_error)) {
             $update = array(
                 'passport_serial' => $order->passport_serial,
                 'passport_date' => $order->passport_date,
@@ -2044,8 +1953,7 @@ class OrderController extends Controller
         if (empty($order->Reghousing))
             $regaddress_error[] = 'empty_reghousing';
 
-        if (empty($regaddress_error))
-        {
+        if (empty($regaddress_error)) {
             $update = array(
                 'Regindex' => $order->Regindex,
                 'Regregion' => $order->Regregion,
@@ -2134,8 +2042,7 @@ class OrderController extends Controller
         if (empty($order->Fakthousing))
             $faktaddress_error[] = 'empty_fakthousing';
 
-        if (empty($faktaddress_error))
-        {
+        if (empty($faktaddress_error)) {
             $update = array(
                 'Faktindex' => $order->Faktindex,
                 'Faktregion' => $order->Faktregion,
@@ -2216,8 +2123,7 @@ class OrderController extends Controller
         if (empty($order->income_base))
             $workaddress_error[] = 'empty_income_base';
 
-        if (empty($workdata_error))
-        {
+        if (empty($workdata_error)) {
             $update = array(
                 'work_scope' => $order->work_scope,
                 'profession' => $order->profession,
@@ -2297,8 +2203,7 @@ class OrderController extends Controller
         if (empty($order->Workhousing))
             $workaddress_error[] = 'empty_workhousing';
 
-        if (empty($workaddress_error))
-        {
+        if (empty($workaddress_error)) {
             $update = array(
                 'Workregion' => $order->Workregion,
                 'Workcity' => $order->Workcity,
@@ -2366,8 +2271,7 @@ class OrderController extends Controller
 
         $socials_error = array();
 
-        if (empty($socials_error))
-        {
+        if (empty($socials_error)) {
             $update = array(
                 'social_fb' => $order->social_fb,
                 'social_inst' => $order->social_inst,
@@ -2423,8 +2327,7 @@ class OrderController extends Controller
         $user_id = $this->request->post('user_id', 'integer');
 
         $statuses = $this->request->post('status');
-        foreach ($statuses as $file_id => $status)
-        {
+        foreach ($statuses as $file_id => $status) {
             $update = array(
                 'status' => $status,
                 'id' => $file_id
@@ -2433,8 +2336,7 @@ class OrderController extends Controller
             $old_values = array();
             foreach ($update as $key => $val)
                 $old_values[$key] = $old_files->$key;
-            if ($old_values['status'] != $update['status'])
-            {
+            if ($old_values['status'] != $update['status']) {
                 $this->changelogs->add_changelog(array(
                     'manager_id' => $this->manager->id,
                     'created' => date('Y-m-d H:i:s'),
@@ -2449,34 +2351,28 @@ class OrderController extends Controller
 
             $this->users->update_file($file_id, array('status' => $status));
 
-            if ($status == 3)
-            {
-                $this->users->update_user($user_id, array('stage_files'=>0));
+            if ($status == 3) {
+                $this->users->update_user($user_id, array('stage_files' => 0));
 
                 $this->ordertimers->update_ordertimer($order_id, array(
                     'pause' => 1,
                 ));
 
-            }
-            else
-            {
+            } else {
                 $have_reject = 0;
-                if ($files = $this->users->get_files(array('user_id' => $user_id)))
-                {
+                if ($files = $this->users->get_files(array('user_id' => $user_id))) {
                     foreach ($files as $item)
                         if ($item->status == 3)
                             $have_reject = 1;
                 }
-                if (empty($have_reject))
-                {
-                    $this->users->update_user($user_id, array('stage_files'=>1));
-                    
+                if (empty($have_reject)) {
+                    $this->users->update_user($user_id, array('stage_files' => 1));
+
                     $this->ordertimers->update_ordertimer($order_id, array(
                         'pause' => 0,
                     ));
-                }
-                else
-                    $this->users->update_user($user_id, array('stage_files'=>0));
+                } else
+                    $this->users->update_user($user_id, array('stage_files' => 0));
 
             }
 
@@ -2499,26 +2395,23 @@ class OrderController extends Controller
 
         $this->design->assign('order', $order);
 
-        $files = $this->users->get_files(array('user_id'=>$user_id));
+        $files = $this->users->get_files(array('user_id' => $user_id));
 
         //Отправляемв 1с
         $need_send = array();
-        $files_dir = str_replace('https://', 'http://', $this->config->front_url.'/files/users/');
-        foreach ($files as $f)
-        {
-            if ($f->sent_1c == 0 && $f->status == 2)
-            {
+        $files_dir = str_replace('https://', 'http://', $this->config->front_url . '/files/users/');
+        foreach ($files as $f) {
+            if ($f->sent_1c == 0 && $f->status == 2) {
                 $need_send_item = new StdClass();
                 $need_send_item->id = $f->id;
                 $need_send_item->user_id = $f->user_id;
                 $need_send_item->type = $f->type;
-                $need_send_item->url = $files_dir.$f->name;
+                $need_send_item->url = $files_dir . $f->name;
 
                 $need_send[] = $need_send_item;
             }
         }
-        if (!empty($need_send))
-        {
+        if (!empty($need_send)) {
             $send_resp = $this->soap1c->send_order_images($order->order_id, $need_send);
             if ($send_resp == 'OK')
                 foreach ($need_send as $need_send_file)
@@ -2540,8 +2433,7 @@ class OrderController extends Controller
 
         $services_error = array();
 
-        if (empty($services_error))
-        {
+        if (empty($services_error)) {
             $update = array(
                 'service_sms' => $order->service_sms,
                 'service_insurance' => $order->service_insurance,
@@ -2599,12 +2491,9 @@ class OrderController extends Controller
         $official = $this->request->post('official', 'integer');
         $organization = $this->request->post('organization', 'string');
 
-        if (empty($text))
-        {
-            $this->json_output(array('error'=>'Напишите комментарий!'));
-        }
-        else
-        {
+        if (empty($text)) {
+            $this->json_output(array('error' => 'Напишите комментарий!'));
+        } else {
 
             $this->ordertimers->update_ordertimer($order_id, array(
                 'last_active_date' => date('Y-m-d H:i:s'),
@@ -2622,18 +2511,15 @@ class OrderController extends Controller
                 'organization' => $organization,
             );
 
-            if ($comment_id = $this->comments->add_comment($comment))
-            {
+            if ($comment_id = $this->comments->add_comment($comment)) {
                 $this->json_output(array(
                     'success' => 1,
                     'created' => date('d.m.Y H:i:s'),
                     'text' => $text,
                     'manager_name' => $this->manager->name,
                 ));
-            }
-            else
-            {
-                $this->json_output(array('error'=>'Не удалось добавить!'));
+            } else {
+                $this->json_output(array('error' => 'Не удалось добавить!'));
             }
         }
     }
@@ -2645,31 +2531,23 @@ class OrderController extends Controller
         $comment = $this->request->post('comment');
         $close_date = $this->request->post('close_date');
 
-        if (empty($comment))
-        {
-            $this->json_output(array('error'=>'Напишите комментарий к закрытию!'));
-        }
-        elseif (empty($close_date))
-        {
-            $this->json_output(array('error'=>'Укажите дату закрытия!'));
-        }
-        else
-        {
-            if ($order = $this->orders->get_order($order_id))
-            {
-                if ($contract = $this->contracts->get_contract($order->contract_id))
-                {
+        if (empty($comment)) {
+            $this->json_output(array('error' => 'Напишите комментарий к закрытию!'));
+        } elseif (empty($close_date)) {
+            $this->json_output(array('error' => 'Укажите дату закрытия!'));
+        } else {
+            if ($order = $this->orders->get_order($order_id)) {
+                if ($contract = $this->contracts->get_contract($order->contract_id)) {
                     $comment = array(
                         'manager_id' => $this->manager->id,
                         'user_id' => $user_id,
                         'contactperson_id' => 0,
                         'order_id' => $order_id,
-                        'text' => 'Закрыт в CRM. '.$comment,
+                        'text' => 'Закрыт в CRM. ' . $comment,
                         'created' => date('Y-m-d H:i:s'),
                     );
 
-                    if ($comment_id = $this->comments->add_comment($comment))
-                    {
+                    if ($comment_id = $this->comments->add_comment($comment)) {
                         $this->orders->update_order($order_id, array('status' => 7));
 
                         $this->contracts->update_contract($contract->id, array(
@@ -2688,20 +2566,14 @@ class OrderController extends Controller
                             'created' => date('d.m.Y H:i:s'),
                             'manager_name' => $this->manager->name,
                         ));
+                    } else {
+                        $this->json_output(array('error' => 'Не удалось добавить комментарий!'));
                     }
-                    else
-                    {
-                        $this->json_output(array('error'=>'Не удалось добавить комментарий!'));
-                    }
+                } else {
+                    $this->json_output(array('error' => 'Договор не найден!'));
                 }
-                else
-                {
-                    $this->json_output(array('error'=>'Договор не найден!'));
-                }
-            }
-            else
-            {
-                $this->json_output(array('error'=>'Заявка не найдена!'));
+            } else {
+                $this->json_output(array('error' => 'Заявка не найдена!'));
             }
 
         }
@@ -2717,28 +2589,22 @@ class OrderController extends Controller
         $peni = $this->request->post('peni');
 
 
-        if (empty($comment))
-        {
-            $this->json_output(array('error'=>'Напишите комментарий к корректировке!'));
-        }
-        else
-        {
-            if ($order = $this->orders->get_order($order_id))
-            {
-                if ($contract = $this->contracts->get_contract($order->contract_id))
-                {
+        if (empty($comment)) {
+            $this->json_output(array('error' => 'Напишите комментарий к корректировке!'));
+        } else {
+            if ($order = $this->orders->get_order($order_id)) {
+                if ($contract = $this->contracts->get_contract($order->contract_id)) {
                     $comment = array(
                         'manager_id' => $this->manager->id,
                         'user_id' => $user_id,
                         'contactperson_id' => 0,
                         'order_id' => $order_id,
-                        'text' => 'Корректировка. '.$comment,
+                        'text' => 'Корректировка. ' . $comment,
                         'created' => date('Y-m-d H:i:s'),
                     );
 
-                    if ($comment_id = $this->comments->add_comment($comment))
-                    {
-                        
+                    if ($comment_id = $this->comments->add_comment($comment)) {
+
                         $operation_id = $this->operations->add_operation(array(
                             'contract_id' => $contract->id,
                             'order_id' => $contract->order_id,
@@ -2751,10 +2617,10 @@ class OrderController extends Controller
                             'loan_body_summ' => $od,
                             'loan_percents_summ' => $percents,
                             'loan_charge_summ' => $charge,
-                            'loan_peni_summ' => $peni,                            
+                            'loan_peni_summ' => $peni,
                             'manager_id' => $this->manager->id,
                         ));
-                        
+
                         $old_values = array(
                             'loan_body_summ' => $contract->loan_body_summ,
                             'loan_percents_summ' => $contract->loan_percents_summ,
@@ -2778,26 +2644,20 @@ class OrderController extends Controller
                             'order_id' => $contract->order_id,
                             'user_id' => $contract->user_id,
                         ));
-    
+
                         $this->json_output(array(
                             'success' => 1,
                             'created' => date('d.m.Y H:i:s'),
                             'manager_name' => $this->manager->name,
                         ));
+                    } else {
+                        $this->json_output(array('error' => 'Не удалось добавить комментарий!'));
                     }
-                    else
-                    {
-                        $this->json_output(array('error'=>'Не удалось добавить комментарий!'));
-                    }
+                } else {
+                    $this->json_output(array('error' => 'Договор не найден!'));
                 }
-                else
-                {
-                    $this->json_output(array('error'=>'Договор не найден!'));
-                }
-            }
-            else
-            {
-                $this->json_output(array('error'=>'Заявка не найдена!'));
+            } else {
+                $this->json_output(array('error' => 'Заявка не найдена!'));
             }
 
         }
@@ -2805,21 +2665,16 @@ class OrderController extends Controller
 
     public function action_repay()
     {
-    	$contract_id = $this->request->post('contract_id', 'integer');
+        $contract_id = $this->request->post('contract_id', 'integer');
 
         if (!in_array('repay_button', $this->manager->permissions))
-            $this->json_output(array('error'=>'Не хватает прав!'));
+            $this->json_output(array('error' => 'Не хватает прав!'));
 
-        if ($contract = $this->contracts->get_contract($contract_id))
-        {
-            if ($order = $this->orders->get_order($contract->order_id))
-            {
-                if ($order->status != 6 || $contract->status != 6)
-                {
-                    $this->json_output(array('error'=>'Невозможно выполнить!'));
-                }
-                else
-                {
+        if ($contract = $this->contracts->get_contract($contract_id)) {
+            if ($order = $this->orders->get_order($contract->order_id)) {
+                if ($order->status != 6 || $contract->status != 6) {
+                    $this->json_output(array('error' => 'Невозможно выполнить!'));
+                } else {
                     $this->contracts->update_contract($contract->id, array('status' => 1));
                     $this->orders->update_order($contract->order_id, array('status' => 4));
 
@@ -2827,8 +2682,8 @@ class OrderController extends Controller
                         'manager_id' => $this->manager->id,
                         'created' => date('Y-m-d H:i:s'),
                         'type' => 'status',
-                        'old_values' => serialize(array('status'=>6)),
-                        'new_values' => serialize(array('status'=>4)),
+                        'old_values' => serialize(array('status' => 6)),
+                        'new_values' => serialize(array('status' => 4)),
                         'order_id' => $contract->order_id,
                         'user_id' => $contract->user_id,
                     ));
@@ -2842,15 +2697,11 @@ class OrderController extends Controller
                     ));
                 }
 
+            } else {
+                $this->json_output(array('error' => 'Заявка не найдена!'));
             }
-            else
-            {
-                $this->json_output(array('error'=>'Заявка не найдена!'));
-            }
-        }
-        else
-        {
-            $this->json_output(array('error'=>'Договор не найден!'));
+        } else {
+            $this->json_output(array('error' => 'Договор не найден!'));
         }
     }
 
@@ -2865,13 +2716,11 @@ class OrderController extends Controller
 
         $template = $this->sms->get_template($template_id);
 
-        if (!empty($order_id))
-        {
+        if (!empty($order_id)) {
             $order = $this->orders->get_order($order_id);
-            if (!empty($order->contract_id))
-            {
+            if (!empty($order->contract_id)) {
                 $code = $this->helpers->c2o_encode($order->contract_id);
-                $payment_link = $this->config->front_url.'/p/'.$code;
+                $payment_link = $this->config->front_url . '/p/' . $code;
                 $template->template = str_replace('{$payment_link}', $payment_link, $template->template);
 
                 $contract = $this->contracts->get_contract($order->contract_id);
@@ -2913,7 +2762,7 @@ class OrderController extends Controller
             'user_id' => $user->id,
             'order_id' => $order_id,
             'manager_id' => $this->manager->id,
-            'text' => 'Клиенту отправлено смс с текстом: '.$template->template,
+            'text' => 'Клиенту отправлено смс с текстом: ' . $template->template,
             'created' => date('Y-m-d H:i:s'),
             'organization' => empty($yuk) ? 'mkk' : 'yuk',
             'auto' => 1
@@ -2934,70 +2783,46 @@ class OrderController extends Controller
             'border_date' => date('Y-m-d H:i:s', time() + $this->ordertimer_delay),
         ));
 
-        $this->json_output(array('success'=>true));
+        $this->json_output(array('success' => true));
     }
 
     public function action_return_insure()
     {
-        if ($contract_id = $this->request->post('contract_id', 'integer'))
-        {
-            if ($contract = $this->contracts->get_contract($contract_id))
-            {
-                if (empty($contract->insurance_returned))
-                {
-                    if ($insurance = $this->insurances->get_insurance($contract->insurance_id))
-                    {
-                        if (!empty($insurance->protection))
-                        {
-                            if ($operation = $this->operations->get_operation($insurance->operation_id))
-                            {
-                                if ($transaction = $this->transactions->get_transaction($operation->transaction_id))
-                                {
+        if ($contract_id = $this->request->post('contract_id', 'integer')) {
+            if ($contract = $this->contracts->get_contract($contract_id)) {
+                if (empty($contract->insurance_returned)) {
+                    if ($insurance = $this->insurances->get_insurance($contract->insurance_id)) {
+                        if (!empty($insurance->protection)) {
+                            if ($operation = $this->operations->get_operation($insurance->operation_id)) {
+                                if ($transaction = $this->transactions->get_transaction($operation->transaction_id)) {
                                     $return = $this->best2pay->return_insurance($transaction, $contract);
-                                    if ($return == 'APPROVED')
-                                    {
-                                        $this->contracts->update_contract($contract->id, array('insurance_returned'=>1));
-                                        $this->json_output(array('success'=>1, 'return'=>$return));
+                                    if ($return == 'APPROVED') {
+                                        $this->contracts->update_contract($contract->id, array('insurance_returned' => 1));
+                                        $this->json_output(array('success' => 1, 'return' => $return));
+                                    } else {
+                                        $this->json_output(array('error' => 'Не удалось вернуть страховку'));
                                     }
-                                    else
-                                    {
-                                        $this->json_output(array('error'=>'Не удалось вернуть страховку'));
-                                    }
+                                } else {
+                                    $this->json_output(array('error' => 'Не найдена транзакция'));
                                 }
-                                else
-                                {
-                                    $this->json_output(array('error'=>'Не найдена транзакция'));
-                                }
+                            } else {
+                                $this->json_output(array('error' => 'Не найдена операция'));
                             }
-                            else
-                            {
-                                $this->json_output(array('error'=>'Не найдена операция'));
-                            }
+                        } else {
+                            $this->json_output(array('error' => 'По данному типу страховки не возможно сделать возврат'));
                         }
-                        else
-                        {
-                            $this->json_output(array('error'=>'По данному типу страховки не возможно сделать возврат'));
-                        }
-                    }
-                    else
-                    {
-                        $this->json_output(array('error'=>'Не найдена страховка'));
+                    } else {
+                        $this->json_output(array('error' => 'Не найдена страховка'));
                     }
 
+                } else {
+                    $this->json_output(array('error' => 'Страховка уже возвращена'));
                 }
-                else
-                {
-                    $this->json_output(array('error'=>'Страховка уже возвращена'));
-                }
+            } else {
+                $this->json_output(array('error' => 'Не найден договор №' . $contract_id));
             }
-            else
-            {
-                $this->json_output(array('error'=>'Не найден договор №'.$contract_id));
-            }
-        }
-        else
-        {
-            $this->json_output(array('error'=>'Не указан номер договора'));
+        } else {
+            $this->json_output(array('error' => 'Не указан номер договора'));
         }
     }
 }
