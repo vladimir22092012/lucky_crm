@@ -31,14 +31,14 @@ class Contact_scoring extends Core
             foreach ($request['Source'] as $source) {
                 foreach ($source['Field'] as $field) {
                     if ($field['FieldName'] == 'Name')
-                        $update['body']['Name'] = 'Имя: ' . $field['FieldValue'];
+                        $name = 'Имя: ' . $field['FieldValue'];
 
                     if ($field['FieldName'] == 'TagsCount')
-                        $update['body']['TagsCount'] = 'Количество тегов: ' . $field['FieldValue'];
+                        $tags = 'Количество тегов: ' . $field['FieldValue'];
                 }
             }
             $update['string_result'] = 'Клиент найден';
-            $update['body'] = serialize($update['body']);
+            $update['body'] = serialize(['name' => $name, 'tags' => $tags]);
         } else {
             $update['body'] = null;
             $update['string_result'] = 'Клиент не найден';
