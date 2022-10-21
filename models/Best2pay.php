@@ -9,8 +9,8 @@ class Best2pay extends Core
         5570725111081379, 05/2022, 415 с 3ds // проведена
         4809388889655340, 05/2022, 195 // проведена
      */
-    
-    private $url = 'https://pay.best2pay.net/';
+
+    private $url = 'https://test.best2pay.net/';
     private $currency_code = 643;
     
     /** пары сектор => пароль
@@ -30,9 +30,9 @@ class Best2pay extends Core
     
     //МИНБ
     private $sectors = array(
-        'PAY_CREDIT' => '4220', //сектор для отправки кредита на карту клиента (P2PCredit)
-        'RECURRENT' => '4220', // сектор для совершения рекурентных платежей (token)
-        'ADD_CARD' => '4220', // сектор для привязки карты (token)
+        'PAY_CREDIT' => '4219', //сектор для отправки кредита на карту клиента (P2PCredit)
+        'RECURRENT' => '4222', // сектор для совершения рекурентных платежей (token)
+        'ADD_CARD' => '4222', // сектор для привязки карты (token)
         'PAYMENT' => '4220', // сектор для оплаты любой картой (C2A)
     );
 
@@ -611,14 +611,7 @@ class Best2pay extends Core
 
         
     }
-    
 
-
-
-
-
-    
-    
     public function get_operation_info($sector, $register_id, $operation_id)
     {
         $password = $this->passwords[$sector]; 
@@ -1002,8 +995,6 @@ class Best2pay extends Core
 
             return $status;
         }
-
-
     }
         
 }
