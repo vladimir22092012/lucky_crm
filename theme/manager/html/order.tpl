@@ -46,7 +46,7 @@
             });
 
             $(document).on('click', '.form-check-input', function () {
-                $.ajax({
+                $.post({
                     url: "ajax/BlacklistAddDelete.php",
                     data: {
                         phone_num: phone_num,
@@ -54,8 +54,7 @@
                         lastname: lastname,
                         patronymic: patronymic
                     },
-                    method: 'POST'
-                });
+                })
             })
         })
     </script>
