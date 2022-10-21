@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.18, created on 2022-10-10 13:13:16
+<?php /* Smarty version Smarty-3.1.18, created on 2022-10-18 12:16:11
          compiled from "/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/orders.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:3903396676343ae1cdd4479-23052232%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '56bf52d122794d1172899892a9c7b1c5c963030a' => 
     array (
       0 => '/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/orders.tpl',
-      1 => 1665396793,
+      1 => 1666084567,
       2 => 'file',
     ),
   ),
@@ -529,14 +529,11 @@ $_smarty_tpl->tpl_vars['order']->_loop = true;
                                                     <?php if ($_smarty_tpl->tpl_vars['order']->value->have_crm_closed) {?>
                                                         <span class="label label-primary"
                                                               title="Клиент уже имеет погашенные займы в CRM">ПК CRM</span>
-                                                    <?php } elseif (count($_smarty_tpl->tpl_vars['order']->value->loan_history)>0) {?>
-                                                        <span class="label label-success"
-                                                              title="Клиент уже имеет погашенные займы">ПК</span>
                                                     <?php } elseif ($_smarty_tpl->tpl_vars['order']->value->first_loan) {?>
                                                         <span class="label label-info" title="Новый клиент">Новая</span>
                                                     <?php } else { ?>
-                                                        <span class="label label-warning"
-                                                              title="Клиент уже подавал ранее заявки">Повтор</span>
+                                                        <span class="label label-success"
+                                                              title="Клиент уже имеет погашенные займы">ПК</span>
                                                     <?php }?>
                                                 <?php }?>
                                                 <?php if ($_smarty_tpl->tpl_vars['order']->value->autoretry) {?>

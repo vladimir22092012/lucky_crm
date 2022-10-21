@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.18, created on 2022-10-12 08:32:48
+<?php /* Smarty version Smarty-3.1.18, created on 2022-10-18 16:32:52
          compiled from "/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/index.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:9789791756343ae1cecaf76-39358637%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '56bdde0a3a152681021839bba2d449e0b220abb4' => 
     array (
       0 => '/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/index.tpl',
-      1 => 1665552726,
+      1 => 1666099816,
       2 => 'file',
     ),
   ),
@@ -352,77 +352,6 @@ $_smarty_tpl->tpl_vars['pn']->_loop = true;
 
                     <?php }?>
 
-                    <?php if (in_array('my_contracts',$_smarty_tpl->tpl_vars['manager']->value->permissions)||in_array('collection_report',$_smarty_tpl->tpl_vars['manager']->value->permissions)||in_array('zvonobot',$_smarty_tpl->tpl_vars['manager']->value->permissions)) {?>
-                        <li class="nav-small-cap">Коллекшин</li>
-                        <?php if (in_array('my_contracts',$_smarty_tpl->tpl_vars['manager']->value->permissions)) {?>
-                            <li <?php if (in_array($_smarty_tpl->tpl_vars['module']->value,array('CollectorContractsController'))) {?>class="active"<?php }?>>
-                                <a class="" href="my_contracts/" aria-expanded="false"><i
-                                            class="mdi mdi-book-multiple"></i><span
-                                            class="hide-menu">Мои договоры</span></a>
-                            </li>
-                        <?php }?>
-                        <?php if (in_array('collection_report',$_smarty_tpl->tpl_vars['manager']->value->permissions)) {?>
-                            <li <?php if (in_array($_smarty_tpl->tpl_vars['module']->value,array('CollectionReportController'))) {?>class="active"<?php }?>>
-                                <a class="" href="collection_report/" aria-expanded="false"><i
-                                            class="mdi mdi-chart-histogram"></i><span class="hide-menu">Отчет</span></a>
-                            </li>
-                        <?php }?>
-                        <?php if (in_array('collection_moving',$_smarty_tpl->tpl_vars['manager']->value->permissions)) {?>
-                            <li <?php if (in_array($_smarty_tpl->tpl_vars['module']->value,array('CollectorClientsController'))) {?>class="active"<?php }?>>
-                                <a class="" href="collector_clients" aria-expanded="false"><i
-                                            class="mdi mdi-chart-histogram"></i><span class="hide-menu">Перебросы клиентов</span></a>
-                            </li>
-                        <?php }?>
-                        <?php if (in_array('zvonobot',$_smarty_tpl->tpl_vars['manager']->value->permissions)) {?>
-                            <li <?php if (in_array($_smarty_tpl->tpl_vars['module']->value,array('ZvonobotController'))) {?>class="active"<?php }?>>
-                                <a class="" href="zvonobot" aria-expanded="false"><i class="mdi mdi-deskphone"></i><span
-                                            class="hide-menu">Звонобот</span></a>
-                            </li>
-                        <?php }?>
-                        <li <?php if (in_array($_smarty_tpl->tpl_vars['module']->value,array('NotificationsController'))) {?>class="active"<?php }?>>
-                            <a class="" href="collection_notifications" aria-expanded="false"><i
-                                        class="mdi-note-multiple-outline mdi"></i><span
-                                        class="hide-menu">Напоминания</span></a>
-                        </li>
-                        <?php if (in_array('collector_mailing',$_smarty_tpl->tpl_vars['manager']->value->permissions)) {?>
-                            <li <?php if (in_array($_smarty_tpl->tpl_vars['module']->value,array('MailingController'))) {?>class="active"<?php }?>>
-                                <a class="" href="mailing/list" aria-expanded="false"><i
-                                            class="mdi mdi-voicemail"></i><span class="hide-menu">Рассылка</span></a>
-                            </li>
-                        <?php }?>
-
-                    <?php }?>
-
-                    <?php if (in_array('sudblock',$_smarty_tpl->tpl_vars['manager']->value->permissions)||in_array('sudblock_settings',$_smarty_tpl->tpl_vars['manager']->value->permissions)) {?>
-                        <li class="nav-small-cap">Судблок</li>
-                        <?php if (in_array('sudblock',$_smarty_tpl->tpl_vars['manager']->value->permissions)) {?>
-                            <li <?php if (in_array($_smarty_tpl->tpl_vars['module']->value,array('SudblockContractsController'))) {?>class="active"<?php }?>>
-                                <a class="" href="sudblock_contracts" aria-expanded="false"><i
-                                            class="mdi mdi-clipboard"></i><span
-                                            class="hide-menu">Мои договоры</span></a>
-                            </li>
-                            <li <?php if (in_array($_smarty_tpl->tpl_vars['module']->value,array('SudblockNotificationsController'))) {?>class="active"<?php }?>>
-                                <a class="" href="sudblock_notifications" aria-expanded="false"><i
-                                            class="mdi-note-multiple-outline mdi"></i><span class="hide-menu">Напоминания</span></a>
-                            </li>
-                        <?php }?>
-                        <?php if (in_array('sudblock_settings',$_smarty_tpl->tpl_vars['manager']->value->permissions)) {?>
-                            <li <?php if (in_array($_smarty_tpl->tpl_vars['module']->value,array('SudblockStatusesController','SudblockDocumentsController, SudblockEventController'))) {?>class="active"<?php }?>>
-                                <a class="has-arrow" href="settings" aria-expanded="false"><i
-                                            class="mdi mdi-settings"></i><span class="hide-menu">Справочники</span></a>
-                                <ul aria-expanded="false" class="collapse">
-                                    <li <?php if (in_array($_smarty_tpl->tpl_vars['module']->value,array('SudblockStatusesController'))) {?>class="active"<?php }?>><a
-                                                href="sudblock_statuses">Статусы</a></li>
-                                    <li <?php if (in_array($_smarty_tpl->tpl_vars['module']->value,array('SudblockDocumentsController'))) {?>class="active"<?php }?>><a
-                                                href="sudblock_documents">Документы</a></li>
-                                    <li <?php if (in_array($_smarty_tpl->tpl_vars['module']->value,array('SudblockEventController'))) {?>class="active"<?php }?>><a
-                                                href="sudblock_event_types">Типы событий</a></li>
-                                </ul>
-                            </li>
-                        <?php }?>
-
-                    <?php }?>
-
                     <?php if (in_array('managers',$_smarty_tpl->tpl_vars['manager']->value->permissions)||in_array('changelogs',$_smarty_tpl->tpl_vars['manager']->value->permissions)||in_array('settings',$_smarty_tpl->tpl_vars['manager']->value->permissions)||in_array('handbooks',$_smarty_tpl->tpl_vars['manager']->value->permissions)||in_array('pages',$_smarty_tpl->tpl_vars['manager']->value->permissions)) {?>
                         <li class="nav-small-cap">Управление</li>
                         <?php if (in_array('managers',$_smarty_tpl->tpl_vars['manager']->value->permissions)) {?>
@@ -491,23 +420,11 @@ $_smarty_tpl->tpl_vars['pn']->_loop = true;
                                 </ul>
                             </li>
                         <?php }?>
-                        <?php if (in_array('pages',$_smarty_tpl->tpl_vars['manager']->value->permissions)) {?>
-                            <li <?php if (in_array($_smarty_tpl->tpl_vars['module']->value,array('PageController','PagesController'))) {?>class="active"<?php }?>>
-                                <a class="" href="pages" aria-expanded="false"><i class="mdi mdi-application"></i><span
-                                            class="hide-menu">Страницы</span></a>
-                            </li>
-                        <?php }?>
                     <?php }?>
 
                     <?php if (in_array('analitics',$_smarty_tpl->tpl_vars['manager']->value->permissions)||in_array('penalty_statistics',$_smarty_tpl->tpl_vars['manager']->value->permissions)||$_smarty_tpl->tpl_vars['manager']->value->role=='chief_sudblock') {?>
                         <li class="nav-small-cap">Аналитика</li>
                         <?php if ($_smarty_tpl->tpl_vars['manager']->value->role!='chief_sudblock') {?>
-                        <?php if ($_smarty_tpl->tpl_vars['manager']->value->role!='analitic_marketing') {?>
-                            <li <?php if (in_array($_smarty_tpl->tpl_vars['module']->value,array('DashboardController'))) {?>class="active"<?php }?>>
-                                <a class="" href="dashboard" aria-expanded="false"><i class="mdi mdi-gauge"></i><span
-                                            class="hide-menu">Dashboard</span></a>
-                            </li>
-                        <?php }?>
                         <li <?php if (in_array($_smarty_tpl->tpl_vars['module']->value,array('ToolsController'))) {?>class="active"<?php }?>>
                             <a class="" href="tools" aria-expanded="false"><i class="mdi mdi-settings"></i><span
                                         class="hide-menu">Инструменты</span></a>

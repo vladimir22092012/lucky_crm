@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.18, created on 2022-10-12 08:47:52
+<?php /* Smarty version Smarty-3.1.18, created on 2022-10-18 11:36:35
          compiled from "/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/client.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:135378028663465508cd2ee1-23861507%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '69878d04e064eade42da5432ae21b6e1bafc474f' => 
     array (
       0 => '/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/client.tpl',
-      1 => 1660295913,
+      1 => 1666082194,
       2 => 'file',
     ),
   ),
@@ -15,6 +15,8 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'function' => 
   array (
   ),
+  'version' => 'Smarty-3.1.18',
+  'unifunc' => 'content_63465508d9a2d3_06326221',
   'variables' => 
   array (
     'client' => 0,
@@ -24,6 +26,8 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'contactdata_errors' => 0,
     'contacts_error' => 0,
     'addresses_error' => 0,
+    'faktaddress' => 0,
+    'regaddress' => 0,
     'order' => 0,
     'work_error' => 0,
     'scoring_types' => 0,
@@ -56,8 +60,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'loan_history_item' => 0,
   ),
   'has_nocache_code' => false,
-  'version' => 'Smarty-3.1.18',
-  'unifunc' => 'content_63465508d9a2d3_06326221',
 ),false); /*/%%SmartyHeaderCode%%*/?>
 <?php if ($_valid && !is_callable('content_63465508d9a2d3_06326221')) {function content_63465508d9a2d3_06326221($_smarty_tpl) {?><?php $_smarty_tpl->tpl_vars['meta_title'] = new Smarty_variable(((string)$_smarty_tpl->tpl_vars['client']->value->lastname)." ".((string)$_smarty_tpl->tpl_vars['client']->value->firstname)." ".((string)$_smarty_tpl->tpl_vars['client']->value->patronymic), null, 1);
 if ($_smarty_tpl->parent != null) $_smarty_tpl->parent->tpl_vars['meta_title'] = clone $_smarty_tpl->tpl_vars['meta_title'];?>
@@ -605,60 +607,13 @@ if (!empty($_capture_buffer)) {
                                                             <table class="table table-hover mb-0">
                                                                 <tr>
                                                                     <td>Адрес прописки</td>
-                                                                    <td>
-                                                                        <?php if ($_smarty_tpl->tpl_vars['client']->value->Regindex) {?><?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Regindex, ENT_QUOTES, 'UTF-8', true);?>
-, <?php }?>
-                                                                        <?php echo $_smarty_tpl->tpl_vars['client']->value->Regregion;?>
- <?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Regregion_shorttype, ENT_QUOTES, 'UTF-8', true);?>
-,
-                                                                        <?php if ($_smarty_tpl->tpl_vars['client']->value->Regcity) {?><?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Regcity, ENT_QUOTES, 'UTF-8', true);?>
- <?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Regcity_shorttype, ENT_QUOTES, 'UTF-8', true);?>
-,<?php }?>
-                                                                        <?php if ($_smarty_tpl->tpl_vars['client']->value->Regdistrict) {?><?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Regdistrict, ENT_QUOTES, 'UTF-8', true);?>
- <?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Regdistrict_shorttype, ENT_QUOTES, 'UTF-8', true);?>
-,<?php }?>
-                                                                        <?php if ($_smarty_tpl->tpl_vars['client']->value->Reglocality) {?><?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Reglocality, ENT_QUOTES, 'UTF-8', true);?>
- <?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Reglocality_shorttype, ENT_QUOTES, 'UTF-8', true);?>
-,<?php }?>
-                                                                        <?php if ($_smarty_tpl->tpl_vars['client']->value->Regstreet) {?><?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Regstreet, ENT_QUOTES, 'UTF-8', true);?>
- <?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Regstreet_shorttype, ENT_QUOTES, 'UTF-8', true);?>
-,<?php }?>
-                                                                        д.<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Reghousing, ENT_QUOTES, 'UTF-8', true);?>
-,
-                                                                        <?php if ($_smarty_tpl->tpl_vars['client']->value->Regbuilding) {?>стр. <?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Regbuilding, ENT_QUOTES, 'UTF-8', true);?>
-,<?php }?>
-                                                                        <?php if ($_smarty_tpl->tpl_vars['client']->value->Regroom) {?>кв.<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Regroom, ENT_QUOTES, 'UTF-8', true);?>
-<?php }?>                                                                
-                                                                    </td>
+                                                                    <td><?php echo $_smarty_tpl->tpl_vars['faktaddress']->value;?>
+</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td>Адрес проживания</td>
-                                                                    <td>
-                                                                        <?php if ($_smarty_tpl->tpl_vars['client']->value->Faktindex) {?><?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Faktindex, ENT_QUOTES, 'UTF-8', true);?>
-, <?php }?>
-                                                                        <?php echo $_smarty_tpl->tpl_vars['client']->value->Faktregion;?>
- <?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Faktregion_shorttype, ENT_QUOTES, 'UTF-8', true);?>
-,
-                                                                        <?php if ($_smarty_tpl->tpl_vars['client']->value->Faktcity) {?><?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Faktcity, ENT_QUOTES, 'UTF-8', true);?>
- <?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Faktcity_shorttype, ENT_QUOTES, 'UTF-8', true);?>
-,<?php }?>
-                                                                        <?php if ($_smarty_tpl->tpl_vars['client']->value->Faktdistrict) {?><?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Faktdistrict, ENT_QUOTES, 'UTF-8', true);?>
- <?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Faktdistrict_shorttype, ENT_QUOTES, 'UTF-8', true);?>
-,<?php }?>
-                                                                        <?php if ($_smarty_tpl->tpl_vars['client']->value->Faktlocality) {?><?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Faktlocality, ENT_QUOTES, 'UTF-8', true);?>
- <?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Faktlocality_shorttype, ENT_QUOTES, 'UTF-8', true);?>
-,<?php }?>
-                                                                        <?php if ($_smarty_tpl->tpl_vars['client']->value->Faktstreet) {?><?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Faktstreet, ENT_QUOTES, 'UTF-8', true);?>
- <?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Faktstreet_shorttype, ENT_QUOTES, 'UTF-8', true);?>
-,<?php }?>
-                                                                        д.<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Fakthousing, ENT_QUOTES, 'UTF-8', true);?>
-,
-                                                                        <?php if ($_smarty_tpl->tpl_vars['client']->value->Faktbuilding) {?>стр. <?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Faktbuilding, ENT_QUOTES, 'UTF-8', true);?>
-,<?php }?>
-                                                                        <?php if ($_smarty_tpl->tpl_vars['client']->value->Faktroom) {?>кв.<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['client']->value->Faktroom, ENT_QUOTES, 'UTF-8', true);?>
-<?php }?>                                                                
-
-                                                                    </td>
+                                                                    <td><?php echo $_smarty_tpl->tpl_vars['regaddress']->value;?>
+</td>
                                                                 </tr>
                                                             </table>
                                                         </div>
