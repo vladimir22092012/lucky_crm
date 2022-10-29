@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.18, created on 2022-10-18 12:22:18
+<?php /* Smarty version Smarty-3.1.18, created on 2022-10-21 09:29:40
          compiled from "/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/order.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2818875476343af9e6a2cf3-14201628%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'fe2aa0d83c9fc8b9ef94f66cee81e67ab66d6ce9' => 
     array (
       0 => '/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/order.tpl',
-      1 => 1666084935,
+      1 => 1666333326,
       2 => 'file',
     ),
   ),
@@ -162,7 +162,7 @@ if ($_smarty_tpl->parent != null) $_smarty_tpl->parent->tpl_vars['meta_title'] =
             });
 
             $(document).on('click', '.form-check-input', function () {
-                $.ajax({
+                $.post({
                     url: "ajax/BlacklistAddDelete.php",
                     data: {
                         phone_num: phone_num,
@@ -170,8 +170,7 @@ if ($_smarty_tpl->parent != null) $_smarty_tpl->parent->tpl_vars['meta_title'] =
                         lastname: lastname,
                         patronymic: patronymic
                     },
-                    method: 'POST'
-                });
+                })
             })
         })
     </script>

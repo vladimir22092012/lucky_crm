@@ -5,9 +5,8 @@ ini_set('display_startup_errors', 'Off');
 
 session_start();
 
-require 'autoload.php';
-require 'vendor/autoload.php';
-
+require_once 'autoload.php';
+require_once 'vendor/autoload.php';
 
 try 
 {

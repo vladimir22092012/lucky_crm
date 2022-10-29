@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__ . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
-
 function core_autoload($classname)
 {
     if (file_exists(dirname(__FILE__).'/core/'.$classname.'.php'))
