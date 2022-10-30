@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.18, created on 2022-10-21 09:29:40
+<?php /* Smarty version Smarty-3.1.18, created on 2022-10-30 14:52:29
          compiled from "/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/order.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2818875476343af9e6a2cf3-14201628%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'fe2aa0d83c9fc8b9ef94f66cee81e67ab66d6ce9' => 
     array (
       0 => '/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/order.tpl',
-      1 => 1666333326,
+      1 => 1667130745,
       2 => 'file',
     ),
   ),
@@ -29,8 +29,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'order' => 0,
     'settings' => 0,
     'manager' => 0,
-    'penalty_block' => 0,
-    'penalties' => 0,
     'contract' => 0,
     'ordertimer' => 0,
     'alert' => 0,
@@ -44,6 +42,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'p2p' => 0,
     'have_newest_order' => 0,
     'comments' => 0,
+    'penalties' => 0,
     'contactdata_error' => 0,
     'penalty_types' => 0,
     'contactdata_errors' => 0,
@@ -240,44 +239,8 @@ if (!empty($_capture_buffer)) {
     foreach ($params as $key => $value) {$_smarty_tpl->tpl_vars[$key] = new Smarty_variable($value);}?>
 
     <?php if (in_array('add_penalty',$_smarty_tpl->tpl_vars['manager']->value->permissions)) {?>
-        <?php if (!$_smarty_tpl->tpl_vars['penalties']->value[$_smarty_tpl->tpl_vars['penalty_block']->value]) {?>
-            <button type="button" class="pb-0 pt-0 mr-2 btn btn-sm btn-danger waves-effect js-add-penalty "
-                    data-block="<?php echo $_smarty_tpl->tpl_vars['penalty_block']->value;?>
-">
-                <i class="fas fa-ban"></i>
-                <span>Штраф</span>
-            </button>
-        <?php } elseif ($_smarty_tpl->tpl_vars['penalties']->value[$_smarty_tpl->tpl_vars['penalty_block']->value]&&in_array($_smarty_tpl->tpl_vars['penalties']->value[$_smarty_tpl->tpl_vars['penalty_block']->value]->status,array(1,2))) {?>
-            <button type="button" class="pb-0 pt-0 mr-2 btn btn-sm btn-primary waves-effect js-reject-penalty "
-                    data-penalty="<?php echo $_smarty_tpl->tpl_vars['penalties']->value[$_smarty_tpl->tpl_vars['penalty_block']->value]->id;?>
-">
-                <i class="fas fa-ban"></i>
-                <span>Отменить</span>
-            </button>
-            <button type="button" class="pb-0 pt-0 mr-2 btn btn-sm btn-warning waves-effect js-strike-penalty "
-                    data-penalty="<?php echo $_smarty_tpl->tpl_vars['penalties']->value[$_smarty_tpl->tpl_vars['penalty_block']->value]->id;?>
-">
-                <i class="fas fa-ban"></i>
-                <span>Страйк</span>
-            </button>
-        <?php }?>
-        <?php if (in_array($_smarty_tpl->tpl_vars['penalties']->value[$_smarty_tpl->tpl_vars['penalty_block']->value]->status,array(4))) {?>
-            <span class="label label-warning">Страйк (<?php echo $_smarty_tpl->tpl_vars['penalties']->value[$_smarty_tpl->tpl_vars['penalty_block']->value]->cost;?>
- руб)</span>
-        <?php }?>
-    <?php } elseif ($_smarty_tpl->tpl_vars['penalties']->value[$_smarty_tpl->tpl_vars['penalty_block']->value]->manager_id==$_smarty_tpl->tpl_vars['manager']->value->id) {?>
-        <?php if (in_array($_smarty_tpl->tpl_vars['penalties']->value[$_smarty_tpl->tpl_vars['penalty_block']->value]->status,array(1))) {?>
-            <button class="pb-0 pt-0 mr-2 btn btn-sm btn-primary js-correct-penalty"
-                    data-penalty="<?php echo $_smarty_tpl->tpl_vars['penalties']->value[$_smarty_tpl->tpl_vars['penalty_block']->value]->id;?>
-" type="button">Исправить
-            </button>
-        <?php }?>
-        <?php if (in_array($_smarty_tpl->tpl_vars['penalties']->value[$_smarty_tpl->tpl_vars['penalty_block']->value]->status,array(4))) {?>
-            <span class="label label-warning">Страйк (<?php echo $_smarty_tpl->tpl_vars['penalties']->value[$_smarty_tpl->tpl_vars['penalty_block']->value]->cost;?>
- руб)</span>
-        <?php }?>
+        
     <?php }?>
-
 <?php $_smarty_tpl->tpl_vars = $saved_tpl_vars;
 foreach (Smarty::$global_tpl_vars as $key => $value) if(!isset($_smarty_tpl->tpl_vars[$key])) $_smarty_tpl->tpl_vars[$key] = $value;}}?>
 

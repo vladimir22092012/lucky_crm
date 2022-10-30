@@ -108,6 +108,7 @@
 {function name='penalty_button'}
 
     {if in_array('add_penalty', $manager->permissions)}
+        {*
         {if !$penalties[$penalty_block]}
             <button type="button" class="pb-0 pt-0 mr-2 btn btn-sm btn-danger waves-effect js-add-penalty "
                     data-block="{$penalty_block}">
@@ -138,8 +139,8 @@
         {if in_array($penalties[$penalty_block]->status, [4])}
             <span class="label label-warning">Страйк ({$penalties[$penalty_block]->cost} руб)</span>
         {/if}
+        *}
     {/if}
-
 {/function}
 
 <div class="page-wrapper js-event-add-load" data-event="1" data-manager="{$manager->id}" data-order="{$order->order_id}"

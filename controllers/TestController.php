@@ -1,23 +1,67 @@
 <?php
 
-set_time_limit(300);
-
 class TestController extends Controller
 {
     public function fetch()
     {
+        $scoring = $this->scorings->get_scoring(23);
+        $order = $this->orders->get_order($scoring->order_id);
 
-        $request =
+        $params =
             [
                 'UserID' => 'barvil',
                 'Password' => 'KsetM+H5',
-                'sources' => 'getcontact',
-                'PhoneReq' => [
-                    'phone' => 79276928586
+                'sources' => 'fssp',
+                'PersonReq' => [
+                    'first'   => 'Мелузова',
+                    'middle'  => 'Викторовна',
+                    'paternal'=> 'Анна',
+                    'birthDt' => date('1974-07-20')
                 ]
             ];
 
-        $request = $this->XMLSerializer->serialize($request);
+        $request = $this->send_request($params);
+
+        echo '<pre>';
+        var_dump($request);
+        exit;
+
+        $update = array(
+            'status' => 'completed',
+            'success' => !isset($request['Source']) ? 0 : 1
+        );
+
+        if (isset($request['Source'])) {
+            foreach ($request['Source'] as $source) {
+                foreach ($source['Field'] as $field) {
+                    if ($field['FieldName'] == 'StatusText')
+                        $update['body']['status'] = 'Статус: ' . $field['FieldValue'];
+
+                    if ($field['FieldName'] == 'StatusDate')
+                        $update['body']['statusDate'] = 'Дата установки статуса: ' . date('d.m.Y', strtotime($field['FieldValue']));
+
+                    if ($field['FieldName'] == 'FullPhoto')
+                        $update['body']['image'] = 'Ссылка на фото: ' . $field['FieldValue'];
+                }
+            }
+
+            $update['string_result'] = 'Клиент найден';
+            $update['body'] = serialize($update['body']);
+        } else
+        {
+            $update['body'] = null;
+            $update['string_result'] = 'Клиент не найден';
+        }
+
+
+        $this->scorings->update_scoring(23, $update);
+
+        return $update;
+    }
+
+    private function send_request($params)
+    {
+        $request = $this->XMLSerializer->serialize($params);
 
         $ch = curl_init('https://i-sphere.ru/2.00/');
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -31,21 +75,6 @@ class TestController extends Controller
         $array = json_decode($json, TRUE);
         curl_close($ch);
 
-        if (isset($array['Source'])) {
-            foreach ($array['Source'] as $source) {
-                foreach ($source['Field'] as $field) {
-                    echo '<pre>';
-                    var_dump($field);
-                    if ($field['FieldName'] == 'Name')
-                        $scoring['status'] = 'Имя: ' . $field['FieldValue'];
-
-                    if ($field['FieldName'] == 'TagsCount')
-                        $scoring['image'] = 'Количество тегов: ' . $field['FieldValue'];
-                }
-            }
-        }
-
-        var_dump($scoring);
-        exit;
+        return $array;
     }
 }
