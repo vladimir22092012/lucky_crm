@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.18, created on 2022-10-30 14:52:29
+<?php /* Smarty version Smarty-3.1.18, created on 2022-10-31 09:19:34
          compiled from "/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/order.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2818875476343af9e6a2cf3-14201628%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'fe2aa0d83c9fc8b9ef94f66cee81e67ab66d6ce9' => 
     array (
       0 => '/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/order.tpl',
-      1 => 1667130745,
+      1 => 1667197171,
       2 => 'file',
     ),
   ),
@@ -2640,19 +2640,6 @@ $_smarty_tpl->tpl_vars['scoring_type']->_loop = true;
                                                                 <div class="pl-2 pr-2 <?php if ($_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->status=='new') {?>bg-light-warning<?php } elseif ($_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->success) {?>bg-light-success<?php } else { ?>bg-light-danger<?php }?>">
                                                                     <div class="row <?php if (!$_smarty_tpl->tpl_vars['scoring_type']->last) {?>border-bottom<?php }?>">
                                                                         <div class="col-12 col-sm-12 pt-2">
-                                                                            <h5 class="float-left">
-                                                                                <?php echo $_smarty_tpl->tpl_vars['scoring_type']->value->title;?>
-
-                                                                                <?php if ($_smarty_tpl->tpl_vars['scoring_type']->value->name=='fssp') {?>
-                                                                                    <?php if ($_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->found_46) {?>
-                                                                                        <span class="label label-danger">46</span>
-                                                                                    <?php }?>
-                                                                                    <?php if ($_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->found_47) {?>
-                                                                                        <span class="label label-danger">47</span>
-                                                                                    <?php }?>
-                                                                                <?php }?>
-                                                                            </h5>
-
                                                                             <?php if ($_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->status=='new') {?>
                                                                                 <span class="label label-warning float-right">Ожидание</span>
                                                                             <?php } elseif ($_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->status=='process') {?>
@@ -2723,12 +2710,6 @@ $_smarty_tpl->tpl_vars['scoring_type']->_loop = true;
                                                                                     <?php echo $_smarty_tpl->smarty->registered_plugins[Smarty::PLUGIN_MODIFIER]['date'][0][0]->date_modifier($_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->created);?>
  <?php echo $_smarty_tpl->smarty->registered_plugins[Smarty::PLUGIN_MODIFIER]['time'][0][0]->time_modifier($_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->created);?>
 
-                                                                                <?php }?>
-                                                                                <?php if ($_smarty_tpl->tpl_vars['scoring_type']->value->name=='fssp') {?>
-                                                                                    <a href="javascript:void(0);"
-                                                                                       class="js-get-fssp-info float-right"
-                                                                                       data-scoring="<?php echo $_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->id;?>
-">Подробнее</a>
                                                                                 <?php }?>
                                                                                 <?php if ($_smarty_tpl->tpl_vars['scoring_type']->value->name=='fssp2') {?>
                                                                                     <a href="/ajax/show_fssp2.php?id=<?php echo $_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->id;?>

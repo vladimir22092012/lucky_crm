@@ -13,10 +13,10 @@ class TestController extends Controller
                 'Password' => 'KsetM+H5',
                 'sources' => 'fssp',
                 'PersonReq' => [
-                    'first' => 'Мелузова',
-                    'middle' => 'Викторовна',
-                    'paternal' => 'Анна',
-                    'birthDt' => date('1974-07-20')
+                    'first' => $order->firstname,
+                    'middle' => $order->patronymic,
+                    'paternal' => $order->lastname,
+                    'birthDt' => date('Y-m-d', strtotime($order->birth))
                 ]
             ];
 
@@ -38,8 +38,8 @@ class TestController extends Controller
         $expSum = 0;
         $badArticle = [];
 
-        if ($request['Source'][0]['ResultsCount'] > 0) {
-            foreach ($request['Source'][0]['Record'] as $source) {
+        if ($request['Source']['ResultsCount'] > 0) {
+            foreach ($request['Source']['Record'] as $source) {
                 foreach ($source['Field'] as $field) {
                     if ($field['FieldName'] == 'Total')
                         $expSum += $field['FieldValue'];
@@ -74,10 +74,6 @@ class TestController extends Controller
             $update['success'] = 1;
             $update['string_result'] = 'Долгов нет';
         }
-        
-        var_dump($update);
-        exit;
-
 
         $this->scorings->update_scoring(23, $update);
 

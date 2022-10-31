@@ -38,8 +38,8 @@ class Fssp_scoring extends Core
         $expSum = 0;
         $badArticle = [];
 
-        if ($request['Source'][0]['ResultsCount'] > 0) {
-            foreach ($request['Source'][0]['Record'] as $source) {
+        if ($request['Source']['ResultsCount'] > 0) {
+            foreach ($request['Source']['Record'] as $source) {
                 foreach ($source['Field'] as $field) {
                     if ($field['FieldName'] == 'Total')
                         $expSum += $field['FieldValue'];
