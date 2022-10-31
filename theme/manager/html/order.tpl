@@ -2197,18 +2197,6 @@
                                                                 <div class="pl-2 pr-2 {if $scorings[$scoring_type->name]->status == 'new'}bg-light-warning{elseif $scorings[$scoring_type->name]->success}bg-light-success{else}bg-light-danger{/if}">
                                                                     <div class="row {if !$scoring_type@last}border-bottom{/if}">
                                                                         <div class="col-12 col-sm-12 pt-2">
-                                                                            <h5 class="float-left">
-                                                                                {$scoring_type->title}
-                                                                                {if $scoring_type->name == 'fssp'}
-                                                                                    {if $scorings[$scoring_type->name]->found_46}
-                                                                                        <span class="label label-danger">46</span>
-                                                                                    {/if}
-                                                                                    {if $scorings[$scoring_type->name]->found_47}
-                                                                                        <span class="label label-danger">47</span>
-                                                                                    {/if}
-                                                                                {/if}
-                                                                            </h5>
-
                                                                             {if $scorings[$scoring_type->name]->status == 'new'}
                                                                                 <span class="label label-warning float-right">Ожидание</span>
                                                                             {elseif $scorings[$scoring_type->name]->status == 'process'}
@@ -2265,11 +2253,6 @@
                                                                                 {/if}
                                                                                 {if $scorings[$scoring_type->name]->created}
                                                                                     {$scorings[$scoring_type->name]->created|date} {$scorings[$scoring_type->name]->created|time}
-                                                                                {/if}
-                                                                                {if $scoring_type->name == 'fssp'}
-                                                                                    <a href="javascript:void(0);"
-                                                                                       class="js-get-fssp-info float-right"
-                                                                                       data-scoring="{$scorings[$scoring_type->name]->id}">Подробнее</a>
                                                                                 {/if}
                                                                                 {if $scoring_type->name == 'fssp2'}
                                                                                     <a href="/ajax/show_fssp2.php?id={$scorings[$scoring_type->name]->id}&password=Hjkdf8d"
