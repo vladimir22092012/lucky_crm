@@ -13,45 +13,70 @@ class TestController extends Controller
                 'Password' => 'KsetM+H5',
                 'sources' => 'fssp',
                 'PersonReq' => [
-                    'first'   => 'Мелузова',
-                    'middle'  => 'Викторовна',
-                    'paternal'=> 'Анна',
+                    'first' => 'Мелузова',
+                    'middle' => 'Викторовна',
+                    'paternal' => 'Анна',
                     'birthDt' => date('1974-07-20')
                 ]
             ];
 
         $request = $this->send_request($params);
 
-        echo '<pre>';
-        var_dump($request);
-        exit;
+        if (!empty($request))
+            $update = ['status' => 'completed'];
+        else {
+            $update = [
+                'status' => 'error',
+                'body' => null,
+                'string_result' => 'Клиент не найден'
+            ];
 
-        $update = array(
-            'status' => 'completed',
-            'success' => !isset($request['Source']) ? 0 : 1
-        );
+            $this->scorings->update_scoring(23, $update);
+            return $update;
+        }
 
-        if (isset($request['Source'])) {
-            foreach ($request['Source'] as $source) {
+        $expSum = 0;
+        $badArticle = [];
+
+        if ($request['Source'][0]['ResultsCount'] > 0) {
+            foreach ($request['Source'][0]['Record'] as $source) {
                 foreach ($source['Field'] as $field) {
-                    if ($field['FieldName'] == 'StatusText')
-                        $update['body']['status'] = 'Статус: ' . $field['FieldValue'];
+                    if ($field['FieldName'] == 'Total')
+                        $expSum += $field['FieldValue'];
 
-                    if ($field['FieldName'] == 'StatusDate')
-                        $update['body']['statusDate'] = 'Дата установки статуса: ' . date('d.m.Y', strtotime($field['FieldValue']));
-
-                    if ($field['FieldName'] == 'FullPhoto')
-                        $update['body']['image'] = 'Ссылка на фото: ' . $field['FieldValue'];
+                    if ($field['FieldName'] == 'CloseReason1' && in_array($field['FieldValue'], [46, 47]))
+                        $badArticle[] = $field['FieldValue'];
                 }
             }
 
-            $update['string_result'] = 'Клиент найден';
-            $update['body'] = serialize($update['body']);
-        } else
-        {
+            $maxExp = $this->scorings->get_type(3);
+            $maxExp = $maxExp->params;
+            $maxExp = $maxExp['amount'];
+
+            if ($expSum > $maxExp || !empty($badArticle)) {
+                $update['body']['amount'] = $expSum;
+
+                if (!empty($badArticle)) {
+                    $update['body']['badArticles'] = implode(',', $badArticle);
+                    $update['body']['badArticles'] = 'Обнаружены статьи: ' . $update['body']['badArticles'];
+                }
+
+                $update['success'] = 0;
+                $update['string_result'] = 'Клиент найден';
+                $update['body'] = serialize($update['body']);
+            } else {
+                $update['body'] = null;
+                $update['success'] = 1;
+                $update['string_result'] = 'Сумма долга: ' . $expSum;
+            }
+        } else {
             $update['body'] = null;
-            $update['string_result'] = 'Клиент не найден';
+            $update['success'] = 1;
+            $update['string_result'] = 'Долгов нет';
         }
+        
+        var_dump($update);
+        exit;
 
 
         $this->scorings->update_scoring(23, $update);
