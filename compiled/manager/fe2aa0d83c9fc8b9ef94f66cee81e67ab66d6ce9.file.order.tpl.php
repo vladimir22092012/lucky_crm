@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.18, created on 2022-10-31 09:19:34
+<?php /* Smarty version Smarty-3.1.18, created on 2022-10-31 09:28:49
          compiled from "/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/order.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2818875476343af9e6a2cf3-14201628%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'fe2aa0d83c9fc8b9ef94f66cee81e67ab66d6ce9' => 
     array (
       0 => '/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/order.tpl',
-      1 => 1667197171,
+      1 => 1667197728,
       2 => 'file',
     ),
   ),
@@ -2640,6 +2640,11 @@ $_smarty_tpl->tpl_vars['scoring_type']->_loop = true;
                                                                 <div class="pl-2 pr-2 <?php if ($_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->status=='new') {?>bg-light-warning<?php } elseif ($_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->success) {?>bg-light-success<?php } else { ?>bg-light-danger<?php }?>">
                                                                     <div class="row <?php if (!$_smarty_tpl->tpl_vars['scoring_type']->last) {?>border-bottom<?php }?>">
                                                                         <div class="col-12 col-sm-12 pt-2">
+                                                                            <h5 class="float-left">
+                                                                                <?php echo $_smarty_tpl->tpl_vars['scoring_type']->value->title;?>
+
+                                                                            </h5>
+
                                                                             <?php if ($_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->status=='new') {?>
                                                                                 <span class="label label-warning float-right">Ожидание</span>
                                                                             <?php } elseif ($_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->status=='process') {?>
@@ -2700,6 +2705,14 @@ $_smarty_tpl->tpl_vars['scoring_type']->_loop = true;
                                                                                 <a href="<?php echo $_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->body['image'];?>
 " target="_blank">Ссылка на фото</a><br>
                                                                             <?php }?>
+                                                                                <?php if ($_smarty_tpl->tpl_vars['scoring_type']->value->name=='fssp') {?>
+                                                                                    <span>Сумма долга: <?php echo $_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->body['amount'];?>
+</span><br>
+                                                                                    <?php if (isset($_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->body['badArticles'])) {?>
+                                                                                    <span><?php echo $_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->body['badArticles'];?>
+</span><br>
+                                                                                    <?php }?>
+                                                                                <?php }?>
                                                                                 <?php if ($_smarty_tpl->tpl_vars['scoring_type']->value->name=='contact') {?>
                                                                                     <span><?php echo $_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->body['name'];?>
 </span><br>

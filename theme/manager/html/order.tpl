@@ -2251,6 +2251,12 @@
                                                                                 <span>{$scorings[$scoring_type->name]->body['statusDate']}</span><br>
                                                                                 <a href="{$scorings[$scoring_type->name]->body['image']}" target="_blank">Ссылка на фото</a><br>
                                                                             {/if}
+                                                                                {if $scoring_type->name == 'fssp'}
+                                                                                    <span>Сумма долга: {$scorings[$scoring_type->name]->body['amount']}</span><br>
+                                                                                    {if isset($scorings[$scoring_type->name]->body['badArticles'])}
+                                                                                    <span>{$scorings[$scoring_type->name]->body['badArticles']}</span><br>
+                                                                                    {/if}
+                                                                                {/if}
                                                                                 {if $scoring_type->name == 'contact'}
                                                                                     <span>{$scorings[$scoring_type->name]->body['name']}</span><br>
                                                                                     <span>{$scorings[$scoring_type->name]->body['tags']}</span><br>

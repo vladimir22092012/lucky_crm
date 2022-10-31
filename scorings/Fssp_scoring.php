@@ -65,14 +65,12 @@ class Fssp_scoring extends Core
                 $update['string_result'] = 'Клиент найден';
                 $update['body'] = serialize($update['body']);
             } else {
-                $update['body'] = null;
                 $update['success'] = 1;
-                $update['string_result'] = 'Сумма долга: ' . $expSum;
+                $update['body']['badArticles'] = 'Сумма долга: ' . $expSum;
             }
         } else {
-            $update['body'] = null;
             $update['success'] = 1;
-            $update['string_result'] = 'Долгов нет';
+            $update['body']['badArticles'] = 'Долгов нет';
         }
 
 
