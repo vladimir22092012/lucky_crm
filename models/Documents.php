@@ -12,103 +12,34 @@ class Documents extends Core
     );
     
     private $templates = array(
-        'ANKETA_PEP' => 'anketa-zayavlenie-pep.01072021.tpl',
-        'SOGLASIE_VZAIMODEYSTVIE' => 'soglasie-na-vzaimodeystvie.01072021.tpl',
-        'SOGLASIE_MEGAFON' => 'soglasie-dlya-megafona.tpl',
-        'SOGLASIE_SCORING' => 'soglasie-dlya-skoringa.tpl',
-        'SOGLASIE_SPISANIE' => 'soglasie-na-spisanie.tpl',
-        'PRICHINA_OTKAZA' => 'zayavlenie-na-uslugu-uznay-prichinu-otkaza.tpl',
-
-        'IND_USLOVIYA_NL' => 'individualnie-usloviya-nl.tpl',
-        'POLIS_STRAHOVANIYA' => 'polis-strahovaniya.03032022.tpl',
-        'DOP_USLUGI_VIDACHA' => 'soglasie-na-okazanie-dopuslugi-pri-vidache.21012022.tpl',
-
-        'DOP_SOGLASHENIE_PROLONGATSIYA' => 'dopolnitelnoe-soglashenie-o-prolongatsii.tpl',
-        'DOP_USLUGI_PROLONGATSIYA' => 'soglasie-na-okazanie-dopuslugi-pri-prolongatsii.tpl',
-
-        'SUD_PRIKAZ' => 'sudblock_prikaz.tpl',
-        'SUD_SPRAVKA' => 'sudblock_spravka.tpl',
-        'SUD_VOZBUZHDENIE' => 'sudblock_zayavlenie.tpl',
-        
-        'OFFLINE_AKT_CONSULTATION' => 'offline/akt_consultation.tpl',
-        'OFFLINE_ANKETA' => 'offline/anketa.tpl',
-        'OFFLINE_DOGOVOR' => 'offline/dogovor.tpl',
-        'OFFLINE_DOGOVOR_CONSULTATION' => 'offline/dogovor_consultation.tpl',
-        'OFFLINE_DOP_SOGLASHENIE' => 'offline/dop_soglashenie.tpl',
-        'OFFLINE_PKO' => 'offline/pko.tpl',
-        'OFFLINE_RKO' => 'offline/rko.tpl',
-        'OFFLINE_ASP' => 'offline/soglashenie_asp.tpl',
-        'OFFLINE_OBRABOTKA' => 'offline/soglasie_na_obrabotku.tpl',
-        'OFFLINE_INFORM' => 'offline/zayavlenie_inform.tpl',
-        'OFFLINE_SMS' => 'offline/zayavlenie_sms.tpl',
-        'OFFLINE_ZAKRYTIE' => 'offline/spravka_zakrytie.tpl',
+        'ANKETA_PEP' => 'anketa-pep.tpl',
+        'SOLGLASHENIE_PEP' => 'soglashenie-pep.tpl',
+        'SOGLASIE_VZAIMODEYSTVIE' => 'soglasie-na-vzaimodeystvie.tpl',
+        'SOGLASIE_SPISANIE' => 'reccurent.tpl',
+        'IND_USLOVIYA' => 'individ_usloviya.tpl',
+        'POLIS_STRAHOVANIYA' => 'polis_vidacha.tpl',
+        'PDN' => 'pdn.tpl'
     );
     
     
     private $names = array(
         'ANKETA_PEP' => 'Анкета - заявление ПЭП',
+        'SOLGLASHENIE_PEP' => 'Соглашение об использовании ПЭП',
         'SOGLASIE_VZAIMODEYSTVIE' => 'Согласие на взаимодействие',
-        'SOGLASIE_MEGAFON' => 'Согласие для мегафона',
-        'SOGLASIE_SCORING' => 'Согласие для скоринга',
-        'SOGLASIE_SPISANIE' => 'Согласие на списание',
-        'PRICHINA_OTKAZA' => 'Заявление на услугу Узнай причину отказа',
-
-        'IND_USLOVIYA_NL' => 'Индивидуальные условия',
+        'SOGLASIE_SPISANIE' => 'Согласие на списание рекуррентных платежей',
+        'IND_USLOVIYA' => 'Индивидуальные условия',
         'POLIS_STRAHOVANIYA' => 'Полис страхования',
-        'DOP_USLUGI_VIDACHA' => 'Заявление на страхование',
-
-        'DOP_SOGLASHENIE_PROLONGATSIYA' => 'Дополнительное соглашение',
-        'DOP_USLUGI_PROLONGATSIYA' => 'Согласие на оказание доп услуги при пролонгации',
-
-        'SUD_PRIKAZ' => 'Заявление о вынесении судебного приказа',
-        'SUD_SPRAVKA' => 'Справка',
-        'SUD_VOZBUZHDENIE' => 'Заявление о возбуждении исполнительного производства',
-
-        'OFFLINE_AKT_CONSULTATION' => 'Акт об оказании услуг к договору',
-        'OFFLINE_ANKETA' => 'Электронная анкета ЦБ',
-        'OFFLINE_DOGOVOR' => 'Договор на оказание услуг к договору',
-        'OFFLINE_DOGOVOR_CONSULTATION' => 'Договор оказания консультационных услуг',
-        'OFFLINE_DOP_SOGLASHENIE' => 'Дополнительное соглашение',
-        'OFFLINE_PKO' => 'Приходный кассовый ордер',
-        'OFFLINE_RKO' => 'Расходный кассовый ордер',
-        'OFFLINE_ASP' => 'Соглашение на ПЭП',
-        'OFFLINE_OBRABOTKA' => 'Согласие на обработку и взаимодействие',
-        'OFFLINE_INFORM' => 'Бот информирование',
-        'OFFLINE_SMS' => 'Смс информирование',
-        'OFFLINE_ZAKRYTIE' => 'Справка о закрытии',
+        'PDN' => 'Уведомление о показателе долговой нагрузки'
     );
     
     private $client_visible = array(
-        'ANKETA_PEP' => 1,
+        'ANKETA_PEP' => 0,
+        'SOLGLASHENIE_PEP' => 1,
         'SOGLASIE_VZAIMODEYSTVIE' => 0,
-        'SOGLASIE_MEGAFON' => 0,
-        'SOGLASIE_SCORING' => 0,
         'SOGLASIE_SPISANIE' => 0,
-        'PRICHINA_OTKAZA' => 0,
-        
-        'IND_USLOVIYA_NL' => 1,
+        'IND_USLOVIYA' => 1,
         'POLIS_STRAHOVANIYA' => 1,
-        'DOP_USLUGI_VIDACHA' => 0,
-
-        'DOP_SOGLASHENIE_PROLONGATSIYA' => 1,
-        'DOP_USLUGI_PROLONGATSIYA' => 0,
-
-        'SUD_PRIKAZ' => 0,
-        'SUD_SPRAVKA' => 0,
-        'SUD_VOZBUZHDENIE' => 0,
-
-        'OFFLINE_AKT_CONSULTATION' => 0,
-        'OFFLINE_ANKETA' => 0,
-        'OFFLINE_DOGOVOR' => 0,
-        'OFFLINE_DOGOVOR_CONSULTATION' => 0,
-        'OFFLINE_DOP_SOGLASHENIE' => 0,
-        'OFFLINE_PKO' => 0,
-        'OFFLINE_RKO' => 0,
-        'OFFLINE_ASP' => 0,
-        'OFFLINE_OBRABOTKA' => 0,
-        'OFFLINE_INFORM' => 0,
-        'OFFLINE_SMS' => 0,
-        'OFFLINE_ZAKRYTIE' => 0,
+        'PDN' => 1
     );
     
     public function create_offline_documents($contract_id)
