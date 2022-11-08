@@ -36,13 +36,8 @@ class Best2pay extends Core
         'PAYMENT' => '9807', // сектор для оплаты любой картой (C2A)
     );
 
-    //МИНБ
-    private $fee_7182 = 0.05;
     private $min_fee = 3000;
-
-    //СНГБ
-    private $fee = 0.018;
-    //private $min_fee = 3000;
+    private $fee = 0.04;
 
     private $passwords = array(
         '9811' => 'G824087',
@@ -55,13 +50,6 @@ class Best2pay extends Core
     public function __construct()
     {
         parent::__construct();
-
-        $this->sectors = array(
-            'PAY_CREDIT' => '4219', //сектор для отправки кредита на карту клиента (P2PCredit)
-            'RECURRENT' => '4222', // сектор для совершения рекурентных платежей (token)
-            'ADD_CARD' => '4222', // сектор для привязки карты (token)
-            'PAYMENT' => '4220', // сектор для оплаты любой картой (C2A)
-        );
     }
     
     public function get_sectors()
