@@ -10,7 +10,7 @@ class Best2pay extends Core
         4809388889655340, 05/2022, 195 // проведена
      */
 
-    private $url = 'https://test.best2pay.net/';
+    private $url = 'https://pay.best2pay.net/';
     private $currency_code = 643;
     
     /** пары сектор => пароль
@@ -883,6 +883,33 @@ class Best2pay extends Core
         $this->db->query($query);
     }
 
+    public function CreditBalance($data, $pass)
+    {
+        $nonce = rand(0, 999999999999);
+
+        $signature =
+            [
+                'sector' => $data['sector'],
+                'nonce'  => $nonce,
+                'password' => $pass
+            ];
+
+        $params =
+            [
+                'sector' => $data['sector'],
+                'nonce' => $nonce,
+                'signature' => $this->get_signature($signature)
+            ];
+
+        $b2p_order = $this->send('P2PCreditBalance', $params);
+
+        echo '<pre>';
+        var_dump($params);
+        var_dump($b2p_order);
+
+        return $b2p_order;
+    }
+
     public function pay_contract_with_register($contract_id)
     {
         echo 'START '.__METHOD__.'<br />';
@@ -890,11 +917,7 @@ class Best2pay extends Core
         $password = $this->passwords[$sector];
 
 
-        if (!($contract = $this->contracts->get_contract($contract_id)))
-            return false;
-
-        if ($contract->status != 1)
-            return false;
+        $contract = $this->contracts->get_contract($contract_id);
 
         $this->contracts->update_contract($contract->id, array('status' => 9));
 
@@ -916,6 +939,7 @@ class Best2pay extends Core
             'description' => $description,
             'reference' => $contract->id,
         );
+
         $data['signature'] = $this->get_signature(array(
             $data['sector'],
             $data['amount'],
@@ -926,7 +950,7 @@ class Best2pay extends Core
         $b2p_order = $this->send('Register', $data);
         $xml = simplexml_load_string($b2p_order);
         $b2p_order_id = (string)$xml->id;
-        //echo __FILE__.' '.__LINE__.'<br /><pre>';echo htmlspecialchars($b2p_order);echo '</pre><hr />';
+ //     echo __FILE__.' '.__LINE__.'<br /><pre>';echo htmlspecialchars($b2p_order);echo '</pre><hr />';
         if (empty($b2p_order))
             return 'ORDER UNREGISTERED';
 
@@ -961,7 +985,7 @@ class Best2pay extends Core
         if ($p2pcredit_id = $this->add_p2pcredit($p2pcredit))
         {
             $response = $this->send('P2PCredit', $data, 'gateweb');
-            //echo __FILE__.' '.__LINE__.'<br /><pre>';echo(htmlspecialchars($response));echo '</pre><hr />';
+ //           echo __FILE__.' '.__LINE__.'<br /><pre>';echo(htmlspecialchars($response));echo '</pre><hr />';
             $xml = simplexml_load_string($response);
             $status = (string)$xml->state;
 
@@ -974,6 +998,70 @@ class Best2pay extends Core
 
             return $status;
         }
+
+        exit;
+    }
+
+    public function purchase_by_token($card_id, $amount, $description)
+    {
+        $sector = $this->sectors['RECURRENT'];
+        $password = $this->passwords[$sector];
+
+        if (!($card = $this->cards->get_card($card_id)))
+            return false;
+        if (!($user = $this->users->get_user((int)$card->user_id)))
+            return false;
+
+
+        // регистрируем оплату
+        $data = array(
+            'sector' => $sector,
+            'amount' => $amount,
+            'currency' => $this->currency_code,
+            'reference' => $user->id,
+            'description' => $description,
+            'phone' => $user->phone_mobile,
+            'email' => $user->email,
+            'first_name' => $user->firstname,
+            'last_name' => $user->lastname,
+            'patronymic' => $user->patronymic,
+        );
+        $data['signature'] = $this->get_signature(array($data['sector'], $data['amount'], $data['currency'], $password));
+
+        $b2p_order = $this->send('Register', $data);
+        $xml = simplexml_load_string($b2p_order);
+        $b2p_order_id = (string)$xml->id;
+        $data = array(
+            'sector' => $sector,
+            'id' => $b2p_order_id,
+            'token' => $card->token,
+//            'fee' => $fee
+        );
+        $data['signature'] = $this->get_signature(array(
+            $data['sector'],
+            $data['id'],
+            $data['token'],
+//            $data['fee'],
+            $password
+        ));
+
+        $recurring = $this->send('PurchaseByToken', $data);
+        $xml = simplexml_load_string($recurring);
+        $status = (string)$xml->state;
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($recurring );echo '</pre><hr />';
+
+        $transaction_id = $this->transactions->add_transaction(array(
+            'user_id' => $user->id,
+            'amount' => $amount,
+            'sector' => $sector,
+            'body' => json_encode($data),
+            'register_id' => $b2p_order_id,
+            'reference' => $user->id,
+            'description' => $description,
+            'created' => date('Y-m-d H:i:s'),
+            'callback_response' => $recurring
+        ));
+        return $xml;
     }
         
 }

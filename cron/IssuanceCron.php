@@ -156,7 +156,7 @@ class IssuanceCron extends Core
 
         $contract_order = $this->orders->get_order((int)$contract->order_id);
 
-        $insurance_cost = $this->insurances->get_insurance_cost($contract_order);
+        $insurance_cost = $contract->amount * 0.25;
 
         $params = array(
             'lastname' => $contract_order->lastname,

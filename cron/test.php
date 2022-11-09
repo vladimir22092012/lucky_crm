@@ -16,12 +16,12 @@ class test extends Core
     public function __construct()
     {
         parent::__construct();
-        $this->import_clients();
+        $this->correct_balances();
     }
 
     private function import_clients()
     {
-        $tmp_name = $this->config->root_dir . '/files/clients2.xlsx';
+        $tmp_name = $this->config->root_dir . '/files/clients.xlsx';
         $format = IOFactory::identify($tmp_name);
         $reader = IOFactory::createReader($format);
         $spreadsheet = $reader->load($tmp_name);
@@ -33,6 +33,13 @@ class test extends Core
 
         for ($row = $first_row; $row <= $last_row; $row++) {
 
+            $lastname = $active_sheet->getCell('B' . $row)->getValue();
+            $firstname = $active_sheet->getCell('C' . $row)->getValue();
+            $patronymic = $active_sheet->getCell('D' . $row)->getValue();
+
+            if(empty($lastname))
+                continue;
+
             $birth = $active_sheet->getCell('E' . $row)->getFormattedValue();
             $passport_date = $active_sheet->getCell('AG' . $row)->getFormattedValue();
 
@@ -42,12 +49,10 @@ class test extends Core
             $reg_id = $this->Addresses->add_address(['adressfull' => $regaddress]);
             $fakt_id = $this->Addresses->add_address(['adressfull' => $faktaddress]);
 
-            $lastname = $active_sheet->getCell('B' . $row)->getValue();
-            $firstname = $active_sheet->getCell('C' . $row)->getValue();
-            $patronymic = $active_sheet->getCell('D' . $row)->getValue();
-
             $phone = preg_replace("/[^,.0-9]/", '', $active_sheet->getCell('I' . $row)->getValue());
-            $phone = str_replace('8', '7', $phone);
+            $phone = str_split($phone);
+            $phone[0] = '7';
+            $phone = implode('', $phone);
 
             $user = [
                 'firstname' => ucfirst($firstname),
@@ -79,12 +84,12 @@ class test extends Core
             $returnDate = $active_sheet->getCell('L' . $row)->getFormattedValue();
 
             $new_order = [
-                'date' => $issuance_date,
+                'date' => date('Y-m-d H:i:s', strtotime($issuance_date)),
                 'user_id' => $userId,
                 'period' => 30,
-                'amount' => $active_sheet->getCell('P' . $row)->getValue(),
-                'accept_date' => $issuance_date,
-                'confirm_date' => $issuance_date,
+                'amount' => $active_sheet->getCell('Q' . $row)->getValue(),
+                'accept_date' => date('Y-m-d H:i:s', strtotime($issuance_date)),
+                'confirm_date' => date('Y-m-d H:i:s', strtotime($issuance_date)),
                 'status' => 5,
                 'percent' => 1
             ];
@@ -98,11 +103,12 @@ class test extends Core
                     'number' => $active_sheet->getCell('J' . $row)->getValue(),
                     'type' => 'base',
                     'period' => 30,
-                    'amount' => $active_sheet->getCell('F' . $row)->getValue(),
+                    'base_percent' => 1,
+                    'amount' => $active_sheet->getCell('Q' . $row)->getValue(),
                     'status' => 4,
                     'expired_days' => $active_sheet->getCell('U' . $row)->getValue(),
                     'create_date' => $issuance_date,
-                    'inssuance_date' => $issuance_date,
+                    'inssuance_date' => date('Y-m-d H:i:s', strtotime($issuance_date)),
                     'return_date' => date('Y-m-d', strtotime($returnDate)),
                     'loan_body_summ' => $active_sheet->getCell('Q' . $row)->getValue(),
                     'loan_percents_summ' => $active_sheet->getCell('R' . $row)->getValue(),
@@ -111,6 +117,25 @@ class test extends Core
 
             $contractId = $this->contracts->add_contract($new_contract);
             $this->orders->update_order($orderId, ['contract_id' => $contractId]);
+
+            $percents_summ = round(($new_contract['loan_body_summ'] / 100 * $new_contract['base_percent']) * 2, 2);
+
+            $this->contracts->update_contract($contractId, array(
+                'loan_percents_summ' => $new_contract['loan_percents_summ'] + $percents_summ
+            ));
+
+
+            $this->operations->add_operation(array(
+                'contract_id' => $contractId,
+                'user_id' => $userId,
+                'order_id' => $orderId,
+                'type' => 'PERCENTS',
+                'amount' => $percents_summ,
+                'created' => date('Y-m-d H:i:s'),
+                'loan_body_summ' => $new_contract['loan_body_summ'],
+                'loan_percents_summ' => $new_contract['loan_percents_summ'] + $percents_summ,
+                'loan_peni_summ' => $new_contract['loan_peni_summ']
+            ));
         }
     }
 
@@ -279,6 +304,69 @@ class test extends Core
 
             $this->contracts->update_contract($contract_id, $new_contract);
             $this->orders->update_order($order->id, ['contract_id' => $contract_id]);
+        }
+    }
+
+    private function correct_balances()
+    {
+        $tmp_name = $this->config->root_dir . '/files/clients.xlsx';
+        $format = IOFactory::identify($tmp_name);
+        $reader = IOFactory::createReader($format);
+        $spreadsheet = $reader->load($tmp_name);
+
+        $active_sheet = $spreadsheet->getActiveSheet();
+
+        $first_row = 5;
+        $last_row = $active_sheet->getHighestRow();
+
+        for ($row = $first_row; $row <= $last_row; $row++) {
+
+            $lastname = $active_sheet->getCell('B' . $row)->getValue();
+            $firstname = $active_sheet->getCell('C' . $row)->getValue();
+            $patronymic = $active_sheet->getCell('D' . $row)->getValue();
+
+            if(empty($lastname))
+                continue;
+
+            $this->db->query("
+            SELECT id
+            FROM s_users
+            where lastname = ?
+            and firstname = ?
+            and patronymic = ?
+            ", $lastname, $firstname, $patronymic);
+
+            $userId = $this->db->result('id');
+
+            $this->db->query("
+            SELECT *
+            FROM s_contracts
+            where user_id = ?
+            ", $userId);
+
+            $contract = $this->db->result();
+
+            $percents = $active_sheet->getCell('R' . $row)->getValue();
+
+            $percents_summ = round(($contract->loan_body_summ / 100 * $contract->base_percent)*12, 2);
+
+            $this->contracts->update_contract($contract->id, array(
+                'loan_percents_summ' => $percents + $percents_summ
+            ));
+
+
+            $this->operations->add_operation(array(
+                'contract_id' => $contract->id,
+                'user_id' => $contract->user_id,
+                'order_id' => $contract->order_id,
+                'type' => 'PERCENTS',
+                'amount' => $percents_summ,
+                'created' => date('Y-m-d H:i:s'),
+                'loan_body_summ' => $contract->loan_body_summ,
+                'loan_percents_summ' => $percents + $percents_summ,
+                'loan_charge_summ' => $contract->loan_charge_summ,
+                'loan_peni_summ' => $contract->loan_peni_summ,
+            ));
         }
     }
 }
