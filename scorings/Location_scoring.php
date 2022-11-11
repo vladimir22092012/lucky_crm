@@ -18,7 +18,9 @@ class Location_scoring extends Core
         {
             if ($order = $this->orders->get_order((int)$scoring->order_id))
             {
-                if (empty($order->Regregion))
+                $regAddress = $this->Addresses->get_address($order->regaddress_id);
+
+                if (empty($regAddress->region))
                 {
                     $update = array(
                         'status' => 'error',
@@ -29,17 +31,17 @@ class Location_scoring extends Core
                 {
                     $exception_regions = array_map('trim', explode(',', $scoring_type->params['regions']));
                 
-                    $score = !in_array(mb_strtolower(trim($order->Regregion), 'utf8'), $exception_regions);
+                    $score = !in_array(mb_strtolower(trim($regAddress->region), 'utf8'), $exception_regions);
                 
                     $update = array(
                         'status' => 'completed',
-                        'body' => serialize(array('region' => $order->Regregion)),
+                        'body' => serialize(array('region' => $regAddress->region)),
                         'success' => $score
                     );
                     if ($score)
-                        $update['string_result'] = 'Допустимый регион: '.$order->Regregion;
+                        $update['string_result'] = 'Допустимый регион: '.$regAddress->region;
                     else
-                        $update['string_result'] = 'Недопустимый регион: '.$order->Regregion;
+                        $update['string_result'] = 'Недопустимый регион: '.$regAddress->region;
 
                 }
                 
