@@ -4,6 +4,7 @@ class TestController extends Controller
 {
     public function fetch()
     {
+<<<<<<< HEAD
         $scoring = $this->scorings->get_scoring(23);
         $order = $this->orders->get_order($scoring->order_id);
 
@@ -65,34 +66,23 @@ class TestController extends Controller
                 $update['body'] = null;
                 $update['success'] = 1;
                 $update['string_result'] = 'Сумма долга: ' . $expSum;
+=======
+        $scoring_types = $this->scorings->get_types();
+        foreach ($scoring_types as $scoring_type)
+        {
+            if ($scoring_type->active && empty($scoring_type->is_paid))
+            {
+                $add_scoring = array(
+                    'user_id' => 684,
+                    'order_id' => 683,
+                    'type' => $scoring_type->name,
+                    'status' => 'new',
+                    'created' => date('Y-m-d H:i:s')
+                );
+
+                $this->scorings->add_scoring($add_scoring);
+>>>>>>> e48f334e4354912d016fec678709bbdc00a26ada
             }
-        } else {
-            $update['body'] = null;
-            $update['success'] = 1;
-            $update['string_result'] = 'Долгов нет';
         }
-
-        $this->scorings->update_scoring(23, $update);
-
-        return $update;
-    }
-
-    private function send_request($params)
-    {
-        $request = $this->XMLSerializer->serialize($params);
-
-        $ch = curl_init('https://i-sphere.ru/2.00/');
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_HEADER, false);
-        $html = curl_exec($ch);
-        $html = simplexml_load_string($html);
-        $json = json_encode($html);
-        $array = json_decode($json, TRUE);
-        curl_close($ch);
-
-        return $array;
     }
 }

@@ -324,7 +324,11 @@ class OrderController extends Controller
                                     }
                                 }
                             }
-                            if ($scoring->type == 'nbki') {
+                            if ($scoring->type == 'nbki' ) {
+                                $scoring->body = unserialize($scoring->body);
+                            }
+
+                            if ($scoring->type == 'addresses' && !empty($scoring->body)) {
                                 $scoring->body = unserialize($scoring->body);
                             }
 

@@ -1,6 +1,6 @@
 <?php
 
-class Whatsapp_scoring extends Core
+class Viber_scoring extends Core
 {
     public function run_scoring($scoring_id)
     {
@@ -12,7 +12,7 @@ class Whatsapp_scoring extends Core
             [
                 'UserID' => 'barvil',
                 'Password' => 'KsetM+H5',
-                'sources' => 'whatsapp',
+                'sources' => 'viber',
                 'PhoneReq' => [
                     'phone' => $phone
                 ]
@@ -22,32 +22,18 @@ class Whatsapp_scoring extends Core
 
         $update = array(
             'status' => 'completed',
-            'success' => !isset($request['Source']) ? 0 : 1
+            'success' => (!isset($request['Source']) && $request['Source']['ResultsCount'] > 0) ? 1 : 0
         );
 
-        if (isset($request['Source'])) {
+        if (isset($request['Source']) && $request['Source']['ResultsCount'] > 0) {
             foreach ($request['Source']['Record'] as $source) {
                 foreach ($source as $field) {
-                    if ($field['FieldName'] == 'StatusText')
-                        $update['body']['status'] = 'Статус: ' . $field['FieldValue'];
-
-                    if ($field['FieldName'] == 'StatusDate')
-                        $update['body']['statusDate'] = 'Дата установки статуса: ' . date('d.m.Y', strtotime($field['FieldValue']));
-
-                    if ($field['FieldName'] == 'FullPhoto')
-                        $update['body']['image'] = 'Ссылка на фото: ' . $field['FieldValue'];
-
-                    if ($field['FieldName'] == 'AvatarHidden')
-                        $update['body']['image'] = 'Ссылка на фото: Аватар скрыт';
-
-                    if ($field['FieldName'] == 'StatusHidden')
-                        $update['body']['status'] = 'Статус: Скрыт';
+                    if ($field['FieldName'] == 'name')
+                        $update['string_result'] = 'Имя: ' . $field['FieldValue'];
                 }
             }
-
-            $update['string_result'] = 'Клиент найден';
-            $update['body'] = serialize($update['body']);
-        } else {
+        } else
+        {
             $update['body'] = null;
             $update['string_result'] = 'Клиент не найден';
         }
