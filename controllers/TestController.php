@@ -11,12 +11,9 @@ class TestController extends Controller
             [
                 'UserID' => 'barvil',
                 'Password' => 'KsetM+H5',
-                'sources' => 'fssp',
-                'PersonReq' => [
-                    'first' => $order->firstname,
-                    'middle' => $order->patronymic,
-                    'paternal' => $order->lastname,
-                    'birthDt' => date('Y-m-d', strtotime($order->birth))
+                'sources' => 'viber',
+                'PhoneReq' => [
+                    'phone' => '79276928586'
                 ]
             ];
 
