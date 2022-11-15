@@ -40,7 +40,7 @@ class Fssp_scoring extends Core
 
         if ($request['Source']['ResultsCount'] > 0) {
             foreach ($request['Source']['Record'] as $source) {
-                foreach ($source['Field'] as $field) {
+                foreach ($source as $field) {
                     if ($field['FieldName'] == 'Total')
                         $expSum += $field['FieldValue'];
 

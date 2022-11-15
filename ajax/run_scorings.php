@@ -81,6 +81,8 @@ class RunScoringsApp extends Core
                         case 'addresses':
                         case 'cards':
                         case 'passport':
+                        case 'leadgens':
+                        case 'contacts':
 
                             $add_scoring = array(
                                 'user_id' => $order->user_id,
