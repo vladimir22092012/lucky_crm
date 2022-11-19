@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.18, created on 2022-10-31 09:28:49
+<?php /* Smarty version Smarty-3.1.18, created on 2022-11-16 09:00:33
          compiled from "/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/order.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2818875476343af9e6a2cf3-14201628%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'fe2aa0d83c9fc8b9ef94f66cee81e67ab66d6ce9' => 
     array (
       0 => '/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/order.tpl',
-      1 => 1667197728,
+      1 => 1668513754,
       2 => 'file',
     ),
   ),
@@ -62,6 +62,8 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'scorings' => 0,
     'number_of_active' => 0,
     'recommended_amount' => 0,
+    'id' => 0,
+    'fio' => 0,
     'efrsb_link' => 0,
     'audit_types' => 0,
     'services_error' => 0,
@@ -2698,13 +2700,32 @@ $_smarty_tpl->tpl_vars['scoring_type']->_loop = true;
                                                                             <?php }?>
                                                                             <span class="time">
                                                                             <?php if ($_smarty_tpl->tpl_vars['scoring_type']->value->name=='whatsapp') {?>
-                                                                                <span><?php echo $_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->body['status'];?>
-</span><br>
-                                                                                <span><?php echo $_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->body['statusDate'];?>
-</span><br>
+                                                                                <?php if (isset($_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->body['status'])) {?><span><?php echo $_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->body['status'];?>
+</span><br><?php }?>
+                                                                                <?php if (isset($_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->body['statusDate'])) {?><span><?php echo $_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->body['statusDate'];?>
+</span><br><?php }?>
+                                                                                <?php if (isset($_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->body['image'])&&$_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->body['image']!='Ссылка на фото: Аватар скрыт') {?>
                                                                                 <a href="<?php echo $_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->body['image'];?>
 " target="_blank">Ссылка на фото</a><br>
+                                                                                <?php } else { ?>
+                                                                                <span>Аватар: Скрыт</span><br>
                                                                             <?php }?>
+                                                                            <?php }?>
+                                                                                <?php if ($_smarty_tpl->tpl_vars['scoring_type']->value->name=='addresses') {?>
+                                                                                    <?php if (!empty($_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->body)) {?>
+                                                                                        <?php  $_smarty_tpl->tpl_vars['fio'] = new Smarty_Variable; $_smarty_tpl->tpl_vars['fio']->_loop = false;
+ $_smarty_tpl->tpl_vars['id'] = new Smarty_Variable;
+ $_from = $_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->body; if (!is_array($_from) && !is_object($_from)) { settype($_from, 'array');}
+foreach ($_from as $_smarty_tpl->tpl_vars['fio']->key => $_smarty_tpl->tpl_vars['fio']->value) {
+$_smarty_tpl->tpl_vars['fio']->_loop = true;
+ $_smarty_tpl->tpl_vars['id']->value = $_smarty_tpl->tpl_vars['fio']->key;
+?>
+                                                                                            <a href="client/<?php echo $_smarty_tpl->tpl_vars['id']->value;?>
+"><?php echo $_smarty_tpl->tpl_vars['fio']->value;?>
+</a><br>
+                                                                                        <?php } ?>
+                                                                                    <?php }?>
+                                                                                <?php }?>
                                                                                 <?php if ($_smarty_tpl->tpl_vars['scoring_type']->value->name=='fssp') {?>
                                                                                     <span>Сумма долга: <?php echo $_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->body['amount'];?>
 </span><br>
