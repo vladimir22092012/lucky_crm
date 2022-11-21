@@ -203,7 +203,7 @@ class Equifax_scoring extends Core
                 'status' => 'complited',
                 'body' => null,
                 'string_result' => ($reject == 1) ? 'Отказ' : 'Одобренный лимит: '.$limit,
-                'success' => ($reject == 1) ? 1: 0
+                'success' => ($reject == 1) ? 0: 1
             ];
         }
 

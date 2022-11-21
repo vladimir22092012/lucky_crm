@@ -6,23 +6,23 @@ class Juicescore_scoring extends Core
     private $order_id;
     private $audit_id;
     private $type;
-    
+
     private $key = '';
     private $url = 'https://api.juicyscore.net/getscore/';
-    
+
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-        $this->key = $this->settings->apikeys['juicescore']['api_key'];
+        $this->key = 'MCzR7jDUyyQFTD8EgkhNhdDjygYzFM';
     }
 
     public function run_scoring($scoring_id)
     {
         $update = array();
-        
-    	$scoring_type = $this->scorings->get_type('juicescore');
-        
+
+        $scoring_type = $this->scorings->get_type('juicescore');
+
         if ($scoring = $this->scorings->get_scoring($scoring_id))
         {
             if ($order = $this->orders->get_order((int)$scoring->order_id))
@@ -51,7 +51,7 @@ class Juicescore_scoring extends Core
                                 'success' => $score,
                                 'string_result' => empty($score) ? 'Проверка не пройдена' : 'Проверка пройдена',
                             );
-                            
+
                         }
                         else
                         {
@@ -59,8 +59,9 @@ class Juicescore_scoring extends Core
                                 'status' => 'error',
                                 'string_result' => 'При запросе произошла ошибка',
                                 'body' => serialize($result),
+                                'success' => 0
                             );
-                            
+
                         }
                     }
                     else
@@ -68,12 +69,13 @@ class Juicescore_scoring extends Core
                         $update = array(
                             'status' => 'error',
                             'string_result' => 'Не удалось выполнить запрос',
+                            'success' => 0
                         );
-                        
+
                     }
 
                 }
-                
+
             }
             else
             {
@@ -82,35 +84,35 @@ class Juicescore_scoring extends Core
                     'string_result' => 'не найдена заявка'
                 );
             }
-            
+
             if (!empty($update))
                 $this->scorings->update_scoring($scoring_id, $update);
-            
+
             return $update;
 
         }
     }
-    
-    
-    
+
+
+
     public function run($audit_id, $user_id, $order_id)
     {
         $this->user_id = $user_id;
         $this->audit_id = $audit_id;
         $this->order_id = $order_id;
-        
+
         $this->type = $this->scorings->get_type('juicescore');
-    	
+
         $response = $this->scoring($this->order_id);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($response);echo '</pre><hr />';    
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($response);echo '</pre><hr />';
 
         return $response;
     }
-    
+
     public function scoring($order_id)
     {
         $order = $this->orders->get_order((int)$order_id);
-        
+
         if (!($scoring = $this->getscore($order_id)))
         {
             $result = new StdClass();
@@ -121,9 +123,9 @@ class Juicescore_scoring extends Core
             $scoring = (array)json_decode($scoring);
             if (isset($scoring['Predictors']))
                 $scoring['Predictors'] = (array)$scoring['Predictors'];
-                
+
             $result = $scoring;
-            
+
             if (!empty($scoring['Success']))
             {
                 $score = (int)$scoring['AntiFraud score'] < ($this->type->params['scorebal']);
@@ -145,23 +147,23 @@ class Juicescore_scoring extends Core
                 }
 
                 $this->scorings->add_scoring($add_scoring);
-                
+
             }
-            
+
         }
         return $result;
     }
-    
+
     public function getscore($order_id)
     {
         if (!($order = $this->orders->get_order((int)$order_id)))
             return false;
-        
+
         $email_expls = explode('@', $order->email);
         $prepare_email = substr($email_expls[0], 0, -1);
-        
+
         $params = array(
-            'account_id' => 'Nalichnoe_RU_test',
+            'account_id' => 'MKK_Barvil_RU',
             'client_id' => $order->user_id,
             'session_id' => $order->juicescore_session_id,
             'channel' => 'SITE',
@@ -191,83 +193,21 @@ class Juicescore_scoring extends Core
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($params);echo '</pre><hr />';        
 //exit;
         $url = $this->url.'?'.http_build_query($params);
-        
+
         $headers = array(
             'session: '.$this->key
         );
-        
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        
+
         $res = curl_exec($ch);
-        
+
         curl_close($ch);
-        
+
         return $res;
-        
-    }
-    
-    public function test()
-    {
-        
-        $url = 'https://api.juicyscore.com/getscore/?
-            account_id=Boostra_RU
-            &application_id=123
-            &client_id=124
-            &channel=SITE
-            &is_js=1
-            &ip=54.38.34.205
-            &useragent=Mozilla%2F5.0+%28Linux%3B+U%3B+Android+4.1.2%3B+en-US%3B+HUAWEI+P2-6011+Build%2FHuaweiP2-6011%29+AppleWebKit%2F534.30+%28KHTML%2C+like+Gecko%29+Version%2F4.0+UCBrowser%2F10.6.2.599+U3%2F0.8.0+Mobile+Safari%2F534.30
-            &time_zone=6
-            &time_local=15.10.2019+16:34:36
-            &time_utc3=15.10.2019+16:34:36
-            &ph_country=7
-            &phone=961235
-            &mail=asdfadad1234
-            &referrer=http://cityadspix.com/click-FQDA856V-KHEQBB2A?bt=25
-            &tl=1
-            &sa=xtd4
-            &sa2=tb.znvy.eh/frnepu?se=nzvtb
-            &se2=dhrel
-            &d=%Q0%O1%Q1%8O%Q1%81%Q1%80%Q0%OR+%Q0%O4%Q0%O5%Q0%OQ%Q1%8P%Q0%O3%Q0%O8+%Q0%OS%Q0%OR+%Q1%81%Q0%O8%Q1%81%Q1%82%Q0%O5%Q0%OP%Q0%O5+%Q1%81%Q0%OR%Q0%OQ%Q1%82%Q0%O0%Q0%ON%Q1%82&tenor=333&amount=250000
-            &response_content_type=json
-            &card_number=123456XXXX1234
-            &card_expiration_date=11%2F19
-            &session_id=w.20200819075042ae820a68-e1f0-11ea-bcce-e236344c85d1
-            &zip_billing=123456
-            &country_code_billing=RU
-            &version=12
-        ';
-"
-$endpoint = 'http://example.com/endpoint';
-$params = array('foo' => 'bar');
-$url = $endpoint . '?' . http_build_query($params);
-curl_setopt($ch, CURLOPT_URL, $url);
-";
-        
-        $headers = array(
-            'session: '.$this->key
-        );
-        
-        $url = 'https://api.juicyscore.com/getscore';
-        
-        $params = array(
-        
-        );
-        
-        $url .= '?' . http_build_query($params);
-        
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        
-        $res = curl_exec($ch);
-        
-        curl_close($ch);
-        
-echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($res);echo '</pre><hr />';
+
     }
 }

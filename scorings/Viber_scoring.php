@@ -22,7 +22,7 @@ class Viber_scoring extends Core
 
         $update = array(
             'status' => 'completed',
-            'success' => (!isset($request['Source']) && $request['Source']['ResultsCount'] > 0) ? 1 : 0
+            'success' => (isset($request['Source']) && $request['Source']['ResultsCount'] > 0) ? 1 : 0
         );
 
         if (isset($request['Source']) && $request['Source']['ResultsCount'] > 0) {

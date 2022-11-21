@@ -16,7 +16,7 @@ class test extends Core
     public function __construct()
     {
         parent::__construct();
-        $this->correct_balances();
+        $this->import_clients();
     }
 
     private function import_clients()
@@ -37,7 +37,7 @@ class test extends Core
             $firstname = $active_sheet->getCell('C' . $row)->getValue();
             $patronymic = $active_sheet->getCell('D' . $row)->getValue();
 
-            if(empty($lastname))
+            if (empty($lastname))
                 continue;
 
             $birth = $active_sheet->getCell('E' . $row)->getFormattedValue();
@@ -54,29 +54,30 @@ class test extends Core
             $phone[0] = '7';
             $phone = implode('', $phone);
 
-            $user = [
-                'firstname' => ucfirst($firstname),
-                'lastname' => ucfirst($lastname),
-                'patronymic' => ucfirst($patronymic),
-                'phone_mobile' => $phone,
-                'email' => $active_sheet->getCell('F' . $row)->getValue(),
-                'birth' => date('d.m.Y', strtotime($birth)),
-                'passport_serial' => $active_sheet->getCell('AE' . $row)->getValue() . '-' . $active_sheet->getCell('AD' . $row)->getValue(),
-                'passport_date' => date('d.m.Y', strtotime($passport_date)),
-                'passport_issued' => $active_sheet->getCell('AF' . $row)->getValue(),
-                'snils' => $active_sheet->getCell('Y' . $row)->getValue(),
-                'inn' => $active_sheet->getCell('Z' . $row)->getValue(),
-                'workphone' => $active_sheet->getCell('H' . $row)->getValue(),
-                'regaddress_id' => $reg_id,
-                'faktaddress_id' => $fakt_id,
-                'created' => date('Y-m-d H:i:s'),
-                'stage_personal' => 1,
-                'stage_passport' => 1,
-                'stage_address' => 1,
-                'stage_work' => 1,
-                'stage_files' => 1,
-                'stage_card' => 1
-            ];
+            $user =
+                [
+                    'firstname' => ucfirst($firstname),
+                    'lastname' => ucfirst($lastname),
+                    'patronymic' => ucfirst($patronymic),
+                    'phone_mobile' => $phone,
+                    'email' => $active_sheet->getCell('F' . $row)->getValue(),
+                    'birth' => date('d.m.Y', strtotime($birth)),
+                    'passport_serial' => $active_sheet->getCell('AD' . $row)->getValue() . '-' . $active_sheet->getCell('AE' . $row)->getValue(),
+                    'passport_date' => date('d.m.Y', strtotime($passport_date)),
+                    'passport_issued' => $active_sheet->getCell('AF' . $row)->getValue(),
+                    'snils' => $active_sheet->getCell('Y' . $row)->getValue(),
+                    'inn' => $active_sheet->getCell('Z' . $row)->getValue(),
+                    'workphone' => $active_sheet->getCell('H' . $row)->getValue(),
+                    'regaddress_id' => $reg_id,
+                    'faktaddress_id' => $fakt_id,
+                    'created' => date('Y-m-d H:i:s'),
+                    'stage_personal' => 1,
+                    'stage_passport' => 1,
+                    'stage_address' => 1,
+                    'stage_work' => 1,
+                    'stage_files' => 1,
+                    'stage_card' => 1
+                ];
 
             $userId = $this->users->add_user($user);
 
@@ -118,7 +119,7 @@ class test extends Core
             $contractId = $this->contracts->add_contract($new_contract);
             $this->orders->update_order($orderId, ['contract_id' => $contractId]);
 
-            $percents_summ = round(($new_contract['loan_body_summ'] / 100 * $new_contract['base_percent']) * 2, 2);
+            $percents_summ = round(($new_contract['loan_body_summ'] / 100 * $new_contract['base_percent']) * 15, 2);
 
             $this->contracts->update_contract($contractId, array(
                 'loan_percents_summ' => $new_contract['loan_percents_summ'] + $percents_summ
@@ -155,7 +156,7 @@ class test extends Core
 
             $id = $active_sheet->getCell('D' . $row)->getValue();
 
-            if(empty($id))
+            if (empty($id))
                 continue;
 
             $created = $active_sheet->getCell('A' . $row)->getFormattedValue();
@@ -163,8 +164,7 @@ class test extends Core
 
             $reject_reason = '';
 
-            if ($active_sheet->getCell('I' . $row)->getValue() === 'Отказ')
-            {
+            if ($active_sheet->getCell('I' . $row)->getValue() === 'Отказ') {
                 $reject_reason = $active_sheet->getCell('N' . $row)->getValue();
                 $status = 3;
             }
@@ -185,16 +185,14 @@ class test extends Core
                 $status = 2;
 
 
-
             if ($active_sheet->getCell('Q' . $row)->getValue() === 'ONLINE-0,5!')
                 $loantype_id = 2;
-            elseif($active_sheet->getCell('Q' . $row)->getValue() === 'ВСЕМ-0,9!')
+            elseif ($active_sheet->getCell('Q' . $row)->getValue() === 'ВСЕМ-0,9!')
                 $loantype_id = 3;
             else
                 $loantype_id = 1;
 
             $loantype = $this->Loantypes->get_loantype($loantype_id);
-
 
 
             $new_order = [
@@ -325,7 +323,7 @@ class test extends Core
             $firstname = $active_sheet->getCell('C' . $row)->getValue();
             $patronymic = $active_sheet->getCell('D' . $row)->getValue();
 
-            if(empty($lastname))
+            if (empty($lastname))
                 continue;
 
             $this->db->query("
@@ -348,7 +346,7 @@ class test extends Core
 
             $percents = $active_sheet->getCell('R' . $row)->getValue();
 
-            $percents_summ = round(($contract->loan_body_summ / 100 * $contract->base_percent)*12, 2);
+            $percents_summ = round(($contract->loan_body_summ / 100 * $contract->base_percent) * 12, 2);
 
             $this->contracts->update_contract($contract->id, array(
                 'loan_percents_summ' => $percents + $percents_summ
