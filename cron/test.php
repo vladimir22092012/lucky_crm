@@ -28,7 +28,7 @@ class test extends Core
 
         $active_sheet = $spreadsheet->getActiveSheet();
 
-        $first_row = 5;
+        $first_row = 1;
         $last_row = $active_sheet->getHighestRow();
 
         for ($row = $first_row; $row <= $last_row; $row++) {
@@ -118,8 +118,9 @@ class test extends Core
 
             $contractId = $this->contracts->add_contract($new_contract);
             $this->orders->update_order($orderId, ['contract_id' => $contractId]);
+            /*
 
-            $percents_summ = round(($new_contract['loan_body_summ'] / 100 * $new_contract['base_percent']) * 15, 2);
+            $percents_summ = round(($new_contract['loan_body_summ'] / 100 * $new_contract['base_percent']) * 14, 2);
 
             $this->contracts->update_contract($contractId, array(
                 'loan_percents_summ' => $new_contract['loan_percents_summ'] + $percents_summ
@@ -137,6 +138,8 @@ class test extends Core
                 'loan_percents_summ' => $new_contract['loan_percents_summ'] + $percents_summ,
                 'loan_peni_summ' => $new_contract['loan_peni_summ']
             ));
+
+            */
         }
     }
 
