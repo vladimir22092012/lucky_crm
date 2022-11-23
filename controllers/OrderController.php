@@ -465,7 +465,12 @@ class OrderController extends Controller
 
         $scoring_types = array();
         foreach ($this->scorings->get_types(array('active' => true)) as $type)
-            $scoring_types[$type->name] = $type;
+        {
+            if ($type->off_pk == 1 && in_array($order->client_status, ['pk', 'crm']))
+                continue;
+            else
+                $scoring_types[$type->name] = $type;
+        }
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scoring_types);echo '</pre><hr />';
         $this->design->assign('scoring_types', $scoring_types);
 

@@ -7,7 +7,14 @@ class Equifax_scoring extends Core
         $scoring = $this->scorings->get_scoring($scoring_id);
         $order = $this->orders->get_order($scoring->order_id);
 
-        list($passportSerial, $passportNumber) = explode('-', $order->passport_serial);
+        $passport_serial = explode('-', $order->passport_serial);
+
+        foreach ($passport_serial as $serial => $value) {
+            if (strlen($value) == 4)
+                $passportSerial = $value;
+            else
+                $passportNumber = $value;
+        }
 
         $regAddress = $this->Addresses->get_address($order->regaddress_id);
         $regAddress = $regAddress->adressfull;
@@ -31,8 +38,8 @@ class Equifax_scoring extends Core
                 "doc" => [
                     "country" => "Россия",
                     "type" => "паспорт РФ",
-                    "serial" => $passportNumber,
-                    "number" => $passportSerial,
+                    "serial" => $passportSerial,
+                    "number" => $passportNumber,
                     "date" => date('d.m.Y', strtotime($order->passport_date)),
                     "who" => $order->passport_issued
                 ],
@@ -64,44 +71,71 @@ class Equifax_scoring extends Core
         } else {
 
             $reject = 0;
+            $reason = '';
 
             if (in_array($order->client_status, ['nk', 'rep'])) {
-                if ($response['credit_count_active_overdue_11_12_13_sum_1000'] > 3)
+                if ($response['credit_count_active_overdue_11_12_13_sum_1000'] > 3) {
                     $reject = 1;
+                    $reason = 'credit_count_active_overdue_11_12_13_sum_1000';
+                }
 
                 if ($response['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] >= 1) {
-                    if ($response['credit_count_active_overdue_11_12_13_sum_1000'] > 2)
+                    if ($response['credit_count_active_overdue_11_12_13_sum_1000'] > 2) {
                         $reject = 1;
-                    if ($response['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] > 2)
+                        $reason = 'credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60';
+                    }
+                    if ($response['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] > 2) {
                         $reject = 1;
-                    if ($response['credit_avg_paid_for_type_19_days_90'] < 3000)
+                        $reason = 'credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60';
+                    }
+                    if ($response['credit_avg_paid_for_type_19_days_90'] < 3000) {
                         $reject = 1;
-                    if ($response['credit_count_delay_5'] < 5)
+                        $reason = 'credit_avg_paid_for_type_19_days_90';
+                    }
+                    if ($response['credit_count_delay_5'] < 5) {
                         $reject = 1;
+                        $reason = 'credit_count_delay_5';
+                    }
                 }
                 if ($response['creditsCreatedlast7day'] == 0) {
-                    if ($response['credit_count_active_overdue_11_12_13_sum_1000'] > 2)
+                    if ($response['credit_count_active_overdue_11_12_13_sum_1000'] > 2) {
                         $reject = 1;
-                    if ($response['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] > 2)
+                        $reason = 'credit_count_active_overdue_11_12_13_sum_1000';
+                    }
+                    if ($response['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] > 2) {
                         $reject = 1;
-                    if ($response['credit_avg_paid_for_type_19_days_90'] < 3000)
+                        $reason = 'credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60';
+                    }
+                    if ($response['credit_avg_paid_for_type_19_days_90'] < 3000) {
                         $reject = 1;
-                    if ($response['bkicountactivecredit'] > 25)
+                        $reason = 'credit_avg_paid_for_type_19_days_90';
+                    }
+                    if ($response['bkicountactivecredit'] > 25) {
                         $reject = 1;
-                    if ($response['interestForLastMonth'] > 21)
+                        $reason = 'bkicountactivecredit';
+                    }
+                    if ($response['interestForLastMonth'] > 21) {
                         $reject = 1;
+                        $reason = 'interestForLastMonth';
+                    }
                 }
                 if ($response['bkicountactivecredit'] > 22) {
-                    if ($response['creditsCreatedlast7day'] == 0)
+                    if ($response['creditsCreatedlast7day'] == 0) {
                         $reject = 1;
-                    if ($response['bkiscoring'] < 550 || $response['bkiscoring'] > 690)
+                        $reason = 'creditsCreatedlast7day';
+                    }
+                    if ($response['bkiscoring'] < 550 || $response['bkiscoring'] > 690) {
                         $reject = 1;
-                    if ($response['interestForLastMonth'] > 20)
+                        $reason = 'bkiscoring';
+                    }
+                    if ($response['interestForLastMonth'] > 20) {
                         $reject = 1;
-                    if ($response['credit_prolongation_count_contracts_with_age_180_type_19'] < 2)
+                        $reason = 'interestForLastMonth';
+                    }
+                    if ($response['credit_prolongation_count_contracts_with_age_180_type_19'] < 2) {
                         $reject = 1;
-                    if ($response['credit_avg_paid_for_type_19_days_90'] > 10000)
-                        $reject = 1;
+                        $reason = 'credit_prolongation_count_contracts_with_age_180_type_19';
+                    }
                 }
 
                 if ($reject == 0) {
@@ -120,42 +154,68 @@ class Equifax_scoring extends Core
                 }
 
             } else {
-                if ($response['credit_count_active_overdue_11_12_13_sum_1000'] > 3)
+                if ($response['credit_count_active_overdue_11_12_13_sum_1000'] > 3) {
                     $reject = 1;
+                    $reason = 'credit_count_active_overdue_11_12_13_sum_1000';
+                }
 
                 if ($response['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] >= 1) {
-                    if ($response['credit_count_active_overdue_11_12_13_sum_1000'] > 2)
+                    if ($response['credit_count_active_overdue_11_12_13_sum_1000'] > 2) {
                         $reject = 1;
-                    if ($response['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] > 2)
+                        $reason = 'credit_count_active_overdue_11_12_13_sum_1000';
+                    }
+                    if ($response['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] > 2) {
                         $reject = 1;
-                    if ($response['credit_avg_paid_for_type_19_days_90'] < 3000)
+                        $reason = 'credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60';
+                    }
+                    if ($response['credit_avg_paid_for_type_19_days_90'] < 3000) {
                         $reject = 1;
-                    if ($response['credit_count_delay_5'] < 5)
+                        $reason = 'credit_avg_paid_for_type_19_days_90';
+                    }
+                    if ($response['credit_count_delay_5'] < 5) {
                         $reject = 1;
+                        $reason = 'credit_count_delay_5';
+                    }
                 }
                 if ($response['creditsCreatedlast7day'] == 0) {
-                    if ($response['credit_count_active_overdue_11_12_13_sum_1000'] > 2)
+                    if ($response['credit_count_active_overdue_11_12_13_sum_1000'] > 2) {
                         $reject = 1;
-                    if ($response['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] >= 1)
+                        $reason = 'credit_count_active_overdue_11_12_13_sum_1000';
+                    }
+                    if ($response['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] >= 1) {
                         $reject = 1;
-                    if ($response['credit_avg_paid_for_type_19_days_90'] < 4000)
+                        $reason = 'credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60';
+                    }
+                    if ($response['credit_avg_paid_for_type_19_days_90'] < 4000) {
                         $reject = 1;
-                    if ($response['bkicountactivecredit'] > 25)
+                        $reason = 'credit_avg_paid_for_type_19_days_90';
+                    }
+                    if ($response['bkicountactivecredit'] > 25) {
                         $reject = 1;
-                    if ($response['interestForLastMonth'] > 21)
+                        $reason = 'bkicountactivecredit';
+                    }
+                    if ($response['interestForLastMonth'] > 21) {
                         $reject = 1;
+                        $reason = 'interestForLastMonth';
+                    }
                 }
                 if ($response['bkicountactivecredit'] > 22) {
-                    if ($response['creditsCreatedlast7day'] == 0)
+                    if ($response['creditsCreatedlast7day'] == 0) {
                         $reject = 1;
-                    if ($response['bkiscoring'] < 550 || $response['bkiscoring'] > 690)
+                        $reason = 'creditsCreatedlast7day';
+                    }
+                    if ($response['bkiscoring'] < 550 || $response['bkiscoring'] > 690) {
                         $reject = 1;
-                    if ($response['interestForLastMonth'] > 20)
+                        $reason = 'bkiscoring';
+                    }
+                    if ($response['interestForLastMonth'] > 20) {
                         $reject = 1;
-                    if ($response['credit_prolongation_count_contracts_with_age_180_type_19'] < 2)
+                        $reason = 'interestForLastMonth';
+                    }
+                    if ($response['credit_prolongation_count_contracts_with_age_180_type_19'] < 2) {
                         $reject = 1;
-                    if ($response['credit_avg_paid_for_type_19_days_90'] > 10000)
-                        $reject = 1;
+                        $reason = 'credit_prolongation_count_contracts_with_age_180_type_19';
+                    }
                 }
 
                 if ($reject == 0) {
@@ -200,10 +260,10 @@ class Equifax_scoring extends Core
             }
 
             $update = [
-                'status' => 'complited',
+                'status' => 'completed',
                 'body' => null,
-                'string_result' => ($reject == 1) ? 'Отказ' : 'Одобренный лимит: '.$limit,
-                'success' => ($reject == 1) ? 0: 1
+                'string_result' => ($reject == 1) ? 'Отказ по переменной ' . $reason . '<br>' . 'credit_avg_paid_for_type_19_days_90: ' . $response['credit_avg_paid_for_type_19_days_90'] : 'Одобренный лимит: ' . $limit . '<br>' . 'credit_avg_paid_for_type_19_days_90: ',
+                'success' => ($reject == 1) ? 0 : 1
             ];
         }
 

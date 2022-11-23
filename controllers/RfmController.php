@@ -37,12 +37,10 @@ class RfmController extends Controller
 
                     $prepare_item['fio'] = mb_strtolower($string);
 
-                    $result = $this->rfm->add_person($prepare_item);
+                    $result = $this->Rfmlist->add_person($prepare_item);
 
                     if(!$result)
-                    {
                         $success = false;
-                    }
                 }
 
                 $this->design->assign('success', $success);

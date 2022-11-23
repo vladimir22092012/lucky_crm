@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.18, created on 2022-11-16 09:00:33
+<?php /* Smarty version Smarty-3.1.18, created on 2022-11-23 21:20:55
          compiled from "/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/order.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2818875476343af9e6a2cf3-14201628%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'fe2aa0d83c9fc8b9ef94f66cee81e67ab66d6ce9' => 
     array (
       0 => '/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/order.tpl',
-      1 => 1668513754,
+      1 => 1669227648,
       2 => 'file',
     ),
   ),
@@ -70,7 +70,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'contract_insurance' => 0,
     'card_error' => 0,
     'cards' => 0,
-    'dupl' => 0,
     'card' => 0,
     'socials_error' => 0,
     'files' => 0,
@@ -2625,7 +2624,7 @@ $_smarty_tpl->tpl_vars['old_value']->_loop = true;
                                                             </a>
                                                             <?php }?>
                                                         </span>
-                                                        </h2>
+                                                        </h5>
                                                         <div class="message-box js-scorings-block <?php if ($_smarty_tpl->tpl_vars['need_update_scorings']->value) {?>js-need-update<?php }?>"
                                                              data-order="<?php echo $_smarty_tpl->tpl_vars['order']->value->order_id;?>
 ">
@@ -2656,7 +2655,7 @@ $_smarty_tpl->tpl_vars['scoring_type']->_loop = true;
                                                                             <?php } elseif ($_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->status=='stopped') {?>
                                                                                 <span class="label label-warning label-sm float-right">Остановлен</span>
                                                                             <?php } elseif ($_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->status=='completed') {?>
-                                                                                <?php if ($_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->success) {?>
+                                                                                <?php if ($_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->success==1) {?>
                                                                                     <span class="label label-success label-sm float-right">Пройден</span>
                                                                                 <?php } else { ?>
                                                                                     <span class="label label-danger float-right">Не пройден</span>
@@ -2964,7 +2963,7 @@ $_smarty_tpl->tpl_vars['efrsb_link']->_loop = true;
 
                                                     <div class="row view-block p-2 <?php if ($_smarty_tpl->tpl_vars['card_error']->value) {?>hide<?php }?>">
                                                         <div class="col-md-12">
-                                                            <div class="form-group mb-0 row <?php if ($_smarty_tpl->tpl_vars['cards']->value[$_smarty_tpl->tpl_vars['order']->value->card_id]->duplicates) {?>text-danger<?php }?>">
+                                                            <div class="form-group mb-0 row">
                                                                 <label class="control-label col-md-8 col-7">
                                                                     <?php echo $_smarty_tpl->tpl_vars['cards']->value[$_smarty_tpl->tpl_vars['order']->value->card_id]->pan;?>
 
@@ -2978,20 +2977,6 @@ $_smarty_tpl->tpl_vars['efrsb_link']->_loop = true;
 
                                                                     </p>
                                                                 </div>
-                                                                <?php if ($_smarty_tpl->tpl_vars['cards']->value[$_smarty_tpl->tpl_vars['order']->value->card_id]->duplicates) {?>
-                                                                    <div class="col-12">
-                                                                        <?php  $_smarty_tpl->tpl_vars['dupl'] = new Smarty_Variable; $_smarty_tpl->tpl_vars['dupl']->_loop = false;
- $_from = $_smarty_tpl->tpl_vars['cards']->value[$_smarty_tpl->tpl_vars['order']->value->card_id]->duplicates; if (!is_array($_from) && !is_object($_from)) { settype($_from, 'array');}
-foreach ($_from as $_smarty_tpl->tpl_vars['dupl']->key => $_smarty_tpl->tpl_vars['dupl']->value) {
-$_smarty_tpl->tpl_vars['dupl']->_loop = true;
-?>
-                                                                            <a href="client/<?php echo $_smarty_tpl->tpl_vars['dupl']->value->user_id;?>
-"
-                                                                               class="text-danger" target="_blank">Найдено
-                                                                                совпадение</a>
-                                                                        <?php } ?>
-                                                                    </div>
-                                                                <?php }?>
                                                             </div>
                                                         </div>
                                                     </div>

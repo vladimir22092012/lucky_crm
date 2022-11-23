@@ -2189,7 +2189,7 @@
                                                             </a>
                                                             {/if}
                                                         </span>
-                                                        </h2>
+                                                        </h5>
                                                         <div class="message-box js-scorings-block {if $need_update_scorings}js-need-update{/if}"
                                                              data-order="{$order->order_id}">
 
@@ -2210,7 +2210,7 @@
                                                                             {elseif $scorings[$scoring_type->name]->status == 'stopped'}
                                                                                 <span class="label label-warning label-sm float-right">Остановлен</span>
                                                                             {elseif $scorings[$scoring_type->name]->status == 'completed'}
-                                                                                {if $scorings[$scoring_type->name]->success}
+                                                                                {if $scorings[$scoring_type->name]->success == 1}
                                                                                     <span class="label label-success label-sm float-right">Пройден</span>
                                                                                 {else}
                                                                                     <span class="label label-danger float-right">Не пройден</span>
@@ -2482,7 +2482,7 @@
 
                                                     <div class="row view-block p-2 {if $card_error}hide{/if}">
                                                         <div class="col-md-12">
-                                                            <div class="form-group mb-0 row {if $cards[$order->card_id]->duplicates}text-danger{/if}">
+                                                            <div class="form-group mb-0 row">
                                                                 <label class="control-label col-md-8 col-7">
                                                                     {$cards[$order->card_id]->pan}
                                                                     <p>{$cards[$order->card_id]->bin_issuer}</p>
@@ -2493,15 +2493,6 @@
                                                                         {$cards[$order->card_id]->expdate}
                                                                     </p>
                                                                 </div>
-                                                                {if $cards[$order->card_id]->duplicates}
-                                                                    <div class="col-12">
-                                                                        {foreach $cards[$order->card_id]->duplicates as $dupl}
-                                                                            <a href="client/{$dupl->user_id}"
-                                                                               class="text-danger" target="_blank">Найдено
-                                                                                совпадение</a>
-                                                                        {/foreach}
-                                                                    </div>
-                                                                {/if}
                                                             </div>
                                                         </div>
                                                     </div>

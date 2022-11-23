@@ -25,9 +25,9 @@ class Efrsb_scoring extends Core
 
         $update = array(
             'status' => 'completed',
-            'success' => (isset($request['Source']) && $request['Source']['ResultsCount'] > 0) ? 1 : 0,
+            'success' => (isset($request['Source']) && $request['Source']['ResultsCount'] > 0) ? 0 : 1,
             'body' => null,
-            'string_result' => (isset($request['Source']) && $request['Source']['ResultsCount'] > 0) ? 'Банкротства не найдены' : 'Найдены банкротства',
+            'string_result' => (isset($request['Source']) && $request['Source']['ResultsCount'] > 0) ? 'Найдены банкротства' : 'Банкротства не найдены',
         );
 
 

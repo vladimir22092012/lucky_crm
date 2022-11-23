@@ -49,7 +49,7 @@ class Rfm_scoring extends Core
                 else
                 {
                     $fio = $order->lastname.' '.$order->firstname.' '.$order->patronymic;
-                    $score = $this->rfm->search($order->phone_mobile, $fio);
+                    $score = $this->Rfmlist->search($order->phone_mobile, $fio);
 
                     $update = array(
                         'status' => 'completed',
@@ -58,7 +58,7 @@ class Rfm_scoring extends Core
                     );
                     if (!empty($score))
                     {
-                        $person = $this->rfm->get_person((int)$score);
+                        $person = $this->Rfmlist->get_person((int)$score);
                         $update['body'] = serialize($person);
                         $update['string_result'] = 'Пользователь найден в списке: '.$person->fio.' '.$person->phone;
                     }

@@ -51,7 +51,11 @@ class Fssp_scoring extends Core
 
             $maxExp = $this->scorings->get_type(3);
             $maxExp = $maxExp->params;
-            $maxExp = $maxExp['amount'];
+
+            if(in_array($order->status, ['nk', 'rep']))
+                $maxExp = $maxExp['amount_nk'];
+            else
+                $maxExp = $maxExp['amount'];
 
             if ($expSum > $maxExp || !empty($badArticle)) {
                 $update['body']['amount'] = $expSum;

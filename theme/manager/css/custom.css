@@ -81,7 +81,6 @@
     margin: 1px 0;
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
-    overflow: hidden;
     white-space: nowrap;
 }
 .time {
@@ -218,7 +217,6 @@
  margin:1px 0;
  -o-text-overflow:ellipsis;
  text-overflow:ellipsis;
- overflow:hidden;
  color:#54667a;
  white-space:normal
 }
