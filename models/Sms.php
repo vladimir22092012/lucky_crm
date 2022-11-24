@@ -1,5 +1,6 @@
 <?php
 
+require_once 'Smsru.php';
 class Sms extends Core
 {
     private $login;
