@@ -72,71 +72,27 @@ class Sms extends Core
         );
         return str_replace($remove_symbols, '', $phone);
     }
-    
-    public function send($phone, $message, $yuk = 0, $custom_originator = false)
+
+    public function send($phone, $message)
     {
-        if ($yuk === 'toros')
-        {
-            $login = $this->toros_login;
-            $password = $this->toros_password;
-            $originator = $this->toros_originator;
-            $connect_id = $this->toros_connect_id;     
-        } 
-        elseif ($yuk == 2)
-        {
-            $login = $this->premier_login;
-            $password = $this->premier_password;
-            $originator = $this->premier_originator;
-            $connect_id = $this->premier_connect_id;            
-        }
-        elseif (empty($yuk))
-        {
-            $login = $this->login;
-            $password = $this->password;
-            
-            if ($custom_originator) {
-                $originator = $custom_originator;
-            } else {
-                $originator = $this->originator;
-            }
-            
-            $connect_id = $this->connect_id;
-        }
-        else
-        {
-            $login = $this->yuk_login;
-            $password = $this->yuk_password;
-            $originator = $this->yuk_originator;
-            $connect_id = $this->yuk_connect_id;            
-        }
-        
         $phone = $this->clear_phone($phone);
-        
-        $params = http_build_query(array(
-            'login' => $login,
-            'password' => $password,
-            'text' => $message,
-            'phone' => $phone,
-            'originator' => $originator
-        ));
-        
-        $url = 'https://xml.smstec.ru/api/v1/easysms/'.$connect_id.'/send_sms?'.$params;
 
-        $log = PHP_EOL.date('d.m.Y H:i:s').PHP_EOL.$url.PHP_EOL;
-        $logfile = $this->config->root_dir.'logs/sms.log';
-        file_put_contents($logfile, $log, FILE_APPEND);
-        
-        $ch = curl_init($url);
-        
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        $api_code = 'CEC47EEB-DA21-5CDB-9431-7E53B513FAA5';
 
-        $resp = curl_exec($ch);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($resp, $url);echo '</pre><hr />';    
+        $smsru = new SMSRU($api_code);
 
-        curl_close($ch);
-        
+        $data = new stdClass();
+        $data->to = $phone;
+        $data->text = $message;
+
+        $sms = $smsru->send_one($data);
+
+        if ($sms->status == "OK") { // Запрос выполнен успешно
+            $resp = "Сообщение отправлено успешно";
+        } else {
+            $resp = "Текст ошибки: $sms->status_text".' Телефон: '.$phone.' Сообщение: '.$message;
+        }
+
         return $resp;
     }
     
