@@ -110,7 +110,7 @@ class Equifax_scoring extends Core
                         $reject = 1;
                         $reason = 'credit_avg_paid_for_type_19_days_90';
                     }
-                    if ($response['bkicountactivecredit'] > 25) {
+                    if ($response['bkicountactivecredit'] >= 30) {
                         $reject = 1;
                         $reason = 'bkicountactivecredit';
                     }
@@ -190,7 +190,7 @@ class Equifax_scoring extends Core
                         $reject = 1;
                         $reason = 'credit_avg_paid_for_type_19_days_90';
                     }
-                    if ($response['bkicountactivecredit'] > 25) {
+                    if ($response['bkicountactivecredit'] >= 30) {
                         $reject = 1;
                         $reason = 'bkicountactivecredit';
                     }
@@ -224,9 +224,9 @@ class Equifax_scoring extends Core
                 from s_contracts
                 where user_id = ?
                 and `status` = 3
-                ");
+                ", $order->user_id);
 
-                    $countContracts = $this->db->results('count');
+                    $countContracts = $this->db->result('count');
 
                     $this->db->query("
                 SELECT *
@@ -235,7 +235,7 @@ class Equifax_scoring extends Core
                 and `status` = 3
                 order by id desc
                 limit 1
-                ");
+                ", $order->user_id);
 
                     $lastContract = $this->db->result();
 
@@ -243,14 +243,19 @@ class Equifax_scoring extends Core
                     $returnDate = new DateTime(date('Y-m-d', strtotime($lastContract->return_date)));
 
                     if ($countContracts >= 2) {
-                        if (date_diff($issuanceDate, $returnDate) >= 21)
-                            $limit = $lastContract->amount + 6000;
+                        if (date_diff($issuanceDate, $returnDate)->days >= 35)
+                            $limit = $lastContract->amount + 3000;
+                        elseif (date_diff($issuanceDate, $returnDate)->days >= 15 && date_diff($issuanceDate, $returnDate)->days < 35)
+                            $limit = $lastContract->amount + 1000;
+                        elseif (date_diff($issuanceDate, $returnDate)->days >= 10 && date_diff($issuanceDate, $returnDate)->days < 15)
+                            $limit = $lastContract->amount;
+                        else
+                            $reject = 1;
                     } else {
-                        if (date_diff($issuanceDate, $returnDate) >= 6 && date_diff($issuanceDate, $returnDate) <= 14)
-                            $limit = $lastContract->amount + 2000;
-
-                        if (date_diff($issuanceDate, $returnDate) >= 15 && date_diff($issuanceDate, $returnDate) < 21)
-                            $limit = $lastContract->amount + 4000;
+                        if (date_diff($issuanceDate, $returnDate)->days > 10)
+                            $limit = $lastContract->amount;
+                        else
+                            $reject = 1;
                     }
                 } else {
                     $limit = 'Отказано в лимите';
@@ -259,10 +264,21 @@ class Equifax_scoring extends Core
 
             }
 
+            $fields  = '<br>' . 'credit_avg_paid_for_type_19_days_90: ' . $response['credit_avg_paid_for_type_19_days_90'];
+            $fields .= '<br>' . 'bkiscoring: ' . $response['bkiscoring'];
+            $fields .= '<br>' . 'bkicountactivecredit: ' . $response['bkicountactivecredit'];
+            $fields .= '<br>' . 'creditsCreatedlast7day: ' . $response['creditsCreatedlast7day'];
+            $fields .= '<br>' . 'interestForLastMonth: ' . $response['interestForLastMonth'];
+            $fields .= '<br>' . 'credit_avg_paid_for_type_19_days_90: ' . $response['credit_avg_paid_for_type_19_days_90'];
+            $fields .= '<br>' . 'credit_count_delay_5: ' . $response['credit_count_delay_5'];
+            $fields .= '<br>' . 'credit_count_active_overdue_11_12_13_sum_1000: ' . $response['credit_count_active_overdue_11_12_13_sum_1000'];
+            $fields .= '<br>' . 'credit_prolongation_count_contracts_with_age_180_type_19: ' . $response['credit_prolongation_count_contracts_with_age_180_type_19'];
+            $fields .= '<br>' . 'credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60: ' . $response['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'];
+
             $update = [
                 'status' => 'completed',
                 'body' => null,
-                'string_result' => ($reject == 1) ? 'Отказ по переменной ' . $reason . '<br>' . 'credit_avg_paid_for_type_19_days_90: ' . $response['credit_avg_paid_for_type_19_days_90'] : 'Одобренный лимит: ' . $limit . '<br>' . 'credit_avg_paid_for_type_19_days_90: ',
+                'string_result' => ($reject == 1) ? 'Отказ по переменной ' . $reason . $fields : 'Одобренный лимит: ' . $limit . $fields,
                 'success' => ($reject == 1) ? 0 : 1
             ];
         }

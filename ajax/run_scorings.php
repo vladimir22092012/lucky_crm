@@ -71,7 +71,7 @@ class RunScoringsApp extends Core
                         case 'antirazgon':
                         case 'nbki':
                         case 'pes':
-                        case 'rfm':
+                        case 'rfmlist':
                         case 'age':
                         case 'fssp2':
                         case 'ip':

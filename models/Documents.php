@@ -25,7 +25,7 @@ class Documents extends Core
     private $names = array(
         'ANKETA_PEP' => 'Анкета - заявление ПЭП',
         'SOLGLASHENIE_PEP' => 'Соглашение об использовании ПЭП',
-        'SOGLASIE_VZAIMODEYSTVIE' => 'Согласие на взаимодействие',
+        'SOGLASIE_VZAIMODEYSTVIE' => 'Согласие на обработку персональных данных',
         'SOGLASIE_SPISANIE' => 'Согласие на списание рекуррентных платежей',
         'IND_USLOVIYA' => 'Индивидуальные условия',
         'POLIS_STRAHOVANIYA' => 'Полис страхования',

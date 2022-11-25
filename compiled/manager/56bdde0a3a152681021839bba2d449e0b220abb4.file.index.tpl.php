@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.18, created on 2022-10-18 16:32:52
+<?php /* Smarty version Smarty-3.1.18, created on 2022-11-24 11:31:48
          compiled from "/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/index.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:9789791756343ae1cecaf76-39358637%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '56bdde0a3a152681021839bba2d449e0b220abb4' => 
     array (
       0 => '/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/index.tpl',
-      1 => 1666099816,
+      1 => 1669278685,
       2 => 'file',
     ),
   ),
@@ -75,7 +75,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     <link href="theme/<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['settings']->value->theme, ENT_QUOTES, 'UTF-8', true);?>
 /css/colors/default.css?v=1.02" id="theme" rel="stylesheet">
     <link href="theme/<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['settings']->value->theme, ENT_QUOTES, 'UTF-8', true);?>
-/css/custom.css?v=1.06" rel="stylesheet">
+/css/custom.css?v=1.07" rel="stylesheet">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>

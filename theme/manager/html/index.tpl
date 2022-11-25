@@ -26,7 +26,7 @@
 
     <link href="theme/{$settings->theme|escape}/css/style.css?v=1.03" rel="stylesheet">
     <link href="theme/{$settings->theme|escape}/css/colors/default.css?v=1.02" id="theme" rel="stylesheet">
-    <link href="theme/{$settings->theme|escape}/css/custom.css?v=1.06" rel="stylesheet">
+    <link href="theme/{$settings->theme|escape}/css/custom.css?v=1.07" rel="stylesheet">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>

@@ -8,13 +8,13 @@ class Juicescore_scoring extends Core
     private $type;
 
     private $key = '';
-    private $url = 'https://api.juicyscore.net/getscore/';
+    private $url = 'https://api.juicyscore.com/getscore/';
 
     public function __construct()
     {
         parent::__construct();
 
-        $this->key = 'MCzR7jDUyyQFTD8EgkhNhdDjygYzFM';
+        $this->key = 'D0xu3UVNtj49KHioXv68r66bmCCXjb';
     }
 
     public function run_scoring($scoring_id)
@@ -168,7 +168,7 @@ class Juicescore_scoring extends Core
             'session_id' => $order->juicescore_session_id,
             'channel' => 'SITE',
             'time_utc3' => date('d.m.Y H:i:s', strtotime($order->date)),
-            'version' => 12,
+            'version' => 14,
             'referrer' => '',
             'tenor' => $order->period,
             'time_local' => '',

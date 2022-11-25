@@ -86,7 +86,7 @@ class Contracts extends Core
             UPDATE __contracts
             SET status = 4
             WHERE status = 2
-            AND DATE(return_date) <= ?
+            AND return_date < ?
         ", date('Y-m-d'));
         $this->db->query($query);
     }
