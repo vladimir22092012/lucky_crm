@@ -277,7 +277,7 @@ class Equifax_scoring extends Core
 
             $update = [
                 'status' => 'completed',
-                'body' => null,
+                'body' => json_encode($response),
                 'string_result' => ($reject == 1) ? 'Отказ по переменной ' . $reason . $fields : 'Одобренный лимит: ' . $limit . $fields,
                 'success' => ($reject == 1) ? 0 : 1
             ];

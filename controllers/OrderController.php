@@ -298,10 +298,19 @@ class OrderController extends Controller
                     $need_update_scorings = 0;
                     $inactive_run_scorings = 0;
                     $scorings = array();
+                    $juiceScore = [];
                     if ($result_scorings = $this->scorings->get_scorings(array('order_id' => $order->order_id))) {
                         foreach ($result_scorings as $scoring) {
                             if (in_array($scoring->type, ['juicescore', 'efrsb', 'whatsapp', 'contact']))
                                 $scoring->body = unserialize($scoring->body);
+
+                            if($scoring->type == 'juicescore')
+                            {
+                                if(!empty($scoring->body['Predictors']))
+                                    $scoring->body['Predictors'] = (array)$scoring->body['Predictors'];
+
+                                $juiceScore = $scoring;
+                            }
 
                             if ($scoring->type == 'scorista') {
                                 $scoring->body = json_decode($scoring->body);
@@ -350,9 +359,11 @@ class OrderController extends Controller
                         );
                         */
                     }
+
                     $this->design->assign('scorings', $scorings);
                     $this->design->assign('need_update_scorings', $need_update_scorings);
                     $this->design->assign('inactive_run_scorings', $inactive_run_scorings);
+                    $this->design->assign('juiceScore', $juiceScore);
 
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scorings, $scoring_types);echo '</pre><hr />';
 

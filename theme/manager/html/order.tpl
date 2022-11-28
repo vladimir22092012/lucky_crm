@@ -55,6 +55,12 @@
                         patronymic: patronymic
                     },
                 })
+            });
+
+            $('.juiceScoreModal').on('click', function (e) {
+                e.preventDefault();
+
+                $('#juiceScoreModal').modal();
             })
         })
     </script>
@@ -2272,6 +2278,9 @@
                                                                                     <span>{$scorings[$scoring_type->name]->body['name']}</span><br>
                                                                                     <span>{$scorings[$scoring_type->name]->body['tags']}</span><br>
                                                                                 {/if}
+                                                                                {if $scoring_type->name == 'juicescore'}
+                                                                                    <a href="#juicescore" class="juiceScoreModal">Подробнее</a><br>
+                                                                                {/if}
                                                                                 {if $scorings[$scoring_type->name]->created}
                                                                                     {$scorings[$scoring_type->name]->created|date} {$scorings[$scoring_type->name]->created|time}
                                                                                 {/if}
@@ -3582,6 +3591,61 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="juiceScoreModal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Информация по Джуси Скорингу</h4>
+            </div>
+            <div class="modal-body">
+                <form id="fio_form">
+                    <div class="form-group" style="display:flex; flex-direction: column">
+                        <div class="form-group">
+                            <label>Antifraud_score: {$juiceScore->body['AntiFraud score']}</label>
+                        </div>
+                        <div class="form-group">
+                            <label>Device_id: {$juiceScore->body['Device id']}</label>
+                        </div>
+                        <div class="form-group">
+                            <label>Exact_device_id: {$juiceScore->body['Exact Device id']}</label>
+                        </div>
+                        <div class="form-group">
+                            <label>Browser_hash: {$juiceScore->body['Browser hash']}</label>
+                        </div>
+                        <div class="form-group">
+                            <label>User_id: {$juiceScore->user_id}</label>
+                        </div>
+                        <div class="form-group">
+                            <label>Success: {$juiceScore->body['Success']}</label>
+                        </div>
+                        <div class="form-group">
+                            <label>Time: {$juiceScore->body['Time']}</label>
+                        </div>
+                        <div class="form-group">
+                            <label>Predictors_idx1_stop_markers: {$juiceScore->body['Predictors']['IDX1 Stop Markers']}</label>
+                        </div>
+                        <div class="form-group">
+                            <label>predictors_idx2_user_behaviour_markers: {$juiceScore->body['Predictors']['IDX2 User Behaviour Markers']}</label>
+                        </div>
+                        <div class="form-group">
+                            <label>predictors_idx3_device_markers: {$juiceScore->body['Predictors']['IDX3 Device Markers']}</label>
+                        </div>
+                        <div class="form-group">
+                            <label>predictors_idx5_device_quality: {$juiceScore->body['Predictors']['IDX5 Device Quality']}</label>
+                        </div>
+                        <div class="form-group">
+                            <label>predictors_idx6_internet_infrastructure_quality: {$juiceScore->body['Predictors']['IDX6 Internet Infrastructure Quality']}</label>
+                        </div>
+                        <div class="form-group">
+                            <label>predictors_idx10_ei_estimation: {$juiceScore->body['Predictors']['IDX10 EI Estimation']}</label>
+                        </div>
+                </form>
             </div>
         </div>
     </div>
