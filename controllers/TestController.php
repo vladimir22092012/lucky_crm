@@ -4,69 +4,86 @@ class TestController extends Controller
 {
     public function fetch()
     {
-        $order = $this->orders->get_order(3167);
-        $phone = preg_replace('/[^0-9]/', '', $order->phone_mobile);
+        $order = $this->orders->get_order(3380);
 
         $params =
             [
                 'UserID' => 'barvil',
                 'Password' => 'KsetM+H5',
-                'sources' => 'viber, whatsapp',
-                'PhoneReq' => [
-                    'phone' => '79966208002'
+                'sources' => 'fssp',
+                'PersonReq' => [
+                    'first' => $order->firstname,
+                    'middle' => $order->patronymic,
+                    'paternal' => $order->lastname,
+                    'birthDt' => date('Y-m-d', strtotime($order->birth))
                 ]
             ];
 
         $request = $this->send_request($params);
 
-        $update = array(
-            'status' => 'completed',
-            'body' => 'null',
-            'string_result' => ''
-        );
+        if (!empty($request))
+            $update = ['status' => 'completed'];
+        else {
+            $update = [
+                'status' => 'error',
+                'body' => null,
+                'string_result' => 'Клиент не найден'
+            ];
 
-        if (isset($request['Source'])) {
-            $viber = $request['Source'][1];
-            $whatsApp = $request['Source'][0];
+            $this->scorings->update_scoring(1, $update);
+            return $update;
+        }
 
-            if ($viber['ResultsCount'] == 0)
-                $update['string_result'] .= 'Viber: Клиент не найден';
-            else {
-                foreach ($viber['Record'] as $records)
-                    foreach ($records as $record)
-                        if ($record['FieldName'] == 'name')
-                            $update['string_result'] .= 'Viber Имя: ' . $record['FieldValue'];
+        $expSum = 0;
+        $badArticle = [];
+
+        if ($request['Source']['ResultsCount'] > 0) {
+            foreach ($request['Source']['Record'] as $source) {
+                foreach ($source as $key => $fields) {
+                    foreach ($fields as $field)
+                    {
+                        if ($field['FieldName'] == 'Total')
+                            $expSum += $field['FieldValue'];
+
+                        if ($field['FieldName'] == 'CloseReason1' && in_array($field['FieldValue'], [46, 47]))
+                            $badArticle[] = $field['FieldValue'];
+                    }
+                }
             }
 
-            if ($whatsApp['ResultsCount'] == 0)
-                $update['string_result'] .= '<br>Whatsapp: Клиент не найден';
-            else {
-                foreach ($whatsApp['Record'] as $records)
-                    foreach ($records as $record) {
-                        if ($record['FieldName'] == 'StatusText')
-                            $update['string_result'] .= '<br>WhatsApp Статус: ' . $record['FieldValue'];
+            $maxExp = $this->scorings->get_type(3);
+            $maxExp = $maxExp->params;
 
-                        if ($record['FieldName'] == 'StatusDate')
-                            $update['string_result'] .= '<br>WhatsApp Дата установки статуса: ' . date('d.m.Y', strtotime($record['FieldValue']));
+            if(in_array($order->status, ['nk', 'rep']))
+                $maxExp = $maxExp['amount_nk'];
+            else
+                $maxExp = $maxExp['amount'];
 
-                        if ($record['FieldName'] == 'FullPhoto')
-                            $update['string_result'] .= '<br>WhatsApp Ссылка на фото: <a href='.$record['FieldValue'].'></a>';
+            if ($expSum > 0)
+                $update['string_result'] = 'Сумма долга: ' . $expSum;
+            else
+                $update['string_result'] = 'Долгов нет';
 
-                        if ($record['FieldName'] == 'AvatarHidden')
-                            $update['string_result'] .= '<br>WhatsApp Ссылка на фото: Аватар скрыт';
+            $update['body'] = null;
 
-                        if ($record['FieldName'] == 'StatusHidden')
-                            $update['string_result'] .= '<br>WhatsApp Статус: Скрыт';
-                    }
+            if ($expSum > $maxExp || !empty($badArticle)) {
+
+                if (!empty($badArticle)) {
+                    $articles = implode(',', $badArticle);
+                    $update['string_result'] .= '<br>Обнаружены статьи: ' . $articles;
+                }
+
+                $update['success'] = 0;
+            } else {
+                $update['success'] = 1;
             }
         } else {
-            $update['body'] = null;
-            $update['string_result'] = 'Отсутствуют мессенджеры';
+            $update['success'] = 1;
+            $update['string_result'] = 'Долгов нет';
         }
 
         echo '<pre>';
         var_dump($update);
-        //var_dump($viber);
         exit;
     }
 
