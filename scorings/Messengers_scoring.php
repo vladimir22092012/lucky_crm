@@ -66,7 +66,7 @@ class Messengers_scoring extends Core
             else
                 $update['success'] = 1;
         } else {
-            $update['body'] = null;
+            $update['body'] = json_encode($request);
             $update['string_result'] = 'Отсутствуют мессенджеры';
             $update['success'] = 0;
         }
