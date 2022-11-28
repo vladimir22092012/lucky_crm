@@ -264,21 +264,10 @@ class Equifax_scoring extends Core
 
             }
 
-            $fields  = '<br>' . 'credit_avg_paid_for_type_19_days_90: ' . $response['credit_avg_paid_for_type_19_days_90'];
-            $fields .= '<br>' . 'bkiscoring: ' . $response['bkiscoring'];
-            $fields .= '<br>' . 'bkicountactivecredit: ' . $response['bkicountactivecredit'];
-            $fields .= '<br>' . 'creditsCreatedlast7day: ' . $response['creditsCreatedlast7day'];
-            $fields .= '<br>' . 'interestForLastMonth: ' . $response['interestForLastMonth'];
-            $fields .= '<br>' . 'credit_avg_paid_for_type_19_days_90: ' . $response['credit_avg_paid_for_type_19_days_90'];
-            $fields .= '<br>' . 'credit_count_delay_5: ' . $response['credit_count_delay_5'];
-            $fields .= '<br>' . 'credit_count_active_overdue_11_12_13_sum_1000: ' . $response['credit_count_active_overdue_11_12_13_sum_1000'];
-            $fields .= '<br>' . 'credit_prolongation_count_contracts_with_age_180_type_19: ' . $response['credit_prolongation_count_contracts_with_age_180_type_19'];
-            $fields .= '<br>' . 'credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60: ' . $response['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'];
-
             $update = [
                 'status' => 'completed',
                 'body' => json_encode($response),
-                'string_result' => ($reject == 1) ? 'Отказ по переменной ' . $reason . $fields : 'Одобренный лимит: ' . $limit . $fields,
+                'string_result' => ($reject == 1) ? 'Отказ по переменной ' . $reason : 'Одобренный лимит: ' . $limit,
                 'success' => ($reject == 1) ? 0 : 1
             ];
         }
