@@ -22,7 +22,7 @@ class Messengers_scoring extends Core
 
         $update = array(
             'status' => 'completed',
-            'body' => 'null',
+            'body' => null,
             'string_result' => ''
         );
 
@@ -51,7 +51,7 @@ class Messengers_scoring extends Core
                             $update['string_result'] .= '<br>WhatsApp Дата установки статуса: ' . date('d.m.Y', strtotime($record['FieldValue']));
 
                         if ($record['FieldName'] == 'FullPhoto')
-                            $update['string_result'] .= '<br>WhatsApp Ссылка на фото: <a href=' . $record['FieldValue'] . '></a>';
+                            $update['string_result'] .= '<br>WhatsApp <a href=' . $record['FieldValue'] . '>Ссылка на фото</a>';
 
                         if ($record['FieldName'] == 'AvatarHidden')
                             $update['string_result'] .= '<br>WhatsApp Ссылка на фото: Аватар скрыт';
