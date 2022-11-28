@@ -63,6 +63,8 @@ class Messengers_scoring extends Core
 
             if ($viber['ResultsCount'] == 0 && $whatsApp['ResultsCount'] == 0)
                 $update['success'] = 0;
+            else
+                $update['success'] = 1;
         } else {
             $update['body'] = null;
             $update['string_result'] = 'Отсутствуют мессенджеры';
