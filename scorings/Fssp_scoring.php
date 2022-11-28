@@ -40,12 +40,15 @@ class Fssp_scoring extends Core
 
         if ($request['Source']['ResultsCount'] > 0) {
             foreach ($request['Source']['Record'] as $source) {
-                foreach ($source as $field) {
-                    if ($field['FieldName'] == 'Total')
-                        $expSum += $field['FieldValue'];
+                foreach ($source as $key => $fields) {
+                    foreach ($fields as $field)
+                    {
+                        if ($field['FieldName'] == 'Total')
+                            $expSum += $field['FieldValue'];
 
-                    if ($field['FieldName'] == 'CloseReason1' && in_array($field['FieldValue'], [46, 47]))
-                        $badArticle[] = $field['FieldValue'];
+                        if ($field['FieldName'] == 'CloseReason1' && in_array($field['FieldValue'], [46, 47]))
+                            $badArticle[] = $field['FieldValue'];
+                    }
                 }
             }
 
@@ -57,24 +60,27 @@ class Fssp_scoring extends Core
             else
                 $maxExp = $maxExp['amount'];
 
+            if ($expSum > 0)
+                $update['string_result'] = 'Сумма долга: ' . $expSum;
+            else
+                $update['string_result'] = 'Долгов нет';
+
+            $update['body'] = null;
+
             if ($expSum > $maxExp || !empty($badArticle)) {
-                $update['body']['amount'] = $expSum;
 
                 if (!empty($badArticle)) {
-                    $update['body']['badArticles'] = implode(',', $badArticle);
-                    $update['body']['badArticles'] = 'Обнаружены статьи: ' . $update['body']['badArticles'];
+                    $articles = implode(',', $badArticle);
+                    $update['string_result'] .= '<br>Обнаружены статьи: ' . $articles;
                 }
 
                 $update['success'] = 0;
-                $update['string_result'] = 'Клиент найден';
-                $update['body'] = serialize($update['body']);
             } else {
                 $update['success'] = 1;
-                $update['body']['badArticles'] = 'Сумма долга: ' . $expSum;
             }
         } else {
             $update['success'] = 1;
-            $update['body']['badArticles'] = 'Долгов нет';
+            $update['string_result'] = 'Долгов нет';
         }
 
 
