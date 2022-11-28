@@ -43,13 +43,18 @@ class Juicescore_scoring extends Core
 
                         if (!empty($result['Success']))
                         {
-                            $score = $result['AntiFraud score'] < $scoring_type->params['scorebal'];
+                            $reject = 0;
+
+                            if($result['AntiFraud score'] < $scoring_type->params['scorebal']
+                                || $result['Predictors']['IDX1 Stop Markers'] <= 2
+                                || $result['Predictors']['IDX2 User Behaviour Markers'] <= 4 )
+                                $reject = 1;
 
                             $update = array(
                                 'status' => 'completed',
                                 'body' => serialize($result),
-                                'success' => $score,
-                                'string_result' => empty($score) ? 'Проверка не пройдена' : 'Проверка пройдена',
+                                'success' => $reject,
+                                'string_result' => ($reject == 0) ? 'Проверка не пройдена' : 'Проверка пройдена',
                             );
 
                         }
@@ -190,7 +195,7 @@ class Juicescore_scoring extends Core
             'card_expiration_date' => '',
             'response_content_type' => 'json',
         );
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($params);echo '</pre><hr />';        
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($params);echo '</pre><hr />';
 //exit;
         $url = $this->url.'?'.http_build_query($params);
 
