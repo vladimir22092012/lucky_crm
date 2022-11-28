@@ -7,7 +7,7 @@ class Leadgens_scoring extends Core
         $scoring = $this->scorings->get_scoring($scoring_id);
         $order = $this->orders->get_order($scoring->order_id);
 
-        if(!empty($order->utm_source) && $order->amount <= 4000){
+        if(!empty($order->utm_source) && $order->amount <= 4000 && $order->utm_source != 'organic'){
             $update = [
                 'status' => 'completed',
                 'body' => null,
