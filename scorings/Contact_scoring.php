@@ -22,8 +22,7 @@ class Contact_scoring extends Core
 
         $update = array(
             'status' => 'completed',
-            'body' => '',
-            'success' => !isset($request['Source']) ? 0 : 1
+            'body' => ''
         );
 
 
@@ -43,9 +42,11 @@ class Contact_scoring extends Core
                 }
             }
             $update['string_result'] = 'Клиент найден';
+            $update['success'] = 1;
             $update['body'] = serialize(['name' => $name, 'tags' => $tags]);
         } else {
             $update['body'] = null;
+            $update['success'] = 0;
             $update['string_result'] = 'Клиент не найден';
         }
 
