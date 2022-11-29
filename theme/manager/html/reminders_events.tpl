@@ -3,9 +3,52 @@
 {capture name='page_scripts'}
     <script>
         $(function () {
-           $('.addEventModal').on('click', function () {
-               $('#addEventModal').modal();
-           });
+            $('.addEventModal, .editEventModal').on('click', function () {
+                $('#addEventModal').modal();
+
+                if ($(this).hasClass('addEventModal')) {
+                    $('.modal-title').text('Добавить событие');
+                    $('#addEventForm').find('input[class="btn btn-success float-right"]').removeClass('editEvent');
+                    $('#addEventForm').find('input[class="btn btn-success float-right"]').addClass('addEvent');
+                    $('#addEventForm').find('input[name="action"]').attr('value', 'addEvent');
+                } else {
+
+                    let id = $(this).attr('data-id');
+
+                    $('.modal-title').text('Редактировать событие');
+                    $('#addEventForm').find('input[class="btn btn-success float-right"]').removeClass('addEvent');
+                    $('#addEventForm').find('input[class="btn btn-success float-right"]').addClass('editEvent');
+                    $('#addEventForm').find('input[name="action"]').attr('value', 'editEvent');
+                    $('#addEventForm').find('input[name="id"]').attr('value', id);
+                }
+            });
+
+            $(document).on('click', '.addEvent, .editEvent', function () {
+                let form = $(this).closest('form').serialize();
+
+                $.ajax({
+                   method: 'POST',
+                   data: form,
+                   success: function () {
+                       location.reload();
+                   }
+                });
+            });
+
+            $('.deleteEvent').on('click', function () {
+                let id = $(this).attr('data-id');
+
+                $.ajax({
+                    method: 'POST',
+                    data:{
+                        action: 'deleteEvent',
+                        id: id
+                    },
+                    success: function () {
+                        location.reload();
+                    }
+                });
+            });
         });
     </script>
 {/capture}
@@ -48,14 +91,16 @@
                                class="table table-hover">
                             <thead style="background-color: #009efb">
                             <tr>
-                                <th style="width: 20%" class="sgrid-header-cell jsgrid-align-right jsgrid-header-sortable {if $sort == 'index_number_desc'}jsgrid-header-sort jsgrid-header-sort-desc{elseif $sort == 'index_number_asc'}jsgrid-header-sort jsgrid-header-sort-asc{/if}">
+                                <th style="width: 20%"
+                                    class="sgrid-header-cell jsgrid-align-right jsgrid-header-sortable {if $sort == 'index_number_desc'}jsgrid-header-sort jsgrid-header-sort-desc{elseif $sort == 'index_number_asc'}jsgrid-header-sort jsgrid-header-sort-asc{/if}">
                                     {if $sort == 'index_number_asc'}
                                         <a href="{url page=null sort='index_number_desc'}">#</a>
                                     {else}
                                         <a style="color: white" href="{url page=null sort='index_number_asc'}">#</a>
                                     {/if}
                                 </th>
-                                <th style="width: 80%" class="jsgrid-header-cell jsgrid-align-right jsgrid-header-sortable {if $sort == 'index_number_desc'}jsgrid-header-sort jsgrid-header-sort-desc{elseif $sort == 'index_number_asc'}jsgrid-header-sort jsgrid-header-sort-asc{/if}">
+                                <th style="width: 30%"
+                                    class="jsgrid-header-cell jsgrid-align-right jsgrid-header-sortable {if $sort == 'index_number_desc'}jsgrid-header-sort jsgrid-header-sort-desc{elseif $sort == 'index_number_asc'}jsgrid-header-sort jsgrid-header-sort-asc{/if}">
                                     {if $sort == 'segment_asc'}
                                         <a style="color: white"
                                            href="{url page=null sort='name desc'}">Событие</a>
@@ -64,9 +109,19 @@
                                            href="{url page=null sort='name asc'}">Событие</a>
                                     {/if}
                                 </th>
+                                <th style="width: 1%"></th>
+                                <th style="width: 30%"></th>
                             </tr>
                             </thead>
                             <tbody>
+                            {foreach $remindersEvents as $event}
+                                <tr>
+                                    <td>{$event->id}</td>
+                                    <td>{$event->name}</td>
+                                    <td><div class="btn btn-outline-warning editEventModal" data-id="{$event->id}"><i class=" fas fa-edit"></i></div></td>
+                                    <td><div class="btn btn-outline-danger deleteEvent" data-id="{$event->id}"><i class=" fas fa-trash"></i></div></td>
+                                </tr>
+                            {/foreach}
                             </tbody>
                         </table>
                     </div>
@@ -97,11 +152,12 @@
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Добавить событие</h4>
+                <h4 class="modal-title"></h4>
             </div>
             <div class="modal-body">
                 <form id="addEventForm">
-                    <input type="hidden" name="action" value="addEvent">
+                    <input type="hidden" name="action" value="">
+                    <input type="hidden" name="id" value="">
                     <div class="form-group" style="display:flex; flex-direction: column">
                         <div class="form-group">
                             <label>Название</label>
