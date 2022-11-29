@@ -39,7 +39,7 @@ class Juicescore_scoring extends Core
 
                     if ($json_result = $this->getscore($order->order_id))
                     {
-                        $result = (array)json_decode($json_result);
+                        $result = json_decode($json_result, true);
 
                         if (!empty($result['Success']))
                         {
