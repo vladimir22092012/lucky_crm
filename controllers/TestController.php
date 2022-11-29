@@ -2,88 +2,24 @@
 
 class TestController extends Controller
 {
-    public function fetch()
-    {
-        $order = $this->orders->get_order(3380);
+    public function fetch(){
+        $order = $this->orders->get_order(3534);
+        $phone = preg_replace('/[^0-9]/', '', $order->phone_mobile);
 
         $params =
             [
                 'UserID' => 'barvil',
                 'Password' => 'KsetM+H5',
-                'sources' => 'fssp',
-                'PersonReq' => [
-                    'first' => $order->firstname,
-                    'middle' => $order->patronymic,
-                    'paternal' => $order->lastname,
-                    'birthDt' => date('Y-m-d', strtotime($order->birth))
+                'sources' => 'viber, whatsapp',
+                'PhoneReq' => [
+                    'phone' => $phone
                 ]
             ];
 
         $request = $this->send_request($params);
 
-        if (!empty($request))
-            $update = ['status' => 'completed'];
-        else {
-            $update = [
-                'status' => 'error',
-                'body' => null,
-                'string_result' => 'Клиент не найден'
-            ];
-
-            $this->scorings->update_scoring(1, $update);
-            return $update;
-        }
-
-        $expSum = 0;
-        $badArticle = [];
-
-        if ($request['Source']['ResultsCount'] > 0) {
-            foreach ($request['Source']['Record'] as $source) {
-                foreach ($source as $key => $fields) {
-                    foreach ($fields as $field)
-                    {
-                        if ($field['FieldName'] == 'Total')
-                            $expSum += $field['FieldValue'];
-
-                        if ($field['FieldName'] == 'CloseReason1' && in_array($field['FieldValue'], [46, 47]))
-                            $badArticle[] = $field['FieldValue'];
-                    }
-                }
-            }
-
-            $maxExp = $this->scorings->get_type(3);
-            $maxExp = $maxExp->params;
-
-            if(in_array($order->status, ['nk', 'rep']))
-                $maxExp = $maxExp['amount_nk'];
-            else
-                $maxExp = $maxExp['amount'];
-
-            if ($expSum > 0)
-                $update['string_result'] = 'Сумма долга: ' . $expSum;
-            else
-                $update['string_result'] = 'Долгов нет';
-
-            $update['body'] = null;
-
-            if ($expSum > $maxExp || !empty($badArticle)) {
-
-                if (!empty($badArticle)) {
-                    $articles = implode(',', $badArticle);
-                    $update['string_result'] .= '<br>Обнаружены статьи: ' . $articles;
-                }
-
-                $update['success'] = 0;
-            } else {
-                $update['success'] = 1;
-            }
-        } else {
-            $update['success'] = 1;
-            $update['string_result'] = 'Долгов нет';
-        }
-
         echo '<pre>';
-        var_dump($update);
+        var_dump($request);
         exit;
     }
 

@@ -248,8 +248,8 @@ class OrdersController extends Controller
         $this->design->assign('orders', $orders);
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($orders);echo '</pre><hr />';
 
-        $sms_templates = $this->sms->get_templates(array('type' => 'order'));
-        $this->design->assign('sms_templates', $sms_templates);
+        //$sms_templates = $this->sms->get_templates(array('type' => 'order'));
+        //$this->design->assign('sms_templates', $sms_templates);
 
         if($this->manager->role == 'analitic_marketing')
         {
