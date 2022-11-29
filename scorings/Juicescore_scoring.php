@@ -48,7 +48,7 @@ class Juicescore_scoring extends Core
                                 'status' => 'completed',
                                 'body' => serialize($result),
                                 'success' => $reject,
-                                'string_result' => ($reject == 0) ? 'Проверка не пройдена' : 'Проверка пройдена',
+                                'string_result' => ($reject == 1) ? 'Проверка не пройдена' : 'Проверка пройдена',
                             );
 
                         } else {
