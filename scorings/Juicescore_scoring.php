@@ -23,34 +23,26 @@ class Juicescore_scoring extends Core
 
         $scoring_type = $this->scorings->get_type('juicescore');
 
-        if ($scoring = $this->scorings->get_scoring($scoring_id))
-        {
-            if ($order = $this->orders->get_order((int)$scoring->order_id))
-            {
-                if (empty($order->juicescore_session_id))
-                {
+        if ($scoring = $this->scorings->get_scoring($scoring_id)) {
+            if ($order = $this->orders->get_order((int)$scoring->order_id)) {
+                if (empty($order->juicescore_session_id)) {
                     $update = array(
                         'status' => 'error',
                         'string_result' => 'в заявке не найден идентификатор сессии juicescore'
                     );
-                }
-                else
-                {
+                } else {
 
-                    if ($json_result = $this->getscore($order->order_id))
-                    {
+                    if ($json_result = $this->getscore($order->order_id)) {
                         $result = json_decode($json_result, true);
 
-                        if (!empty($result['Success']))
-                        {
+                        if (!empty($result['Success'])) {
                             $reject = 0;
 
-                            $result['Predictors'] = (array)$result['Predictors'];
-
-                            if($result['AntiFraud score'] < $scoring_type->params['scorebal']
+                            if ($result['AntiFraud score'] < $scoring_type->params['scorebal']
                                 || $result['Predictors']['IDX1 Stop Markers'] <= 2
-                                || $result['Predictors']['IDX2 User Behaviour Markers'] <= 4 )
+                                || $result['Predictors']['IDX2 User Behaviour Markers'] <= 4) {
                                 $reject = 1;
+                            }
 
                             $update = array(
                                 'status' => 'completed',
@@ -59,9 +51,7 @@ class Juicescore_scoring extends Core
                                 'string_result' => ($reject == 0) ? 'Проверка не пройдена' : 'Проверка пройдена',
                             );
 
-                        }
-                        else
-                        {
+                        } else {
                             $update = array(
                                 'status' => 'error',
                                 'string_result' => 'При запросе произошла ошибка',
@@ -70,9 +60,7 @@ class Juicescore_scoring extends Core
                             );
 
                         }
-                    }
-                    else
-                    {
+                    } else {
                         $update = array(
                             'status' => 'error',
                             'string_result' => 'Не удалось выполнить запрос',
@@ -83,9 +71,7 @@ class Juicescore_scoring extends Core
 
                 }
 
-            }
-            else
-            {
+            } else {
                 $update = array(
                     'status' => 'error',
                     'string_result' => 'не найдена заявка'
@@ -99,7 +85,6 @@ class Juicescore_scoring extends Core
 
         }
     }
-
 
 
     public function run($audit_id, $user_id, $order_id)
@@ -120,21 +105,17 @@ class Juicescore_scoring extends Core
     {
         $order = $this->orders->get_order((int)$order_id);
 
-        if (!($scoring = $this->getscore($order_id)))
-        {
+        if (!($scoring = $this->getscore($order_id))) {
             $result = new StdClass();
             $result->error = 'undefined_order';
-        }
-        else
-        {
+        } else {
             $scoring = (array)json_decode($scoring);
             if (isset($scoring['Predictors']))
                 $scoring['Predictors'] = (array)$scoring['Predictors'];
 
             $result = $scoring;
 
-            if (!empty($scoring['Success']))
-            {
+            if (!empty($scoring['Success'])) {
                 $score = (int)$scoring['AntiFraud score'] < ($this->type->params['scorebal']);
                 $add_scoring = array(
                     'user_id' => $order->user_id,
@@ -144,12 +125,9 @@ class Juicescore_scoring extends Core
                     'success' => $score,
                     'scorista_id' => '',
                 );
-                if ($score)
-                {
+                if ($score) {
                     $add_scoring['string_result'] = 'Проверка пройдена';
-                }
-                else
-                {
+                } else {
                     $add_scoring['string_result'] = 'Проверка не пройдена';
                 }
 
@@ -199,10 +177,10 @@ class Juicescore_scoring extends Core
         );
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($params);echo '</pre><hr />';
 //exit;
-        $url = $this->url.'?'.http_build_query($params);
+        $url = $this->url . '?' . http_build_query($params);
 
         $headers = array(
-            'session: '.$this->key
+            'session: ' . $this->key
         );
 
         $ch = curl_init();
