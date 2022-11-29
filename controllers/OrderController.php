@@ -1012,7 +1012,6 @@ class OrderController extends Controller
         if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer')))
             return array('error' => 'Не хватает прав для выполнения операции');
 
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($order);echo '</pre><hr />';
         $this->orders->update_order($order_id, $update);
 
 
@@ -1026,9 +1025,6 @@ class OrderController extends Controller
             'user_id' => $order->user_id,
         ));
 
-        // отправляем письмо независимо от того сняли за причину отказа или нет
-        $this->notify->send_reject_reason($order_id);
-
         // проверяем были ли уже списания за причину отказа, что бы не списать второй раз
         $reject_operations = $this->operations->get_operations(array(
             'type' => 'REJECT_REASON',
@@ -1040,41 +1036,6 @@ class OrderController extends Controller
             if (!empty($order->service_reason) && $status == 3)
                 $this->best2pay->reject_reason($order);
         }
-
-        if (!empty($order->id_1c)) {
-            $resp = $this->soap1c->block_order_1c($order->id_1c, 0);
-            $this->soap1c->send_order_status($order->id_1c, 'Отказано');
-        }
-
-
-        $this->leadfinances->send_lead_to_leadfinances($order); //отправка лида по апи в leadfinances
-        $this->smssales->send_smssales($order, $reason_id);//отправка спама(продажа лидов по смс)
-
-
-        if (!empty($order->utm_source) && $order->utm_source == 'leadcraft' && !empty($order->id_1c) && !empty($order->click_hash)) {
-            try {
-                $this->leadgens->send_cancelled_postback($order->click_hash, $order->id_1c, $order_id);
-            } catch (\Throwable $th) {
-                //throw $th;
-            }
-        }
-
-        if (!empty($order->utm_source) && $order->utm_source == 'bankiru' && !empty($order->id_1c) && !empty($order->click_hash)) {
-            try {
-                $this->leadgens->send_cancelled_postback_bankiru($order_id, $order);
-            } catch (\Throwable $th) {
-                //throw $th;
-            }
-        }
-
-        if (!empty($order->utm_source) && $order->utm_source == 'click2money' && !empty($order->id_1c) && !empty($order->click_hash)) {
-            try {
-                $this->leadgens->send_cancelled_postback_click2money($order_id, $order);
-            } catch (\Throwable $th) {
-                //throw $th;
-            }
-        }
-
 
         return array('success' => 1, 'status' => $status);
     }
