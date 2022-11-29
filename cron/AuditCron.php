@@ -135,12 +135,6 @@ class AuditCron extends Core
                         'order_id' => $order->order_id,
                         'user_id' => $order->user_id,
                     ));
-
-                    if ($reason->type == 'mko')
-                    {
-                        // списываем за причину
-                        $this->best2pay->reject_reason($order);
-                    }
                 }
             }
         }

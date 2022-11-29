@@ -1025,18 +1025,6 @@ class OrderController extends Controller
             'user_id' => $order->user_id,
         ));
 
-        // проверяем были ли уже списания за причину отказа, что бы не списать второй раз
-        $reject_operations = $this->operations->get_operations(array(
-            'type' => 'REJECT_REASON',
-            'order_id' => $order->order_id
-        ));
-
-        // Снимаем за причину отказа
-        if (empty($reject_operations)) {
-            if (!empty($order->service_reason) && $status == 3)
-                $this->best2pay->reject_reason($order);
-        }
-
         return array('success' => 1, 'status' => $status);
     }
 
