@@ -336,6 +336,10 @@
                                         <li {if in_array($module, ['SettingsCommunicationsController'])}class="active"{/if}>
                                             <a href="settings_communications">Лимиты коммуникаций</a></li>
                                     {/if}
+                                    {if in_array('communications', $manager->permissions)}
+                                        <li {if in_array($module, ['RemindersEventsController'])}class="active"{/if}>
+                                            <a href="reminders_events">События для ремайндеров</a></li>
+                                    {/if}
                                     {if in_array('ticket_handbooks', $manager->permissions)}
                                         <li {if in_array($module, ['TicketStatusesController'])}class="active"{/if}><a
                                                     href="ticket_statuses">Статусы тикетов</a></li>

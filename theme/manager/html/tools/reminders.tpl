@@ -133,7 +133,7 @@
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Редактирование платежный реквизитов</h4>
+                <h4 class="modal-title">Добавить ремайндер</h4>
             </div>
             <div class="modal-body">
                 <form id="addReminderForm">
@@ -147,13 +147,17 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Дней</label>
-                            <input type="text" name="days"
+                            <label>Дней/Часов</label>
+                            <select type="text" name="typeTime"
                                     class="form-control">
+                                <option value="0">Выберите тип</option>
+                                <option value="days">Дней</option>
+                                <option value="hours">Часов</option>
+                            </select>
                         </div>
                         <div class="form-group">
-                            <label>МСК</label>
-                            <input type="text" name="hours"
+                            <label>Количество</label>
+                            <input type="text" name="count"
                                    class="form-control"/>
                         </div>
                         <div class="form-group">

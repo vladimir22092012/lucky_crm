@@ -92,6 +92,8 @@ RewriteRule ^changelogs/?$              index.php?module=ChangelogsController  [
 RewriteRule ^test_con/?$                index.php?module=TestController  [L,QSA]
 RewriteRule ^test_api/?$                index.php?module=TestApiController  [L,QSA]
 
+RewriteRule ^reminders_events/?$        index.php?module=RemindersEventsController  [L,QSA]
+
 RewriteRule ^scorings/?$                index.php?module=ScoringsController  [L,QSA]
 RewriteRule ^settings/?$                index.php?module=SettingsController  [L,QSA]
 RewriteRule ^settings_communications/?$ index.php?module=SettingsCommunicationsController  [L,QSA]
