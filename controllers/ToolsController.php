@@ -20,6 +20,11 @@ class ToolsController extends Controller
                     return $this->action_short_link();
                     break;
 
+                case 'reminders':
+                    return $this->action_reminders();
+                    break;
+
+
             endswitch;
         }
     }
@@ -140,7 +145,6 @@ class ToolsController extends Controller
         exit;
     }
 
-
     private function action_delete_integration()
     {
 
@@ -236,5 +240,10 @@ class ToolsController extends Controller
         $id = $this->request->post('id_link');
 
         $this->shortlink->del_link($id);
+    }
+
+    private function action_reminders()
+    {
+        return $this->design->fetch('tools/reminders.tpl');
     }
 }

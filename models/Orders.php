@@ -1062,10 +1062,6 @@ class Orders extends Core
         ", (array)$order, (int)$id);
         $this->db->query($query);
 
-        if (isset($order['status']) && $order['status'] == 7) {
-            $this->Reminders->moment_of_redemption($id);
-        }
-
         return $id;
     }
 
