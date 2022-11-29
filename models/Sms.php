@@ -1,6 +1,6 @@
 <?php
 
-/*
+
 require_once 'Smsru.php';
 class Sms extends Core
 {
@@ -454,5 +454,3 @@ class Sms extends Core
         return $this->render($template, $data);
     }
 }
-
-*/

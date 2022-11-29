@@ -504,8 +504,8 @@ class OrderController extends Controller
         $penalty_types = $this->penalties->get_types();
         $this->design->assign('penalty_types', $penalty_types);
 
-        //$sms_templates = $this->sms->get_templates(array('type' => 'order'));
-        //$this->design->assign('sms_templates', $sms_templates);
+        $sms_templates = $this->sms->get_templates(array('type' => 'order'));
+        $this->design->assign('sms_templates', $sms_templates);
 
         if (!empty($order) && $order->status == 1) {
             if ($ordertimer = $this->ordertimers->get_ordertimer($order_id)) {
