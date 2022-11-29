@@ -36,19 +36,19 @@ class Juicescore_scoring extends Core
                         $result = json_decode($json_result, true);
 
                         if (!empty($result['Success'])) {
-                            $reject = 0;
+                            $success = 1;
 
                             if ($result['AntiFraud score'] < $scoring_type->params['scorebal']
                                 || $result['Predictors']['IDX1 Stop Markers'] <= 2
                                 || $result['Predictors']['IDX2 User Behaviour Markers'] <= 4) {
-                                $reject = 1;
+                                $success = 0;
                             }
 
                             $update = array(
                                 'status' => 'completed',
                                 'body' => serialize($result),
-                                'success' => $reject,
-                                'string_result' => ($reject == 1) ? 'Проверка не пройдена' : 'Проверка пройдена',
+                                'success' => $success,
+                                'string_result' => ($success == 0) ? 'Проверка не пройдена' : 'Проверка пройдена',
                             );
 
                         } else {
