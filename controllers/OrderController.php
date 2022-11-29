@@ -900,7 +900,7 @@ class OrderController extends Controller
         }
 
         // отправялем смс
-        $msg = 'Активируй займ ' . ($order->amount * 1) . ' в личном кабинете, код ' . $accept_code . ' finfive.ru/lk';
+        $msg = 'Активируй займ ' . ($order->amount * 1) . ' в личном кабинете, код ' . $accept_code . 'mkk-barvil.ru/lk';
         $this->sms->send($order->phone_mobile, $msg);
 
 //        ящик: sale@nalichnoeplus.com
