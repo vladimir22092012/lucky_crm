@@ -5,7 +5,7 @@ chdir(dirname(__FILE__) . '/../');
 
 require 'autoload.php';
 
-class getTimeZoneCron extends Core
+class GetTimeZoneCron extends Core
 {
     protected $token = "222e191767518127bcf15cc4d2a23c131404fdf2";
     protected $secret = "6b90de07e9974eba848ac174b3eed2829a35ec5e";
