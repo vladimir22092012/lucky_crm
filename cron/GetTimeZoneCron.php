@@ -24,8 +24,7 @@ class getTimeZoneCron extends Core
             foreach ($users as $user) {
                 $regaddress = $this->Addresses->get_address($user->regaddress_id);
 
-                if(!empty($regaddress))
-                {
+                if (!empty($regaddress)) {
                     $dadata = new \Dadata\DadataClient($this->token, $this->secret);
                     $result = $dadata->clean("address", $regaddress->adressfull);
                     UsersORM::where('id', $user->id)->update(['time_zone' => $result['timezone']]);
