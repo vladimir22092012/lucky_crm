@@ -39,8 +39,8 @@ class Juicescore_scoring extends Core
                             $success = 1;
 
                             if ($result['AntiFraud score'] < $scoring_type->params['scorebal']
-                                || $result['Predictors']['IDX1 Stop Markers'] <= 2
-                                || $result['Predictors']['IDX2 User Behaviour Markers'] <= 4) {
+                                || $result['Predictors']['IDX1 Stop Markers'] >= 2
+                                || $result['Predictors']['IDX2 User Behaviour Markers'] >= 4) {
                                 $success = 0;
                             }
 
