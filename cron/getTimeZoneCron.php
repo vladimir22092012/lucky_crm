@@ -20,16 +20,20 @@ class getTimeZoneCron extends Core
     {
         $users = UsersORM::whereNull('time_zone')->get();
 
-        if (!empty($users)) {
-            foreach ($users as $user) {
-                $regaddress = $this->Addresses->get_address($user->regaddress_id);
+        foreach ($users as $user) {
+            $regaddress = $this->Addresses->get_address($user->regaddress_id);
 
+            if (!empty($regaddress)) {
                 $dadata = new \Dadata\DadataClient($this->token, $this->secret);
                 $result = $dadata->clean("address", $regaddress->adressfull);
 
-                UsersORM::where('id', $user->id)->update(['time_zone', $result->timezone]);
+                var_dump($result);
+
+                UsersORM::where('id', $user->id)->update(['time_zone' => $result->timezone]);
             }
         }
+
+        exit;
     }
 }
 
