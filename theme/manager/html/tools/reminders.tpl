@@ -1,7 +1,94 @@
 {$meta_title = 'Интеграции' scope=parent}
 
 {capture name='page_scripts'}
-    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/toolsReminders.js"></script>
+    <script>
+        $(function () {
+            $('.addReminderModal, .editReminderModal').on('click', function () {
+                $('#ReminderModal').modal();
+
+                if ($(this).hasClass('addReminderModal')) {
+                    $('.modal-title').text('Добавить ремайндер');
+                    $('#addReminderForm').find('input[class="btn btn-success float-right"]').removeClass('editReminder');
+                    $('#addReminderForm').find('input[class="btn btn-success float-right"]').addClass('addReminder');
+                    $('#addReminderForm').find('input[name="action"]').attr('value', 'addReminder');
+                } else {
+
+                    let id = $(this).attr('data-id');
+
+                    $.ajax({
+                        method: 'POST',
+                        dataType: 'JSON',
+                        data: {
+                            id: id,
+                            action: 'getReminder'
+                        },
+                        success: function (reminder) {
+                            $('#addReminderForm').find('select[name="event"] option[value="' + reminder['eventId'] + '"]').prop('selected', true);
+                            $('#addReminderForm').find('select[name="segment"] option[value="' + reminder['segmentId'] + '"]').prop('selected', true);
+                            $('#addReminderForm').find('select[name="typeTime"] option[value="' + reminder['timeType'] + '"]').prop('selected', true);
+                            $('#addReminderForm').find('input[name="count"]').val(reminder['countTime']);
+                            $('#addReminderForm').find('input[name="msgSms"]').val(reminder['msgSms']);
+                            $('#addReminderForm').find('input[name="msgZvon"]').val(reminder['msgZvon']);
+                            $('#addReminderForm').find('input[name="id"]').attr('value', reminder['id']);
+                        }
+                    });
+
+                    $('.modal-title').text('Редактировать событие');
+                    $('#addReminderForm').find('input[class="btn btn-success float-right"]').removeClass('addReminder');
+                    $('#addReminderForm').find('input[class="btn btn-success float-right"]').addClass('editReminder');
+                    $('#addReminderForm').find('input[name="action"]').attr('value', 'updateReminder');
+                    $('#addReminderForm').find('input[name="id"]').attr('value', id);
+                }
+            });
+
+            $(document).on('click', '.addReminder, .editReminder', function () {
+                let form = $(this).closest('form').serialize();
+
+                $.ajax({
+                    method: 'POST',
+                    data: form,
+                    success: function () {
+                        location.reload();
+                    }
+                });
+            });
+
+            $('.deleteReminder').on('click', function () {
+                let id = $(this).attr('data-id');
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'deleteReminder',
+                        id: id
+                    },
+                    success: function () {
+                        location.reload();
+                    }
+                });
+            });
+
+            $('.reminderSwitcher').on('change', function () {
+                let id = $(this).attr('data-id');
+
+                if ($(this).is(':checked'))
+                    $(this).val(1);
+                else
+                    $(this).val(0);
+
+                let value = $(this).val();
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        id: id,
+                        value: value,
+                        action: 'switchReminder'
+                    }
+                });
+            });
+        });
+    </script>
 {/capture}
 
 {capture name='page_styles'}
@@ -60,7 +147,7 @@
                                            href="{url page=null sort='segment_asc'}">Сегмент</a>
                                     {/if}
                                 </th>
-                                <th class="col-3">
+                                <th class="col-2">
                                     {if $sort == 'event_asc'}
                                         <a style="color: white" href="{url page=null sort='event_desc'}">Событие</a>
                                     {else}
@@ -70,22 +157,22 @@
                                 <th class="col-2">
                                     {if $sort == 'message_asc'}
                                         <a style="color: white"
-                                           href="{url page=null sort='message_desc'}">Сообщение</a>
+                                           href="{url page=null sort='message_desc'}">Сообщение СМС</a>
                                     {else}
                                         <a style="color: white"
-                                           href="{url page=null sort='message_asc'}">Сообщение</a>
+                                           href="{url page=null sort='message_asc'}">Сообщение СМС</a>
                                     {/if}
                                 </th>
                                 <th class="col-2">
-                                    {if $sort == 'sender_asc'}
+                                    {if $sort == 'message_asc'}
                                         <a style="color: white"
-                                           href="{url page=null sort='sender_desc'}">Отправитель</a>
+                                           href="{url page=null sort='message_desc'}">Сообщение Звонобот</a>
                                     {else}
                                         <a style="color: white"
-                                           href="{url page=null sort='sender_asc'}">Отправитель</a>
+                                           href="{url page=null sort='message_asc'}">Сообщение Звонобот</a>
                                     {/if}
                                 </th>
-                                <th class="col-2">
+                                <th class="col-4">
                                     {if $sort == 'updated_at_asc'}
                                         <a style="color: white"
                                            href="{url page=null sort='updated_at_desc'}">Изменен</a>
@@ -100,9 +187,44 @@
                                 <th>
 
                                 </th>
+                                <th>
+
+                                </th>
                             </tr>
                             </thead>
                             <tbody>
+                            {foreach $reminders as $reminder}
+                                <tr>
+                                    <td>{$reminder->id}</td>
+                                    <td>{$reminder->segment->name}</td>
+                                    <td>{$reminder->event->name}</td>
+                                    <td>{$reminder->msgSms}</td>
+                                    <td>{$reminder->msgZvon}</td>
+                                    <td>{$reminder->updated|date} {$reminder->updated|time}</td>
+                                    <td>
+                                        <div class="btn btn-outline-warning editReminderModal" data-id="{$reminder->id}"><i
+                                                    class=" fas fa-edit"></i></div>
+                                    </td>
+                                    <td>
+                                        <div class="btn btn-outline-danger deleteReminder" data-id="{$reminder->id}"><i
+                                                    class=" fas fa-trash"></i></div>
+                                    </td>
+                                    <td>
+                                        <div class="onoffswitch">
+                                            <input
+                                                    type="checkbox"
+                                                    class="onoffswitch-checkbox reminderSwitcher"
+                                                    {if $reminder->is_on}checked{/if}
+                                                    id="reminder-{$reminder->id}"
+                                                    data-id="{$reminder->id}"/>
+                                            <label class="onoffswitch-label" for="reminder-{$reminder->id}">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {/foreach}
                             </tbody>
                         </table>
                     </div>
@@ -113,7 +235,7 @@
 
             <div class="row">
                 <div class="col-12 grid-stack-item" data-gs-x="0" data-gs-y="0" data-gs-width="12">
-                    <div class="btn btn-outline-success addReminder">Добавить</div>
+                    <div class="btn btn-outline-success addReminderModal">Добавить</div>
                 </div>
         </form>
         <!-- Row -->
@@ -128,22 +250,36 @@
     <!-- ============================================================== -->
 </div>
 
-<div id="addReminderModal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
-     aria-labelledby="mySmallModalLabel" aria-hidden="true" data-backdrop="static">
+<div id="ReminderModal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Добавить ремайндер</h4>
+                <h4 class="modal-title"></h4>
             </div>
             <div class="modal-body">
                 <form id="addReminderForm">
-                    <input type="hidden" name="action" value="addReminder">
+                    <input type="hidden" name="action" value="">
+                    <input type="hidden" name="id">
                     <div class="form-group" style="display:flex; flex-direction: column">
+                        <div class="form-group">
+                            <label>Сегмент</label>
+                            <select type="text" name="segment"
+                                    class="form-control">
+                                <option value="0">Выберите сегмент</option>
+                                {foreach $remindersSegments as $segment}
+                                    <option value="{$segment->id}">{$segment->name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
                         <div class="form-group">
                             <label>Событие</label>
                             <select type="text" name="event"
                                     class="form-control">
                                 <option value="0">Выберите событие</option>
+                                {foreach $remindersEvents as $event}
+                                    <option value="{$event->id}">{$event->name}</option>
+                                {/foreach}
                             </select>
                         </div>
                         <div class="form-group">
@@ -170,10 +306,10 @@
                             <input type="text" name="msgZvon"
                                    class="form-control"/>
                         </div>
-                    <div>
-                        <input type="button" class="btn btn-danger cancel" data-dismiss="modal" value="Отмена">
-                        <input type="button" class="btn btn-success float-right" value="Сохранить">
-                    </div>
+                        <div>
+                            <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
+                            <input type="button" class="btn btn-success float-right" value="Сохранить">
+                        </div>
                 </form>
             </div>
         </div>

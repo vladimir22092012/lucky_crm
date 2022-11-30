@@ -16,6 +16,9 @@ class RemindersEventsController extends Core
         $remindersEvents = RemindersEventsORM::get();
         $this->design->assign('remindersEvents', $remindersEvents);
 
+        $reminders = RemindersORM::with('event')->get();
+        $this->design->assign('reminders', $reminders);
+
         return $this->design->fetch('reminders_events.tpl');
     }
 
@@ -41,6 +44,15 @@ class RemindersEventsController extends Core
         $id = $this->request->post('id');
 
         RemindersEventsORM::destroy($id);
+        exit;
+    }
+
+    private function action_getEvent()
+    {
+        $id = $this->request->post('id');
+
+        $event = RemindersEventsORM::find($id);
+        echo $event->name;
         exit;
     }
 }

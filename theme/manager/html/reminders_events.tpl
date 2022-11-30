@@ -15,6 +15,17 @@
 
                     let id = $(this).attr('data-id');
 
+                    $.ajax({
+                        method: 'POST',
+                        data: {
+                            id: id,
+                            action: 'getEvent'
+                        },
+                        success: function (eventName) {
+                            $('#addEventForm').find('input[name="name"]').val(eventName);
+                        }
+                    });
+
                     $('.modal-title').text('Редактировать событие');
                     $('#addEventForm').find('input[class="btn btn-success float-right"]').removeClass('addEvent');
                     $('#addEventForm').find('input[class="btn btn-success float-right"]').addClass('editEvent');
@@ -27,11 +38,11 @@
                 let form = $(this).closest('form').serialize();
 
                 $.ajax({
-                   method: 'POST',
-                   data: form,
-                   success: function () {
-                       location.reload();
-                   }
+                    method: 'POST',
+                    data: form,
+                    success: function () {
+                        location.reload();
+                    }
                 });
             });
 
@@ -40,7 +51,7 @@
 
                 $.ajax({
                     method: 'POST',
-                    data:{
+                    data: {
                         action: 'deleteEvent',
                         id: id
                     },
@@ -118,8 +129,14 @@
                                 <tr>
                                     <td>{$event->id}</td>
                                     <td>{$event->name}</td>
-                                    <td><div class="btn btn-outline-warning editEventModal" data-id="{$event->id}"><i class=" fas fa-edit"></i></div></td>
-                                    <td><div class="btn btn-outline-danger deleteEvent" data-id="{$event->id}"><i class=" fas fa-trash"></i></div></td>
+                                    <td>
+                                        <div class="btn btn-outline-warning editEventModal" data-id="{$event->id}"><i
+                                                    class=" fas fa-edit"></i></div>
+                                    </td>
+                                    <td>
+                                        <div class="btn btn-outline-danger deleteEvent" data-id="{$event->id}"><i
+                                                    class=" fas fa-trash"></i></div>
+                                    </td>
                                 </tr>
                             {/foreach}
                             </tbody>
@@ -157,7 +174,7 @@
             <div class="modal-body">
                 <form id="addEventForm">
                     <input type="hidden" name="action" value="">
-                    <input type="hidden" name="id" value="">
+                    <input type="hidden" name="id">
                     <div class="form-group" style="display:flex; flex-direction: column">
                         <div class="form-group">
                             <label>Название</label>
