@@ -5,7 +5,7 @@ chdir(dirname(__FILE__) . '/../');
 
 require 'autoload.php';
 
-class getTimeZoneCron extends Core
+class GetTimeZoneCron extends Core
 {
     protected $token = "222e191767518127bcf15cc4d2a23c131404fdf2";
     protected $secret = "6b90de07e9974eba848ac174b3eed2829a35ec5e";
@@ -20,20 +20,18 @@ class getTimeZoneCron extends Core
     {
         $users = UsersORM::whereNull('time_zone')->get();
 
-        foreach ($users as $user) {
-            $regaddress = $this->Addresses->get_address($user->regaddress_id);
+        if (!empty($users)) {
+            foreach ($users as $user) {
+                $regaddress = $this->Addresses->get_address($user->regaddress_id);
 
-            if (!empty($regaddress)) {
-                $dadata = new \Dadata\DadataClient($this->token, $this->secret);
-                $result = $dadata->clean("address", $regaddress->adressfull);
-
-                var_dump($result);
-
-                UsersORM::where('id', $user->id)->update(['time_zone' => $result->timezone]);
+                if(!empty($regaddress))
+                {
+                    $dadata = new \Dadata\DadataClient($this->token, $this->secret);
+                    $result = $dadata->clean("address", $regaddress->adressfull);
+                    UsersORM::where('id', $user->id)->update(['time_zone' => $result['timezone']]);
+                }
             }
         }
-
-        exit;
     }
 }
 
