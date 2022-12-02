@@ -34,4 +34,4 @@ class GetTimeZoneCron extends Core
     }
 }
 
-new getTimeZoneCron();
+new GetTimeZoneCron();

@@ -38,11 +38,12 @@ class Contact_scoring extends Core
 
                         if($field['FieldValue'] < 2)
                             $update['success'] = 0;
+                        else
+                            $update['success'] = 1;
                     }
                 }
             }
             $update['string_result'] = 'Клиент найден';
-            $update['success'] = 1;
             $update['body'] = serialize(['name' => $name, 'tags' => $tags]);
         } else {
             $update['body'] = null;
