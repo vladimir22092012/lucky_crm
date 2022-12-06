@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.18, created on 2022-11-28 12:34:07
+<?php /* Smarty version Smarty-3.1.18, created on 2022-12-06 12:58:33
          compiled from "/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/order.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2818875476343af9e6a2cf3-14201628%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'fe2aa0d83c9fc8b9ef94f66cee81e67ab66d6ce9' => 
     array (
       0 => '/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/order.tpl',
-      1 => 1669627439,
+      1 => 1670320704,
       2 => 'file',
     ),
   ),
@@ -35,6 +35,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'looker_link' => 0,
     'managers' => 0,
     'm' => 0,
+    'short_link' => 0,
     'amount_error' => 0,
     'er' => 0,
     'is_developer' => 0,
@@ -53,8 +54,8 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'old_value' => 0,
     'contacts_error' => 0,
     'addresses_error' => 0,
-    'faktaddress' => 0,
     'regaddress' => 0,
+    'faktaddress' => 0,
     'work_error' => 0,
     'need_update_scorings' => 0,
     'scoring_types' => 0,
@@ -564,8 +565,26 @@ $_smarty_tpl->tpl_vars['m']->_loop = true;
                                                     </button>
                                                 </div>
                                             </div>
-
                                         </form>
+                                        <br>
+                                        <br>
+                                        <div class="mt-3 card card-danger mb-2 text-center">
+                                            <form id="send_short_link" action="/ajax/send_short_link.php" title="" method="POST">
+                                                <div style="padding-top: 10px;padding-bottom: 10px;">
+                                                    <label id="result" class="title text-white">Короткая ссылка на оплату</label>
+                                                    <br>
+                                                    <input type="hidden" name="userId" value="<?php echo $_smarty_tpl->tpl_vars['order']->value->user_id;?>
+">
+                                                    <input type="text" id="short_link" name="short_link" value="<?php echo $_smarty_tpl->tpl_vars['short_link']->value;?>
+" size="21" readonly>
+                                                    <input type="text" id="phone_short_link" name="phone_short_link" value="<?php echo $_smarty_tpl->tpl_vars['order']->value->phone_mobile;?>
+" size="9">
+                                                    <input type="submit" id="submit_short_link" name="submit_short_link" value="Отправить смс">
+                                                    <br>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <br>
                                     </div>
                                     <div class="col-12 col-md-8 col-lg-6">
                                         <form action="<?php echo $_smarty_tpl->smarty->registered_plugins[Smarty::PLUGIN_FUNCTION]['url'][0][0]->url_modifier(array(),$_smarty_tpl);?>
@@ -1767,12 +1786,12 @@ $_smarty_tpl->tpl_vars['old_value']->_loop = true;
                                                             <table class="table table-hover mb-0">
                                                                 <tr>
                                                                     <td>Адрес прописки</td>
-                                                                    <td><?php echo $_smarty_tpl->tpl_vars['faktaddress']->value;?>
+                                                                    <td><?php echo $_smarty_tpl->tpl_vars['regaddress']->value;?>
 </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td>Адрес проживания</td>
-                                                                    <td><?php echo $_smarty_tpl->tpl_vars['regaddress']->value;?>
+                                                                    <td><?php echo $_smarty_tpl->tpl_vars['faktaddress']->value;?>
 </td>
                                                                 </tr>
                                                             </table>

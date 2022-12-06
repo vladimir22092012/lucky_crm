@@ -38,7 +38,7 @@ class Juicescore_scoring extends Core
                         if (!empty($result['Success'])) {
                             $success = 1;
 
-                            if ($result['AntiFraud score'] < $scoring_type->params['scorebal']
+                            if ($result['AntiFraud score'] >= $scoring_type->params['scorebal']
                                 || $result['Predictors']['IDX1 Stop Markers'] >= 2
                                 || $result['Predictors']['IDX2 User Behaviour Markers'] >= 4) {
                                 $success = 0;
