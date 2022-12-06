@@ -402,8 +402,23 @@
                                                     </button>
                                                 </div>
                                             </div>
-
                                         </form>
+                                        <br>
+                                        <br>
+                                        <div class="mt-3 card card-danger mb-2 text-center">
+                                            <form id="send_short_link" action="/ajax/send_short_link.php" title="" method="POST">
+                                                <div style="padding-top: 10px;padding-bottom: 10px;">
+                                                    <label id="result" class="title text-white">Короткая ссылка на оплату</label>
+                                                    <br>
+                                                    <input type="hidden" name="userId" value="{$order->user_id}">
+                                                    <input type="text" id="short_link" name="short_link" value="{$short_link}" size="21" readonly>
+                                                    <input type="text" id="phone_short_link" name="phone_short_link" value="{$order->phone_mobile}" size="9">
+                                                    <input type="submit" id="submit_short_link" name="submit_short_link" value="Отправить смс">
+                                                    <br>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <br>
                                     </div>
                                     <div class="col-12 col-md-8 col-lg-6">
                                         <form action="{url}" class="mb-3 p-2 border js-order-item-form js-check-amount"

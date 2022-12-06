@@ -288,6 +288,10 @@ class OrderController extends Controller
 
                         $contract = $this->contracts->get_contract((int)$order->contract_id);
                         $this->design->assign('contract', $contract);
+
+                        $code = $this->helpers->c2o_encode($contract->id);
+                        $short_link = $this->config->main_domain.'/p/'.$code;
+                        $this->design->assign('short_link', $short_link);
                     }
 
                     if (!empty($contract->insurance_id)) {
@@ -894,10 +898,6 @@ class OrderController extends Controller
         $contract_id = $this->contracts->add_contract($new_contract);
 
         $this->orders->update_order($order_id, array('contract_id' => $contract_id));
-
-        if (!empty($order->id_1c)) {
-            $resp = $this->soap1c->block_order_1c($order->id_1c, 0);
-        }
 
         // отправялем смс
         $msg = 'Активируй займ ' . ($order->amount * 1) . ' в личном кабинете, код ' . $accept_code . 'mkk-barvil.ru/lk';

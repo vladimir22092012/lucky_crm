@@ -20,7 +20,6 @@
             singleDatePicker: true,
             showDropdowns: true,
             timePicker24Hour: true,
-            showDropdowns: true,
             locale: {
                 format: 'DD.MM.YYYY hh:mm'
             },

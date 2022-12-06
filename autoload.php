@@ -12,5 +12,7 @@ function core_autoload($classname)
         require dirname(__FILE__).'/scorings/'.$classname.'.php';
     if (file_exists(dirname(__FILE__).'/vendor/autoload.php'))
         require dirname(__FILE__).'/vendor/autoload.php';
+    if (file_exists(dirname(__FILE__).'/tools/'.$classname.'.php'))
+        require dirname(__FILE__).'/tools/'.$classname.'.php';
 }
 spl_autoload_register('core_autoload');

@@ -26,6 +26,7 @@
         "illuminate/macroable": "^8.83",
         "illuminate/support": "^8.83",
         "hflabs/dadata": "^22.3",
-        "guzzlehttp/guzzle": "^7.5"
+        "guzzlehttp/guzzle": "^7.5",
+        "cloud-castle/equifax-report": "^1.0"
     }
 }

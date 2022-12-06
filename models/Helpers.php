@@ -237,16 +237,10 @@ class Helpers extends Core
     	$code = '';
         
         $chars = str_split($id);
-        
-        if (count($chars) != 6)
-            return false;
-        
-        $code .= $this->c2o_codes[5][$chars[5]];
-        $code .= $this->c2o_codes[4][$chars[4]];
-        $code .= $this->c2o_codes[3][$chars[3]];
-        $code .= $this->c2o_codes[2][$chars[2]];
-        $code .= $this->c2o_codes[1][$chars[1]];
-        $code .= $this->c2o_codes[0][$chars[0]];
+
+        for($i = 0; $i < count($chars); $i++)
+            $code .= $this->c2o_codes[$i][$chars[$i]];
+
         return $code;
     }
     

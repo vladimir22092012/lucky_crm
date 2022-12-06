@@ -14,52 +14,26 @@ class SendPaymentLinkAjax extends Core
     public function run()
     {
         $short_link = $this->request->post('short_link');
-
-        preg_match_all('/.*'.$this->config->main_domain.'\/pay\/(.*)/', $short_link, $code);
-
-        //var_dump($code);
-        
-        if (!isset($code[1]))
-            return false;
-
-        if (mb_strlen($code[1][0]) == 7) {
-
-        } else {
-            if (!($id = $this->helpers->c2o_decode($code[1][0]))) {
-                return false;
-            }
-
-            if(!($contract = $this->contracts->get_contract($id))) {
-                return false;
-            }
-        }
-
-        //$order = $this->orders->get_order($contract->order_id);
-
         $phone = $this->request->post('phone');
-        $phone = filter_var($phone, FILTER_SANITIZE_NUMBER_INT);
+        $userId = $this->request->post('userId');
 
         if (empty($phone)) {
             $this->response['data'] = 'Ошибка. Нет номера';
             $this->output();
             return;
         } elseif (strlen($phone) != 11) {
-            //var_dump($phone);
-            //exit;
             $this->response['data'] = 'Ошибка. Неверный формат номера';
             $this->output();
             return;
         }
 
-        //var_dump($order->phone_mobile);
-        //exit;
         $action = $this->request->get('action', 'string');    
 
         switch($action || true):
             
             case 'send':
                 
-                $this->send_action($phone, $short_link);
+                $this->send_action($phone, $short_link, $userId);
                 
             break;
             
@@ -68,68 +42,25 @@ class SendPaymentLinkAjax extends Core
         $this->output();
     }
 
-    private function send_action($phone, $short_link)
+    private function send_action($phone, $short_link, $userId)
     {
-        //INSERT INTO `s_sms_by_collectors` (`id`, `phone`, `number_of`, `updated_at`) VALUES (NULL, '79276928586', '1', CURRENT_TIMESTAMP);
-        //UPDATE `s_sms_by_collectors` SET `number_of`=3 WHERE phone = 79276928586 
+        $link = parse_url('https://'.$short_link, PHP_URL_HOST);
+        $msg = "Ваша ссылка для оплаты задолженности : {$link}";
 
-        $query = $this->db->placehold("
-            SELECT number_of
-            FROM __sms_by_collectors
-            WHERE phone = ?
-            ORDER BY id DESC
-            LIMIT 1
-        ", $phone);
-        $this->db->query($query);
-        
-        $number_of = $this->db->result('number_of');
+        $sms = $this->sms->send($phone, $msg);
 
-        if ($number_of > 100) {
-            $this->response['data'] = "Не отправлено. Уже отправлено больше 9 СМС";
-            return;
-        }
-        
-        //Срочно погасите просроченную задолженность! Вся информация в личном кабинете: {url} \"Премьер\" 88003331280
+        $insert =
+            [
+                'code' => '0',
+                'message'  => $msg,
+                'phone'    => $phone,
+                'response' => $sms,
+                'user_id'  => $userId
+            ];
 
-        if (parse_url('https://'.$short_link, PHP_URL_HOST) == 'finfive.ru') {
-            $sms = $this->sms->send($phone, "Срочно погасите просроченную задолженность! Вся информация в личном кабинете: {$short_link} ООО \"НАЛИЧНОЕ\" 88002226091");
-        } elseif (parse_url('https://'.$short_link, PHP_URL_HOST) == 'premier.finfive.ru') {
-            $sms = $this->sms->send($phone, "Срочно погасите просроченную задолженность! Вся информация в личном кабинете: {$short_link} \"Премьер\" 88003331280", 2);
-        }elseif (parse_url('https://'.$short_link, PHP_URL_HOST) == 'toros.finfive.ru') {
-            $sms = $this->sms->send($phone, "Срочно погасите просроченную задолженность! Вся информация в личном кабинете: {$short_link} \"Торос\" 88003335987", 'toros');
-        } else {
-            $sms = $this->sms->send($phone, "Срочно погасите просроченную задолженность! Вся информация в личном кабинете: {$short_link} ООО \"ЮК №1\" 88002226091", 'jurcompany1');
-        }
+        SmsMessagesORM::insert($insert);
 
-        $filter['search']['phone'] = $phone;
-
-        $user = $this->users->get_users($filter);
-    
-        if ($user && isset($user[0])) {
-            //var_dump($user);
-            //exit;
-            
-            $this->response['data'] = 'Отправлено. ФИО: ' . $user[0]->lastname. ' ' . $user[0]->firstname. ' ' . $user[0]->patronymic . '. Всего отправлено: '. ($number_of +  1) .' СМС. manager.nalichnoeplus.ru/client/' . $user[0]->id;
-            //return;
-        } else {
-            $this->response['data'] = 'Отправлено. Не найден пользователь с таким номером. Всего отправлено: '. ($number_of +  1) .' СМС';
-            //return;
-        }
-    
-
-        if ($number_of) {
-            $query = $this->db->placehold("
-                UPDATE __sms_by_collectors SET ?% WHERE phone = ?
-            ", ['number_of' => $number_of + 1, 'updated_at' => time()], $phone);
-            $this->db->query($query);
-        } else {
-            $query = $this->db->placehold("
-                INSERT INTO __sms_by_collectors SET ?%
-            ", ['phone' => $phone, 'number_of' => 1]);
-            $this->db->query($query);
-        }
-
-        //$this->response['data'] = 'Всего отправлено: '. ($number_of +  1) .' СМС';
+        $this->response['data'] = 'Успешно отправлено';
     }
     
     
