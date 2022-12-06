@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.18, created on 2022-10-18 11:36:35
+<?php /* Smarty version Smarty-3.1.18, created on 2022-12-02 16:18:50
          compiled from "/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/client.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:135378028663465508cd2ee1-23861507%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '69878d04e064eade42da5432ae21b6e1bafc474f' => 
     array (
       0 => '/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/client.tpl',
-      1 => 1666082194,
+      1 => 1669978755,
       2 => 'file',
     ),
   ),
@@ -26,8 +26,8 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'contactdata_errors' => 0,
     'contacts_error' => 0,
     'addresses_error' => 0,
-    'faktaddress' => 0,
     'regaddress' => 0,
+    'faktaddress' => 0,
     'order' => 0,
     'work_error' => 0,
     'scoring_types' => 0,
@@ -607,12 +607,12 @@ if (!empty($_capture_buffer)) {
                                                             <table class="table table-hover mb-0">
                                                                 <tr>
                                                                     <td>Адрес прописки</td>
-                                                                    <td><?php echo $_smarty_tpl->tpl_vars['faktaddress']->value;?>
+                                                                    <td><?php echo $_smarty_tpl->tpl_vars['regaddress']->value;?>
 </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td>Адрес проживания</td>
-                                                                    <td><?php echo $_smarty_tpl->tpl_vars['regaddress']->value;?>
+                                                                    <td><?php echo $_smarty_tpl->tpl_vars['faktaddress']->value;?>
 </td>
                                                                 </tr>
                                                             </table>
