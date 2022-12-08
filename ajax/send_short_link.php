@@ -9,7 +9,7 @@ require 'autoload.php';
 
 class SendPaymentLinkAjax extends Core
 {
-    private $response = array();
+    private $response = '';
     
     public function run()
     {
@@ -18,11 +18,11 @@ class SendPaymentLinkAjax extends Core
         $userId = $this->request->post('userId');
 
         if (empty($phone)) {
-            $this->response['data'] = 'Ошибка. Нет номера';
+            $this->response = 'Ошибка. Нет номера';
             $this->output();
             return;
         } elseif (strlen($phone) != 11) {
-            $this->response['data'] = 'Ошибка. Неверный формат номера';
+            $this->response = 'Ошибка. Неверный формат номера';
             $this->output();
             return;
         }
@@ -60,18 +60,13 @@ class SendPaymentLinkAjax extends Core
 
         SmsMessagesORM::insert($insert);
 
-        $this->response['data'] = 'Успешно отправлено';
+        $this->response = 'Успешно отправлено';
     }
     
     
     private function output()
     {
-        header("Content-type: application/json; charset=UTF-8");
-        header("Cache-Control: must-revalidate");
-        header("Pragma: no-cache");
-        header("Expires: -1");		
-        
-        echo json_encode($this->response);
+        echo $this->response;
     }
 }
 
