@@ -1,7 +1,5 @@
 <?php
 
-use model\SMSRU;
-
 abstract class SegmentsAbastract
 {
     abstract static function sendReminder($request);
