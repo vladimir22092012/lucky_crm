@@ -17,16 +17,30 @@ class RegSegment extends SegmentsAbastract
                 if (!empty($isSent))
                     continue;
 
-                if(empty($user->time_zone))
+                if (empty($user->time_zone))
                     continue;
 
-                $send =
-                    [
-                        'phone' => 'phone_mobile',
-                        'msg' => $reminder->msgSms
-                    ];
+                $clientTime = gmdate('Y-m-d H:i:s', strtotime("UTC+3"));
 
-                self::send($send);
+                $isHoliday = WeekendCalendarORM::where('date', date('Y-m-d'))->first();
+                $settings = new Settings();
+                $sent = 0;
+
+                if (!empty($isHoliday) && date('G', strtotime($clientTime)) >= $settings->holiday_worktime['from'] && date('G', strtotime($clientTime)) < $settings->holiday_worktime['to'])
+                    $sent = 1;
+
+                if (empty($isHoliday) && date('G', strtotime($clientTime)) >= $settings->workday_worktime['from'] && date('G', strtotime($clientTime)) < $settings->workday_worktime['to'])
+                    $sent = 1;
+
+                if ($sent == 1) {
+                    $send =
+                        [
+                            'phone' => 'phone_mobile',
+                            'msg' => $reminder->msgSms
+                        ];
+
+                    self::send($send);
+                }
             }
         }
     }
