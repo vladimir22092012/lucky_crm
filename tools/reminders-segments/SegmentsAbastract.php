@@ -8,7 +8,7 @@ abstract class SegmentsAbastract
     {
         $api_code = 'CEC47EEB-DA21-5CDB-9431-7E53B513FAA5';
 
-        $smsru = new SMSRU($api_code);
+        $smsru = new Smsru($api_code);
 
         $data = new stdClass();
         $data->to = $send['phone'];
