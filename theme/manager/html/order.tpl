@@ -412,7 +412,7 @@
                                                         <br>
                                                         <input type="hidden" name="userId" value="{$order->user_id}">
                                                         <input type="text" id="short_link" name="short_link" value="{$short_link}" size="21" readonly>
-                                                        <input type="text" id="phone_short_link" name="phone_short_link" value="{$order->phone_mobile}" size="9">
+                                                        <input type="text" id="phone_short_link" name="phone" value="{$order->phone_mobile}" size="9">
                                                         <input type="submit" id="submit_short_link" name="submit_short_link" value="Отправить смс">
                                                         <br>
                                                     </div>

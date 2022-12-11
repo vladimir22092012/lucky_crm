@@ -9,10 +9,14 @@ class RegSegment extends SegmentsAbastract
 
         foreach ($reminders as $reminder) {
             $startTime = date('Y-m-d H:i:s', strtotime('-' . $reminder->countTime . ' ' . $reminder->timeType));
-            $users = UsersORM::whereRaw('lastUpdate', '<=', $startTime)->where('stage_card', 0)->get();
+            $users = UsersORM::where('lastUpdate', '<=', $startTime)->where('stage_card', 0)->get();
+
+            if (empty($users))
+                exit;
 
             foreach ($users as $user) {
-                $isSent = RemindersCronORM::where('userId', $user->id)->where('reminderId', $reminder->id)->get();
+
+                $isSent = RemindersCronORM::where('userId', $user->id)->where('reminderId', $reminder->id)->first();
 
                 if (!empty($isSent))
                     continue;
@@ -32,10 +36,20 @@ class RegSegment extends SegmentsAbastract
                 if (empty($isHoliday) && date('G', strtotime($clientTime)) >= $settings->workday_worktime['from'] && date('G', strtotime($clientTime)) < $settings->workday_worktime['to'])
                     $sent = 1;
 
+                $reminderLog =
+                    [
+                        'reminderId' => $reminder->id,
+                        'userId' => $user->id,
+                        'message' => $reminder->msgSms,
+                        'phone' => $user->phone_mobile
+                    ];
+
+                RemindersCronORM::insert($reminderLog);
+
                 if ($sent == 1) {
                     $send =
                         [
-                            'phone' => 'phone_mobile',
+                            'phone' => $user->phone_mobile,
                             'msg' => $reminder->msgSms
                         ];
 

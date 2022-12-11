@@ -58,8 +58,9 @@ class EquifaxUploads implements ToolsInterface
             ->setContacts(
                 $order->user->phone_mobile,
                 $order->user->email
-            )
-            ->setContract(
+            );
+        if (!empty($contract)) {
+            $report->setContract(
 
                 $contract->number,
                 [
@@ -88,6 +89,8 @@ class EquifaxUploads implements ToolsInterface
                     ]
                 ]
             );
+        }
+
         $config = new Config('config.json');
         $action = new Action();
 
