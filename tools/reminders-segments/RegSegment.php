@@ -17,6 +17,9 @@ class RegSegment extends SegmentsAbastract
                 if (!empty($isSent))
                     continue;
 
+                if(empty($user->time_zone))
+                    continue;
+
                 $send =
                     [
                         'phone' => 'phone_mobile',
