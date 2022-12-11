@@ -20,7 +20,7 @@ class RegSegment extends SegmentsAbastract
                 if (empty($user->time_zone))
                     continue;
 
-                $clientTime = gmdate('Y-m-d H:i:s', strtotime("UTC+3"));
+                $clientTime = gmdate('Y-m-d H:i:s', strtotime($user->time_zone));
 
                 $isHoliday = WeekendCalendarORM::where('date', date('Y-m-d'))->first();
                 $settings = new Settings();
