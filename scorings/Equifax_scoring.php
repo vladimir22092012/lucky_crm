@@ -70,75 +70,12 @@ class Equifax_scoring extends Core
 
         } else {
 
-            $reject = 0;
-            $reason = '';
+            if ($response['bkiscoring'] < 450)
+                $reason = 'bkiscoring';
 
-            if (in_array($order->client_status, ['nk', 'rep'])) {
-                if ($response['credit_count_active_overdue_11_12_13_sum_1000'] > 3) {
-                    $reject = 1;
-                    $reason = 'credit_count_active_overdue_11_12_13_sum_1000';
-                }
-
-                if ($response['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] >= 1) {
-                    if ($response['credit_count_active_overdue_11_12_13_sum_1000'] > 2) {
-                        $reject = 1;
-                        $reason = 'credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60';
-                    }
-                    if ($response['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] > 2) {
-                        $reject = 1;
-                        $reason = 'credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60';
-                    }
-                    if ($response['credit_avg_paid_for_type_19_days_90'] < 3000) {
-                        $reject = 1;
-                        $reason = 'credit_avg_paid_for_type_19_days_90';
-                    }
-                    if ($response['credit_count_delay_5'] < 5) {
-                        $reject = 1;
-                        $reason = 'credit_count_delay_5';
-                    }
-                }
-                if ($response['creditsCreatedlast7day'] == 0) {
-                    if ($response['credit_count_active_overdue_11_12_13_sum_1000'] > 2) {
-                        $reject = 1;
-                        $reason = 'credit_count_active_overdue_11_12_13_sum_1000';
-                    }
-                    if ($response['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] > 2) {
-                        $reject = 1;
-                        $reason = 'credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60';
-                    }
-                    if ($response['credit_avg_paid_for_type_19_days_90'] < 3000) {
-                        $reject = 1;
-                        $reason = 'credit_avg_paid_for_type_19_days_90';
-                    }
-                    if ($response['bkicountactivecredit'] >= 30) {
-                        $reject = 1;
-                        $reason = 'bkicountactivecredit';
-                    }
-                    if ($response['interestForLastMonth'] > 21) {
-                        $reject = 1;
-                        $reason = 'interestForLastMonth';
-                    }
-                }
-                if ($response['bkicountactivecredit'] > 22) {
-                    if ($response['creditsCreatedlast7day'] == 0) {
-                        $reject = 1;
-                        $reason = 'creditsCreatedlast7day';
-                    }
-                    if ($response['bkiscoring'] < 550 || $response['bkiscoring'] > 690) {
-                        $reject = 1;
-                        $reason = 'bkiscoring';
-                    }
-                    if ($response['interestForLastMonth'] > 20) {
-                        $reject = 1;
-                        $reason = 'interestForLastMonth';
-                    }
-                    if ($response['credit_prolongation_count_contracts_with_age_180_type_19'] < 2) {
-                        $reject = 1;
-                        $reason = 'credit_prolongation_count_contracts_with_age_180_type_19';
-                    }
-                }
-
-                if ($reject == 0) {
+            if(empty($reason))
+            {
+                if (in_array($order->client_status, ['nk', 'rep'])) {
                     if ($response['bkicountactivecredit'] >= 1 && $response['bkicountactivecredit'] <= 5)
                         $limit = 11000;
                     elseif ($response['bkicountactivecredit'] >= 6 && $response['bkicountactivecredit'] <= 10)
@@ -146,79 +83,10 @@ class Equifax_scoring extends Core
                     elseif ($response['bkicountactivecredit'] >= 11 && $response['bkicountactivecredit'] <= 29)
                         $limit = 6000;
                     elseif ($response['bkicountactivecredit'] >= 30)
-                        $reject = 1;
+                        $reason = 'Отказ в лимите';
                     else
-                        $limit = 'Нет лимита';
+                        $reason = 'Отказ в лимите';
                 } else {
-                    $limit = 'Отказано в лимите';
-                }
-
-            } else {
-                if ($response['credit_count_active_overdue_11_12_13_sum_1000'] > 3) {
-                    $reject = 1;
-                    $reason = 'credit_count_active_overdue_11_12_13_sum_1000';
-                }
-
-                if ($response['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] >= 1) {
-                    if ($response['credit_count_active_overdue_11_12_13_sum_1000'] > 2) {
-                        $reject = 1;
-                        $reason = 'credit_count_active_overdue_11_12_13_sum_1000';
-                    }
-                    if ($response['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] > 2) {
-                        $reject = 1;
-                        $reason = 'credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60';
-                    }
-                    if ($response['credit_avg_paid_for_type_19_days_90'] < 3000) {
-                        $reject = 1;
-                        $reason = 'credit_avg_paid_for_type_19_days_90';
-                    }
-                    if ($response['credit_count_delay_5'] < 5) {
-                        $reject = 1;
-                        $reason = 'credit_count_delay_5';
-                    }
-                }
-                if ($response['creditsCreatedlast7day'] == 0) {
-                    if ($response['credit_count_active_overdue_11_12_13_sum_1000'] > 2) {
-                        $reject = 1;
-                        $reason = 'credit_count_active_overdue_11_12_13_sum_1000';
-                    }
-                    if ($response['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] >= 1) {
-                        $reject = 1;
-                        $reason = 'credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60';
-                    }
-                    if ($response['credit_avg_paid_for_type_19_days_90'] < 4000) {
-                        $reject = 1;
-                        $reason = 'credit_avg_paid_for_type_19_days_90';
-                    }
-                    if ($response['bkicountactivecredit'] >= 30) {
-                        $reject = 1;
-                        $reason = 'bkicountactivecredit';
-                    }
-                    if ($response['interestForLastMonth'] > 21) {
-                        $reject = 1;
-                        $reason = 'interestForLastMonth';
-                    }
-                }
-                if ($response['bkicountactivecredit'] > 22) {
-                    if ($response['creditsCreatedlast7day'] == 0) {
-                        $reject = 1;
-                        $reason = 'creditsCreatedlast7day';
-                    }
-                    if ($response['bkiscoring'] < 550 || $response['bkiscoring'] > 690) {
-                        $reject = 1;
-                        $reason = 'bkiscoring';
-                    }
-                    if ($response['interestForLastMonth'] > 20) {
-                        $reject = 1;
-                        $reason = 'interestForLastMonth';
-                    }
-                    if ($response['credit_prolongation_count_contracts_with_age_180_type_19'] < 2) {
-                        $reject = 1;
-                        $reason = 'credit_prolongation_count_contracts_with_age_180_type_19';
-                    }
-                }
-
-                if ($reject == 0) {
                     $this->db->query("
                 SELECT count(*) as `count`
                 from s_contracts
@@ -250,25 +118,21 @@ class Equifax_scoring extends Core
                         elseif (date_diff($issuanceDate, $returnDate)->days >= 10 && date_diff($issuanceDate, $returnDate)->days < 15)
                             $limit = $lastContract->amount;
                         else
-                            $reject = 1;
+                            $reason = 'Отказ в лимите';
                     } else {
                         if (date_diff($issuanceDate, $returnDate)->days > 10)
                             $limit = $lastContract->amount;
                         else
-                            $reject = 1;
+                            $reason = 'Отказ в лимите';
                     }
-                } else {
-                    $limit = 'Отказано в лимите';
                 }
-
-
             }
 
             $update = [
                 'status' => 'completed',
                 'body' => json_encode($response),
-                'string_result' => ($reject == 1) ? 'Отказ по переменной ' . $reason : 'Одобренный лимит: ' . $limit,
-                'success' => ($reject == 1) ? 0 : 1
+                'string_result' => (isset($reason)) ? 'Отказ по переменной ' . $reason : 'Одобренный лимит: ' . $limit,
+                'success' => (isset($reason)) ? 0 : 1
             ];
         }
 

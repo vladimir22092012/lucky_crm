@@ -6,7 +6,17 @@ class EquifaxExpired_scoring extends Core
     {
         $scoring = $this->scorings->get_scoring($scoring_id);
 
-        $params = json_decode($scoring->body, true);
+        $this->db->query("
+        SELECT *
+        FROM s_scorings
+        WHERE order_id = ?
+        and `type` = 'equifax'
+        and `status` = 'completed'
+        ", $scoring->order_id);
+
+        $equifax = $this->db->result();
+
+        $params = json_decode($equifax->body, true);
 
         if ($params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] > 1) {
 

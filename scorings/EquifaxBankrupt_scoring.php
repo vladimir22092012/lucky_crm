@@ -8,7 +8,17 @@ class EquifaxBankrupt_scoring extends Core
 
         $order = $this->orders->get_order($scoring->order_id);
 
-        $params = json_decode($scoring->body, true);
+        $this->db->query("
+        SELECT *
+        FROM s_scorings
+        WHERE order_id = ?
+        and `type` = 'equifax'
+        and `status` = 'completed'
+        ", $scoring->order_id);
+
+        $equifax = $this->db->result();
+
+        $params = json_decode($equifax->body, true);
 
         if (in_array($order->client_status, ['nk', 'rep']) && $params['bkicountactivecredit'] > 22 || in_array($order->client_status, ['pk', 'crm']) && $params['bkicountactivecredit'] > 25) {
 
