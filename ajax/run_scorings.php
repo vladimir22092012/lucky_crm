@@ -83,6 +83,10 @@ class RunScoringsApp extends Core
                         case 'leadgens':
                         case 'contacts':
                         case 'equifax':
+                        case 'equifaxoverdue':
+                        case 'equifaxexpired':
+                        case 'equifaxcompanies':
+                        case 'equifaxbankrupt':
 
                             $add_scoring = array(
                                 'user_id' => $order->user_id,
