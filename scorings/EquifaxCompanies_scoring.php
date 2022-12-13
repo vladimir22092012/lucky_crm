@@ -12,6 +12,8 @@ class EquifaxCompanies_scoring extends Core
         WHERE order_id = ?
         and `type` = 'equifax'
         and `status` = 'completed'
+        order by id desc
+        limit 1
         ", $scoring->order_id);
 
         $equifax = $this->db->result();
