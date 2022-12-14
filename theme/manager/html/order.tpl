@@ -68,6 +68,22 @@
 
                 $('#equifaxScoreModal').modal();
             });
+
+            $('.editLoanProfit').on('click', function () {
+                $('#editLoanProfitModal').modal();
+            });
+
+            $('.saveEditLoanProfit').on('click', function () {
+                let form = $(this).closest('form').serialize();
+
+                $.ajax({
+                    method: 'POST',
+                    data: form,
+                    success: function () {
+                        location.reload();
+                    }
+                });
+            });
         })
     </script>
     <script>
@@ -660,6 +676,12 @@
                                                                 {/if}
                                                             </h6>
                                                         </div>
+                                                    </div>
+                                                {/if}
+                                                {if in_array($contract->status, [2,4])}
+                                                    <div data-order="{$order->order_id}"
+                                                         class="btn btn-block btn-success editLoanProfit">
+                                                        Скорректировать долг/Остановить начисления
                                                     </div>
                                                 {/if}
                                                 {if in_array('close_contract', $manager->permissions)}
@@ -3721,6 +3743,44 @@
                         </div>
                     {/if}
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="editLoanProfitModal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Скорректировать долг / Остановить начисления</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert" style="display:none"></div>
+                <form method="POST" id="editLoanProfitForm">
+                    <input type="hidden" name="action" value="editLoanProfit">
+                    <input type="hidden" name="contractId" value="{$contract->id}">
+                    <div class="form-group">
+                        <label class="control-label">Основной долг:</label>
+                        <input type="text" class="form-control" name="body" value="{$contract->loan_body_summ}">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Процент:</label>
+                        <input type="text" class="form-control" name="prc" value="{$contract->loan_percents_summ}">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Пени:</label>
+                        <input type="text" class="form-control" name="peni" value="{$contract->loan_peni_summ}">
+                    </div>
+                    <div class="custom-control custom-checkbox mr-sm-2 mb-3">
+                        <input type="checkbox" id="stopProfit" name="stopProfit" class="custom-control-input" {if $contract->stop_profit == 1}checked{/if}>
+                        <label class="custom-control-label" for="stopProfit">
+                            Остановить начисления
+                        </label>
+                    </div>
+                    <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
+                    <input type="button" class="btn btn-success saveEditLoanProfit" value="Сохранить">
+                </form>
             </div>
         </div>
     </div>
