@@ -306,6 +306,7 @@ class Contracts extends Core
         $premier_filter = '';
         $keyword_filter = '';
         $search_filter = '';
+        $stop_profit_filter = '';
         $limit = 1000;
         $page = 1;
         $sort = 'id DESC';
@@ -318,6 +319,9 @@ class Contracts extends Core
 
         if (!empty($filter['id']))
             $id_filter = $this->db->placehold("AND c.id IN (?@)", array_map('intval', (array)$filter['id']));
+
+        if (isset($filter['stop_profit']))
+            $stop_profit_filter = $this->db->placehold("AND stop_profit = ?", (int)$filter['stop_profit']);
 
         if (!empty($filter['user_id']))
             $user_id_filter = $this->db->placehold("AND c.user_id = ?", (int)$filter['user_id']);
@@ -547,6 +551,7 @@ class Contracts extends Core
                     $premier_filter
                     $keyword_filter
                     $search_filter
+                    $stop_profit_filter
                 GROUP BY c.id
                 ORDER BY $sort_workout $sort 
                 $sql_limit
