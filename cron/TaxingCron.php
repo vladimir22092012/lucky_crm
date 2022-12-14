@@ -36,6 +36,14 @@ class TaxingCron extends Core
 
             foreach ($contracts as $contract) {
 
+                if ($contract->loan_percents_summ >= $contract->amount * 1.5) {
+                    $this->contracts->update_contract($contract->id, array(
+                        'stop_profit' => 1
+                    ));
+
+                    continue;
+                }
+
                 $this->db->query("
                 select sum(amount) as sum_taxing
                 from s_operations
@@ -51,8 +59,7 @@ class TaxingCron extends Core
                 //Начисление процентов
                 $percents_summ = round($contract->loan_body_summ / 100 * $contract->base_percent, 2);
 
-                if($percents_summ > ($taxing_limit - $sum_taxing))
-                {
+                if ($percents_summ > ($taxing_limit - $sum_taxing)) {
                     $percents_summ = $taxing_limit - $sum_taxing;
                     $stop_taxing = 1;
                 }
