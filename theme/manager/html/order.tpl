@@ -3710,10 +3710,7 @@
             <div class="modal-body">
                 <div class="form-group" style="display:flex; flex-direction: column">
                     {if !empty($equifaxScore)}
-                        {foreach $equifaxScore->body as $key => $score}
-                            {if $key == 'error'}
-                                {continue}
-                            {/if}
+                        {foreach $equifaxScore as $key => $score}
                             <div class="form-group">
                                 <label>{$key}: {$score}</label>
                             </div>

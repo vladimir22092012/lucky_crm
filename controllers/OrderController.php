@@ -319,8 +319,39 @@ class OrderController extends Controller
 
                             if($scoring->type == 'equifax')
                             {
-                                $scoring->body = json_decode($scoring->body);
-                                $equifaxScore = $scoring;
+                                $scoring->body = json_decode($scoring->body, true);
+                                $equifaxScore = $scoring->body;
+
+                                $equifaxScore =
+                                    [
+                                        'bkicountoverdue' => $equifaxScore['bkicountoverdue'],
+                                        'bkiactivecountoverdue' => $equifaxScore['bkiactivecountoverdue'],
+                                        'bkicoutoverdue1000' => $equifaxScore['bkicoutoverdue1000'],
+                                        'bkiallamountoverdue' => $equifaxScore['bkiallamountoverdue'],
+                                        'bkicountcreditcard' => $equifaxScore['bkicountcreditcard'],
+                                        'bkicountactivecredit' => $equifaxScore['bkicountactivecredit'],
+                                        'bkiscoring' => $equifaxScore['bkiscoring'],
+                                        'creditsCreatedlast7day' => $equifaxScore['creditsCreatedlast7day'],
+                                        'interestForLastMonth' => $equifaxScore['interestForLastMonth'],
+                                        'historyCreditCount' => $equifaxScore['historyCreditCount'],
+                                        'summ_of_all_ta_cred_sum_paid' => $equifaxScore['summ_of_all_ta_cred_sum_paid'],
+                                        'credit_count_with_sum_more_300000' => $equifaxScore['credit_count_with_sum_more_300000'],
+                                        'credit_avg_paid_for_type_19_days_90' => $equifaxScore['credit_avg_paid_for_type_19_days_90'],
+                                        'credit_count_for_type_19_days_90' => $equifaxScore['credit_count_for_type_19_days_90'],
+                                        'credit_summ_for_type_19_days_90' => $equifaxScore['credit_summ_for_type_19_days_90'],
+                                        'credit_avg_paid_for_type_19_days_180' => $equifaxScore['credit_avg_paid_for_type_19_days_180'],
+                                        'credit_count_for_type_19_days_180' => $equifaxScore['credit_count_for_type_19_days_180'],
+                                        'credit_summ_for_type_19_days_180' => $equifaxScore['credit_summ_for_type_19_days_180'],
+                                        'credit_last_open_date_for_type_19' => $equifaxScore['credit_last_open_date_for_type_19'],
+                                        'credit_last_open_days_for_type_19' => $equifaxScore['credit_last_open_days_for_type_19'],
+                                        'credit_count_overdue_for_date_365' => $equifaxScore['credit_count_overdue_for_date_365'],
+                                        'credit_count_delay_5' => $equifaxScore['credit_count_delay_5'],
+                                        'credit_count_active_overdue_11_12_13_sum_1000' => $equifaxScore['credit_count_active_overdue_11_12_13_sum_1000'],
+                                        'credit_min_age_in_days_for_overdue_sum_1000' => $equifaxScore['credit_min_age_in_days_for_overdue_sum_1000'],
+                                        'credit_count_active_contracts_with_age_90_type_19' => $equifaxScore['credit_count_active_contracts_with_age_90_type_19'],
+                                        'credit_prolongation_count_contracts_with_age_180_type_19' => $equifaxScore['credit_prolongation_count_contracts_with_age_180_type_19'],
+                                        'credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60' => $equifaxScore['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'],
+                                    ];
                             }
 
                             if ($scoring->type == 'scorista') {
