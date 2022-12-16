@@ -1195,9 +1195,9 @@ class StatisticsController extends Controller
                         $active_sheet->setCellValue('M' . $i, '-');
                     }
                     if ($ad_service->number) {
-                        $active_sheet->setCellValue('N' . $i, ($ad_service->amount_contract * 3) . ' руб');
+                        $active_sheet->setCellValue('N' . $i, $ad_service->amount_contract * 3);
                     }
-                    $active_sheet->setCellValue('O' . $i, $ad_service->amount_insurance . 'руб');
+                    $active_sheet->setCellValue('O' . $i, $ad_service->amount_insurance);
 
                     $i++;
                 }

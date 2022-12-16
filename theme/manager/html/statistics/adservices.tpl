@@ -247,11 +247,11 @@ console.log(_table)
                                         <td></td>
                                     {/if}
                                     {if ($ad_service->number)}
-                                        <td>{$ad_service->amount_contract * 3} руб</td>
+                                        <td>{$ad_service->amount_contract * 3}</td>
                                         {else}
                                         <td></td>
                                     {/if}
-                                    <td>{$ad_service->amount_insurance} руб</td>
+                                    <td>{$ad_service->amount_insurance}</td>
                                 </tr>
                             {/foreach}
                             {foreach $card_binding as $card}
