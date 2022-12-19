@@ -1,5 +1,7 @@
 <?php
 
+error_reporting(-1);
+ini_set('display_errors', 'Off');
 class OrderController extends Controller
 {
     private $ordertimer_delay = 480;

@@ -4,41 +4,85 @@ class TestController extends Controller
 {
     public function fetch(){
         $order = $this->orders->get_order(3534);
-        $phone = preg_replace('/[^0-9]/', '', $order->phone_mobile);
+
+        $passport_serial = explode('-', $order->passport_serial);
+
+        foreach ($passport_serial as $serial => $value) {
+            if (strlen($value) == 4)
+                $passportSerial = $value;
+            else
+                $passportNumber = $value;
+        }
+
+        $regAddress = $this->Addresses->get_address($order->regaddress_id);
+        $regAddress = $regAddress->adressfull;
+
+        $faktAddress = $this->Addresses->get_address($order->faktaddress_id);
+        $faktAddress = $faktAddress->adressfull;
 
         $params =
             [
-                'UserID' => 'barvil',
-                'Password' => 'KsetM+H5',
-                'sources' => 'viber, whatsapp',
-                'PhoneReq' => [
-                    'phone' => $phone
+                "last" => $order->lastname,
+                "first" => $order->firstname,
+                "middle" => $order->patronymic,
+                "birthday" => date('d.m.Y', strtotime($order->birth)),
+                "birthplace" => 'Россия',
+                'gender' => 'неизвестно',
+                "snils" => $order->snils,
+                "reason" => "Контроль данных",
+                "transfer" => "правоприемник",
+                "period" => "на весь срок",
+                "adm_inform" => "проинформирован",
+                "doc" => [
+                    "country" => "Россия",
+                    "type" => "паспорт РФ",
+                    "serial" => $passportSerial,
+                    "number" => $passportNumber,
+                    "date" => date('d.m.Y', strtotime($order->passport_date)),
+                    "who" => $order->passport_issued
+                ],
+                "addr_reg" => [
+                    "addr_total" => $regAddress
+                ],
+                "addr_fact" => [
+                    "addr_total" => $faktAddress
                 ]
             ];
 
-        $request = $this->send_request($params);
+        $response = $this->send_request($params);
 
         echo '<pre>';
-        var_dump($request);
+        var_dump($response);
         exit;
     }
 
     private function send_request($params)
     {
-        $request = $this->XMLSerializer->serialize($params);
+        $headers =
+            [
+                'Content-Type: application/json'
+            ];
 
-        $ch = curl_init('https://i-sphere.ru/2.00/');
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_HEADER, false);
-        $html = curl_exec($ch);
-        $html = simplexml_load_string($html);
-        $json = json_encode($html);
-        $array = json_decode($json, TRUE);
-        curl_close($ch);
+        $curl = curl_init();
 
-        return $array;
+        curl_setopt_array($curl, [
+            CURLOPT_URL => 'http://51.250.97.26/scoring/user/info',
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 40,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_POSTFIELDS => json_encode($params),
+            CURLOPT_CUSTOMREQUEST => 'PUT'
+        ]);
+
+
+        $resp = curl_exec($curl);
+        curl_close($curl);
+        $resp = json_decode($resp, true);
+
+        return $resp;
     }
 }

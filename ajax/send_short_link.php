@@ -10,7 +10,7 @@ require 'autoload.php';
 class SendPaymentLinkAjax extends Core
 {
     private $response = '';
-    
+
     public function run()
     {
         $short_link = $this->request->post('short_link');
@@ -27,16 +27,16 @@ class SendPaymentLinkAjax extends Core
             return;
         }
 
-        $action = $this->request->get('action', 'string');    
+        $action = $this->request->get('action', 'string');
 
         switch($action || true):
-            
+
             case 'send':
-                
+
                 $this->send_action($phone, $short_link, $userId);
-                
-            break;
-            
+
+                break;
+
         endswitch;
 
         $this->output();
@@ -44,8 +44,8 @@ class SendPaymentLinkAjax extends Core
 
     private function send_action($phone, $short_link, $userId)
     {
-        $link = parse_url('https://'.$short_link, PHP_URL_HOST);
-        $msg = "Ваша ссылка для оплаты задолженности : {$link}";
+        $link = 'https://'.$short_link;
+        $msg = "Ваша ссылка для оплаты задолженности : ". $link;
 
         $sms = $this->sms->send($phone, $msg);
 
@@ -62,8 +62,8 @@ class SendPaymentLinkAjax extends Core
 
         $this->response = 'Успешно отправлено';
     }
-    
-    
+
+
     private function output()
     {
         echo $this->response;

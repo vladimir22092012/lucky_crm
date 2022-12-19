@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.18, created on 2022-12-08 14:52:26
+<?php /* Smarty version Smarty-3.1.18, created on 2022-12-14 15:33:28
          compiled from "/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/order.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2818875476343af9e6a2cf3-14201628%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'fe2aa0d83c9fc8b9ef94f66cee81e67ab66d6ce9' => 
     array (
       0 => '/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/order.tpl',
-      1 => 1670500344,
+      1 => 1671021050,
       2 => 'file',
     ),
   ),
@@ -188,6 +188,22 @@ if ($_smarty_tpl->parent != null) $_smarty_tpl->parent->tpl_vars['meta_title'] =
                 e.preventDefault();
 
                 $('#equifaxScoreModal').modal();
+            });
+
+            $('.editLoanProfit').on('click', function () {
+                $('#editLoanProfitModal').modal();
+            });
+
+            $('.saveEditLoanProfit').on('click', function () {
+                let form = $(this).closest('form').serialize();
+
+                $.ajax({
+                    method: 'POST',
+                    data: form,
+                    success: function () {
+                        location.reload();
+                    }
+                });
             });
         })
     </script>
@@ -886,6 +902,13 @@ $_smarty_tpl->tpl_vars['er']->_loop = true;
                                                                 <?php }?>
                                                             </h6>
                                                         </div>
+                                                    </div>
+                                                <?php }?>
+                                                <?php if (in_array($_smarty_tpl->tpl_vars['contract']->value->status,array(2,4))) {?>
+                                                    <div data-order="<?php echo $_smarty_tpl->tpl_vars['order']->value->order_id;?>
+"
+                                                         class="btn btn-block btn-success editLoanProfit">
+                                                        Скорректировать долг/Остановить начисления
                                                     </div>
                                                 <?php }?>
                                                 <?php if (in_array('close_contract',$_smarty_tpl->tpl_vars['manager']->value->permissions)) {?>
@@ -4433,14 +4456,11 @@ $_smarty_tpl->tpl_vars['sms_template']->_loop = true;
                     <?php if (!empty($_smarty_tpl->tpl_vars['equifaxScore']->value)) {?>
                         <?php  $_smarty_tpl->tpl_vars['score'] = new Smarty_Variable; $_smarty_tpl->tpl_vars['score']->_loop = false;
  $_smarty_tpl->tpl_vars['key'] = new Smarty_Variable;
- $_from = $_smarty_tpl->tpl_vars['equifaxScore']->value->body; if (!is_array($_from) && !is_object($_from)) { settype($_from, 'array');}
+ $_from = $_smarty_tpl->tpl_vars['equifaxScore']->value; if (!is_array($_from) && !is_object($_from)) { settype($_from, 'array');}
 foreach ($_from as $_smarty_tpl->tpl_vars['score']->key => $_smarty_tpl->tpl_vars['score']->value) {
 $_smarty_tpl->tpl_vars['score']->_loop = true;
  $_smarty_tpl->tpl_vars['key']->value = $_smarty_tpl->tpl_vars['score']->key;
 ?>
-                            <?php if ($_smarty_tpl->tpl_vars['key']->value=='error') {?>
-                                <?php continue 1?>
-                            <?php }?>
                             <div class="form-group">
                                 <label><?php echo $_smarty_tpl->tpl_vars['key']->value;?>
 : <?php echo $_smarty_tpl->tpl_vars['score']->value;?>
@@ -4453,6 +4473,48 @@ $_smarty_tpl->tpl_vars['score']->_loop = true;
                         </div>
                     <?php }?>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="editLoanProfitModal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Скорректировать долг / Остановить начисления</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert" style="display:none"></div>
+                <form method="POST" id="editLoanProfitForm">
+                    <input type="hidden" name="action" value="editLoanProfit">
+                    <input type="hidden" name="contractId" value="<?php echo $_smarty_tpl->tpl_vars['contract']->value->id;?>
+">
+                    <div class="form-group">
+                        <label class="control-label">Основной долг:</label>
+                        <input type="text" class="form-control" name="body" value="<?php echo $_smarty_tpl->tpl_vars['contract']->value->loan_body_summ;?>
+">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Процент:</label>
+                        <input type="text" class="form-control" name="prc" value="<?php echo $_smarty_tpl->tpl_vars['contract']->value->loan_percents_summ;?>
+">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Пени:</label>
+                        <input type="text" class="form-control" name="peni" value="<?php echo $_smarty_tpl->tpl_vars['contract']->value->loan_peni_summ;?>
+">
+                    </div>
+                    <div class="custom-control custom-checkbox mr-sm-2 mb-3">
+                        <input type="checkbox" id="stopProfit" name="stopProfit" class="custom-control-input" <?php if ($_smarty_tpl->tpl_vars['contract']->value->stop_profit==1) {?>checked<?php }?>>
+                        <label class="custom-control-label" for="stopProfit">
+                            Остановить начисления
+                        </label>
+                    </div>
+                    <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
+                    <input type="button" class="btn btn-success saveEditLoanProfit" value="Сохранить">
+                </form>
             </div>
         </div>
     </div>

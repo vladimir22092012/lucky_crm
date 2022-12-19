@@ -211,7 +211,7 @@ class Documents extends Core
                 $client_visible_filter
                 $type_filter
  	            $keyword_filter
-            ORDER BY id ASC 
+            ORDER BY id DESC
             $sql_limit
         ");
         $this->db->query($query);
