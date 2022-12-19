@@ -1112,10 +1112,6 @@ class StatisticsController extends Controller
             $this->design->assign('op_type', $op_type);
             $this->design->assign('gender', $gender);
 
-            $card_binding = $this->transactions->get_transactions_cards_users($filter);
-
-            $this->design->assign('card_binding', $card_binding);
-
             if ($this->request->get('download') == 'excel') {
 
                 $filename = 'files/reports/adservices.xls';
@@ -1198,44 +1194,6 @@ class StatisticsController extends Controller
                         $active_sheet->setCellValue('N' . $i, $ad_service->amount_contract * 3);
                     }
                     $active_sheet->setCellValue('O' . $i, $ad_service->amount_insurance);
-
-                    $i++;
-                }
-
-                foreach ($card_binding as $card) {
-
-                    if ($ad_service->Regcity) {
-                        $address = "$card->Regindex $card->Regcity $card->Regstreet_shorttype $card->Regstreet $card->Reghousing $card->Regroom";
-
-                    } else {
-                        $address = "$card->Regindex $card->Reglocality $card->Regstreet_shorttype $card->Regstreet $card->Reghousing $card->Regroom";
-                    }
-
-                    $fio_birth = "$card->lastname $card->firstname $card->patronymic $card->birth";
-
-
-                    $active_sheet->setCellValue('A' . $i, $card->created);
-                    $active_sheet->setCellValue('B' . $i, $card->contract_id);
-                    $active_sheet->setCellValue('C' . $i, $card->user_id);
-                    $active_sheet->setCellValue('D' . $i, $card->number);
-                    $active_sheet->setCellValue('E' . $i, $card->description);
-                    $active_sheet->setCellValue('F' . $i, $card->id);
-                    $active_sheet->setCellValue('G' . $i, $card->uid);
-                    $active_sheet->setCellValue('H' . $i, $fio_birth);
-                    $active_sheet->setCellValue('I' . $i, $card->phone_mobile);
-                    $active_sheet->setCellValue('J' . $i, $gender[$card->gender]);
-                    $active_sheet->setCellValue('K' . $i, $card->passport_serial);
-                    $active_sheet->setCellValue('L' . $i, $address);
-
-                    if ($card->start_date) {
-                        $active_sheet->setCellValue('M' . $i, $card->start_date . '/' . $card->end_date);
-                    } else {
-                        $active_sheet->setCellValue('M' . $i, '-');
-                    }
-                    if ($card->number) {
-                        $active_sheet->setCellValue('N' . $i, ($card->amount_contract * 3) . ' руб');
-                    }
-                    $active_sheet->setCellValue('O' . $i, '1 руб');
 
                     $i++;
                 }

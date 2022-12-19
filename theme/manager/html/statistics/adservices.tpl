@@ -254,24 +254,6 @@ console.log(_table)
                                     <td>{$ad_service->amount_insurance}</td>
                                 </tr>
                             {/foreach}
-                            {foreach $card_binding as $card}
-                                <tr>
-                                <td>{$card->operation_date}</td>
-                                <td>{$card->user_id}</td>
-                                <td>-</td>
-                                <td>{$card->description}</td>
-                                <td>{$card->id}</td>
-                                <td>-</td>
-                                <td>{$card->lastname} {$card->firstname} {$card->patronymic} <p>{$card->birth}</p></td>
-                                <td>{$card->phone_mobile}<td>
-                                <td>{$gender[$card->gender]}</td>
-                                <td>{$card->passport_serial}</td>
-                                <td>{$card->Regindex} {if $card->Regcity}{$card->Regcity}{else}{$card->Reglocality}{/if}{$card->Regstreet_shorttype} {$card->Regstreet}
-                                    {$card->Reghousing} {$card->Regroom}</td>
-                                <td>-</td>
-                                <td>1 руб</td>
-                                </tr>
-                            {/foreach}
                             </tbody>
                         </table>
                         </div>
