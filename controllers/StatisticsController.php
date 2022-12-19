@@ -293,8 +293,6 @@ class StatisticsController extends Controller
             $this->design->assign('from', $from);
             $this->design->assign('to', $to);
 
-// сделайте выгрузку в эксель, пожалуйста, по всем выданным займам:
-// дата - номер договора - ФИО+ДР - сумма - ПК/НК.
             $query = $this->db->placehold("
                 SELECT
                     c.id AS contract_id,
@@ -319,8 +317,8 @@ class StatisticsController extends Controller
                     u.email,
                     u.birth,
                     u.UID AS uid,
-                    u.Regregion,
-                    u.Regregion_shorttype
+                    u.regaddress_id,
+                    u.faktaddress_id
                 FROM __contracts AS c
                 LEFT JOIN __users AS u
                 ON u.id = c.user_id
@@ -372,50 +370,11 @@ class StatisticsController extends Controller
                         //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($c->close_date, $c->return_date, $interval);echo '</pre><hr />';
                         $c->expiration = $interval->days;
                     }
-
                 }
 
-                if (empty($c->client_status)) {
-                    $client_contracts = $this->contracts->get_contracts(array(
-                        'user_id' => $c->user_id,
-                        'status' => 3,
-                        'close_date_to' => $c->date
-                    ));
-                    if (!empty($client_contracts)) {
-                        $this->orders->update_order($c->order_id, array('client_status' => 'crm'));
-                    } else {
-                        $loan_history = $this->soap1c->get_client_credits($c->uid);
-                        if (!empty($loan_history)) {
-                            $have_close_loans = 0;
-                            foreach ($loan_history as $lh) {
-                                if (!empty($lh->ДатаЗакрытия)) {
-                                    if (strtotime($lh->ДатаЗакрытия) < strtotime($c->date)) {
-                                        $have_close_loans = 1;
-                                        $this->orders->update_order($c->order_id, array('client_status' => 'pk'));
-                                    }
-                                }
-                            }
-                        }
-
-                        if (empty($have_close_loans)) {
-                            $have_old_orders = 0;
-                            $orders = $this->orders->get_orders(array('user_id' => $c->user_id, 'date_to' => $c->date));
-                            foreach ($orders as $order) {
-                                if ($order->order_id != $c->order_id) {
-                                    $have_old_orders = 1;
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump('$order', $order);echo '</pre><hr />';
-                                }
-                            }
-
-                            if (empty($have_old_orders)) {
-                                $this->orders->update_order($c->order_id, array('client_status' => 'nk'));
-                            } else {
-                                $this->orders->update_order($c->order_id, array('client_status' => 'rep'));
-                            }
-                        }
-                    }
-
-                }
+                $regAddress   = AdressesORM::find($c->regaddress_id);
+                $c->Regregion = $regAddress->region;
+                $c->Regregion_shorttype = $regAddress->region_type;
             }
 
             $statuses = $this->contracts->get_statuses();
