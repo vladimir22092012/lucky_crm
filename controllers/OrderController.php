@@ -356,7 +356,10 @@ class OrderController extends Controller
                                         'credit_min_age_in_days_for_overdue_sum_1000' => $equifaxScore['credit_min_age_in_days_for_overdue_sum_1000'],
                                         'credit_count_active_contracts_with_age_90_type_19' => $equifaxScore['credit_count_active_contracts_with_age_90_type_19'],
                                         'credit_prolongation_count_contracts_with_age_180_type_19' => $equifaxScore['credit_prolongation_count_contracts_with_age_180_type_19'],
+                                        'credit_count_with_active_not_0_3_20_deliqfrom_0_deliqto_5' => $equifaxScore['credit_count_with_active_not_0_3_20_deliqfrom_0_deliqto_5'],
                                         'credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60' => $equifaxScore['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'],
+                                        'credit_count_with_active_not_0_3_20_deliqfrom_5_deliqto_30' => $equifaxScore['credit_count_with_active_not_0_3_20_deliqfrom_5_deliqto_30'],
+                                        'credit_count_with_active_not_0_3_20_deliqfrom_60_deliqto_90' => $equifaxScore['credit_count_with_active_not_0_3_20_deliqfrom_60_deliqto_90']
                                     ];
                             }
 
