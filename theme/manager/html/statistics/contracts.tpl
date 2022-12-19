@@ -111,6 +111,8 @@
                                 </th>
                                 <th>Регион</th>
                                 <th>Сумма</th>
+                                <th>Проценты</th>
+                                <th>Штрафы</th>
                                 <th>ПК/НК</th>
                                 <th>Менеджер</th>
                                 <th>Орг-я</th>
@@ -148,6 +150,8 @@
                                     {$contract->Regregion} {$contract->Regregion_shorttype}
                                 </td>
                                 <td><h3 class="text-primary">{$contract->amount*1}</h3></td>
+                                <td><h3 class="text-primary">{$contract->loan_percents_summ}</h3></td>
+                                <td><h3 class="text-primary">{$contract->loan_peni_summ}</h3></td>
                                 <td class="text-center">
                                     {if $contract->client_status == 'pk'}<span class="label label-info">ПК</span>{/if}
                                     {if $contract->client_status == 'nk'}<span class="label label-success">НК</span>{/if}

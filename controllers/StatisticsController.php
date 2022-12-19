@@ -306,6 +306,8 @@ class StatisticsController extends Controller
                     c.status,
                     c.collection_status,
                     c.sold,
+                    c.loan_percents_summ,
+                    c.loan_peni_summ,
                     o.client_status,
                     o.date AS order_date,
                     o.manager_id,
@@ -415,6 +417,8 @@ class StatisticsController extends Controller
                 $active_sheet->getColumnDimension('J')->setWidth(10);
                 $active_sheet->getColumnDimension('K')->setWidth(10);
                 $active_sheet->getColumnDimension('L')->setWidth(20);
+                $active_sheet->getColumnDimension('M')->setWidth(20);
+                $active_sheet->getColumnDimension('N')->setWidth(20);
 
                 $active_sheet->setCellValue('A1', 'Дата');
                 $active_sheet->setCellValue('B1', 'Договор');
@@ -423,11 +427,13 @@ class StatisticsController extends Controller
                 $active_sheet->setCellValue('E1', 'Регион');
                 $active_sheet->setCellValue('F1', 'Почта');
                 $active_sheet->setCellValue('G1', 'Сумма');
-                $active_sheet->setCellValue('H1', 'ПК/НК');
-                $active_sheet->setCellValue('I1', 'Менеджер');
-                $active_sheet->setCellValue('J1', 'Статус');
-                $active_sheet->setCellValue('K1', 'Источник');
-                $active_sheet->setCellValue('L1', 'Поступление заявки');
+                $active_sheet->setCellValue('H1', 'Проценты');
+                $active_sheet->setCellValue('I1', 'Штрафы');
+                $active_sheet->setCellValue('J1', 'ПК/НК');
+                $active_sheet->setCellValue('K1', 'Менеджер');
+                $active_sheet->setCellValue('L1', 'Статус');
+                $active_sheet->setCellValue('M1', 'Источник');
+                $active_sheet->setCellValue('N1', 'Поступление заявки');
 
                 $i = 2;
                 foreach ($contracts as $contract) {
@@ -459,11 +465,13 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('E' . $i, $contract->Regregion . ' ' . $contract->Regregion_shorttype);
                     $active_sheet->setCellValue('F' . $i, $contract->email);
                     $active_sheet->setCellValue('G' . $i, $contract->amount * 1);
-                    $active_sheet->setCellValue('H' . $i, $client_status);
-                    $active_sheet->setCellValue('I' . $i, $managers[$contract->manager_id]->name);
-                    $active_sheet->setCellValue('J' . $i, $status);
-                    $active_sheet->setCellValue('K' . $i, $contract->utm_source);
-                    $active_sheet->setCellValue('L' . $i, date('d.m.Y H:i:s', strtotime($contract->order_date)));
+                    $active_sheet->setCellValue('H' . $i, $contract->loan_percents_summ);
+                    $active_sheet->setCellValue('I' . $i, $contract->loan_peni_summ);
+                    $active_sheet->setCellValue('J' . $i, $client_status);
+                    $active_sheet->setCellValue('K' . $i, $managers[$contract->manager_id]->name);
+                    $active_sheet->setCellValue('L' . $i, $status);
+                    $active_sheet->setCellValue('M' . $i, $contract->utm_source);
+                    $active_sheet->setCellValue('N' . $i, date('d.m.Y H:i:s', strtotime($contract->order_date)));
 
                     $i++;
                 }
