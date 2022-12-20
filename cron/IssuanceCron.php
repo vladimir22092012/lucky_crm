@@ -79,23 +79,30 @@ class IssuanceCron extends Core
                                 $dt->add(new DateInterval('P6M'));
                                 $end_date = $dt->format('Y-m-d 23:59:59');
 
-                                $insurance_id = $this->insurances->add_insurance(array(
-                                    'amount' => $insurance_cost,
-                                    'contract_id' => $contract->id,
-                                    'user_id' => $contract->user_id,
-                                    'order_id' => $contract->order_id,
-                                    'create_date' => date('Y-m-d H:i:s'),
-                                    'start_date' => date('Y-m-d 00:00:00', time() + (1 * 86400)),
-                                    'end_date' => $end_date,
-                                    'operation_id' => $operation_id
-                                ));
+                                try{
+                                    $contract->insurance = new InsurancesORM();
+                                    $contract->insurance->amount = $insurance_cost;
+                                    $contract->insurance->user_id = $contract->user_id;
+                                    $contract->insurance->order_id = $contract->order_id;
+                                    $contract->insurance->start_date = date('Y-m-d 00:00:00', time() + (1 * 86400));
+                                    $contract->insurance->end_date = $end_date;
+                                    $contract->insurance->operation_id = $operation_id;
+                                    $contract->insurance->save();
+
+                                    $contract->insurance->number = InsurancesORM::create_number($contract->insurance->id);
+
+                                    InsurancesORM::where('id', $contract->insurance->id)->update(['number' => $contract->insurance->number]);
+                                }catch (Exception $e)
+                                {
+
+                                }
     
                                 $this->contracts->update_contract($contract->id, array(
-                                    'insurance_id' => $insurance_id
+                                    'insurance_id' => $contract->insurance->id
                                 ));
     
     
-                                $contract->insurance_id = $insurance_id;
+                                $contract->insurance_id = $contract->insurance->id;
                                 //TODO: Страховой полиc
                                 $this->create_document('POLIS_STRAHOVANIYA', $contract);
                             }
