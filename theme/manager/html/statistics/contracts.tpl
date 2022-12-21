@@ -104,12 +104,14 @@
                                     Договор
                                 </th>
                                 <th>ФИО</th>
+                                <th>Дата рождения</th>
+                                <th>Место рождения</th>
                                 <th>
                                     Телефон
                                     <br />
                                     Email
                                 </th>
-                                <th>Регион</th>
+                                <th>Адрес регистрации</th>
                                 <th>Сумма</th>
                                 <th>Проценты</th>
                                 <th>Штрафы</th>
@@ -137,9 +139,13 @@
                                         {$contract->lastname|escape} 
                                         {$contract->firstname|escape} 
                                         {$contract->patronymic|escape}
-                                        <br />
-                                        {$contract->birth|escape}
                                     </a>
+                                </td>
+                                <td>
+                                    {$contract->birth|date}
+                                </td>
+                                <td>
+                                    {$contract->birth_place}
                                 </td>
                                 <td>
                                     {$contract->phone_mobile}
@@ -147,7 +153,7 @@
                                     <small>{$contract->email}</small>
                                 </td>
                                 <td>
-                                    {$contract->Regregion} {$contract->Regregion_shorttype}
+                                    {$contract->Regregion}
                                 </td>
                                 <td><h3 class="text-primary">{$contract->amount*1}</h3></td>
                                 <td><h3 class="text-primary">{$contract->loan_percents_summ}</h3></td>

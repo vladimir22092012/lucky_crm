@@ -1,67 +1,105 @@
 <?php
 
 use CloudCastle\EquifaxReport\Individual\Client;
-use CloudCastle\EquifaxReport\Individual\Report;
+use CloudCastle\EquifaxReport\Individual\Report as Report;
 use CloudCastle\EquifaxConfig\Config;
-use CloudCastle\EquifaxConfig\Action;
-use CloudCastle\EquifaxReport\Generator;
+use CloudCastle\EquifaxReport\Report as Generator;
+use CloudCastle\EquifaxConfig\Info;
 
 class EquifaxUploads implements ToolsInterface
 {
 
-    public static function processing($orderId)
+    public static function processing($count)
     {
-        $order = OrdersORM::with('user')->find($orderId);
-        $contract = ContractsORM::where('order_id', $orderId)->first();
-        $regAddress = AdressesORM::find($order->user->regaddress_id);
-        $faktAddress = AdressesORM::find($order->user->faktaddress_id);
+        $config = new Config('config.json');
 
-        list($passportSerial, $passportNumber) = explode('-', $order->user->passport_serial);
+        $reports = [];
 
-        $client = new Client();
-        $client->setName($order->user->lastname, $order->user->firstname, $order->user->patronymic);
-        $client->setInn(['inn' => $order->user->inn]);
-        $client->setSnils($order->user->snils);
-        $client->setBirth(
-            [
-                'date' => date('d.m.Y', strtotime($order->user->birth)),
-                'birthCountry' => 'Россия',
-                'birthPlace' => $order->user->birth_place
+        $contracts = ContractsORM::with('user')->orderBy('id', 'desc')->limit($count)->get();
+
+        foreach ($contracts as $contract) {
+            $title_part = new stdClass();
+            $report = new stdClass();
+            $report->info = new Info();
+            $report->info->set([
+                /**
+                 * Id клиента в системе кредитной организации
+                 */
+                'recnumber' => $contract->user_id,
+                /*
+                 * Действие с кредитной историей
+                 * Возможные варианты :
+                 * 'Источник направляет кредитную историю о субъекте или его отдельном обязательстве впервые' => 'A',
+                 * 'Кредитная история изменяется или дополняется' => 'B',
+                 * 'Исправляется ошибка в кредитной информации или представляется непринятая бюро кредитная информация' => 'C',
+                 * 'Аннулируются сведения' => 'D'
+                 */
+                'action' => 'Кредитная история изменяется или дополняется', // или B (по умолчанию)
+                /*
+                 * события, вследствие которого формируется запись кредитной истории
+                 */
+                'event' => 'Субъект обратился к источнику с предложением совершить сделку', // или 1.1 (по умолчанию)
+                /*
+                 * Объём выполняемой операции, производимой с записью кредитной истории
+                 */
+                'action_volume' => 'изменение отдельных показателей кредитной истории', // или 1 (по умолчанию)
+                /*
+                 * Причина предоставления операции, производимой с записью кредитной истории
+                 * Указывается только при action => 'Аннулируются сведения'
+                 */
+                # 'action_reason' => 'На основании пункта 2 части 1 статьи 7 218-ФЗ: на основании решения суда, вступившего в силу', // или 2
             ]);
-        $client->setDocument(
-            [
-                'country' => 'Росиия',
-                'type' => 'Паспорт РФ',
-                'serial' => $passportSerial,
-                'number' => $passportNumber,
-                'date' => date('d.m.Y', strtotime($order->user->passport_date)),
-                'who' => $order->user->passport_issued,
-                'department_code' => $order->user->subdivision_code
-            ]);
+            $regAddress = AdressesORM::find($contract->user->regaddress_id);
+            $faktAddress = AdressesORM::find($contract->user->faktaddress_id);
 
-        $report = new Report();
-        $report
-            ->setAddrReg([
-                'index' => $regAddress->zip,
-                'country' => 'Росиия',
-                'okato' => $regAddress->okato,
-                'street' => $regAddress->street_type . ' ' . $regAddress->street,
-                'house' => $regAddress->house
-            ])
-            ->setAddrFact([
-                'index' => $faktAddress->zip,
-                'country' => 'Росиия',
-                'okato' => $faktAddress->okato,
-                'street' => $faktAddress->street_type . ' ' . $faktAddress->street,
-                'house' => $faktAddress->house
-            ])
-            ->setContacts(
-                $order->user->phone_mobile,
-                $order->user->email
-            );
-        if (!empty($contract)) {
-            $report->setContract(
+            list($passportSerial, $passportNumber) = explode('-', $contract->user->passport_serial);
 
+            $client = new Client();
+            $client->setName($contract->user->lastname, $contract->user->firstname, $contract->user->patronymic);
+            $client->setInn(['inn' => $contract->user->inn]);
+            $client->setSnils($contract->user->snils);
+            $client->setBirth(
+                [
+                    'date' => date('d.m.Y', strtotime($contract->user->birth)),
+                    'birthCountry' => 'Россия',
+                    'birthPlace' => $contract->user->birth_place
+                ]);
+            $client->setDocument(
+                [
+                    'country' => 'Росиия',
+                    'type' => 'Паспорт РФ',
+                    'serial' => $passportSerial,
+                    'number' => $passportNumber,
+                    'date' => date('d.m.Y', strtotime($contract->user->passport_date)),
+                    'who' => $contract->user->passport_issued,
+                    'department_code' => $contract->user->subdivision_code
+                ]);
+
+            $title_part->private = $client;
+            $report->title_part = $title_part;
+
+            $report->title_part->base_part = new Report();
+
+            $report->title_part->base_part
+                ->setAddrReg([
+                    'index' => $regAddress->zip,
+                    'country' => 'Росиия',
+                    'okato' => $regAddress->okato,
+                    'street' => $regAddress->street_type . ' ' . $regAddress->street,
+                    'house' => $regAddress->house
+                ])
+                ->setAddrFact([
+                    'index' => $faktAddress->zip,
+                    'country' => 'Росиия',
+                    'okato' => $faktAddress->okato,
+                    'street' => $faktAddress->street_type . ' ' . $faktAddress->street,
+                    'house' => $faktAddress->house
+                ])
+                ->setContacts(
+                    $contract->user->phone_mobile,
+                    $contract->user->email
+                )
+                ->setContract(
                 $contract->number,
                 [
                     'deal' =>
@@ -89,28 +127,19 @@ class EquifaxUploads implements ToolsInterface
                     ]
                 ]
             );
+
+            $reports[] = $report;
         }
-
-        $config = new Config('config.json');
-        $action = new Action();
-
-
-        $action->set([
-            'action' => 'Источник направляет кредитную историю о субъекте или его отдельном обязательстве впервые',
-            'event' => 'Субъект обратился к источнику с предложением совершить сделку',
-            'action_volume' => 'Изменение отдельных показателей кредитной истории'
-        ]);
-        $config->setAction($action);
 
         /**
          * Передаем генератору конфигурацию и объект клиента для формирования титульной части КИ
          */
-        $generator = new Generator($config, $client);
+        $generator = new Generator($config, $reports);
 
         /**
          * Сгенерировать xml файл передав объект с информацией о КИ
          */
-        $xml = $generator->create($report);
+        $xml = $generator->create($count);
 
         $fileDir = $xml->file->realPath;
         $dir = $xml->file->path;

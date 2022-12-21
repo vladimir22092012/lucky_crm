@@ -320,7 +320,8 @@ class StatisticsController extends Controller
                     u.birth,
                     u.UID AS uid,
                     u.regaddress_id,
-                    u.faktaddress_id
+                    u.faktaddress_id,
+                    u.birth_place
                 FROM __contracts AS c
                 LEFT JOIN __users AS u
                 ON u.id = c.user_id
@@ -375,8 +376,7 @@ class StatisticsController extends Controller
                 }
 
                 $regAddress   = AdressesORM::find($c->regaddress_id);
-                $c->Regregion = $regAddress->region;
-                $c->Regregion_shorttype = $regAddress->region_type;
+                $c->Regregion = $regAddress->adressfull;
             }
 
             $statuses = $this->contracts->get_statuses();
@@ -419,21 +419,25 @@ class StatisticsController extends Controller
                 $active_sheet->getColumnDimension('L')->setWidth(20);
                 $active_sheet->getColumnDimension('M')->setWidth(20);
                 $active_sheet->getColumnDimension('N')->setWidth(20);
+                $active_sheet->getColumnDimension('O')->setWidth(20);
+                $active_sheet->getColumnDimension('P')->setWidth(20);
 
                 $active_sheet->setCellValue('A1', 'Дата');
                 $active_sheet->setCellValue('B1', 'Договор');
                 $active_sheet->setCellValue('C1', 'ФИО');
-                $active_sheet->setCellValue('D1', 'Телефон');
-                $active_sheet->setCellValue('E1', 'Регион');
-                $active_sheet->setCellValue('F1', 'Почта');
-                $active_sheet->setCellValue('G1', 'Сумма');
-                $active_sheet->setCellValue('H1', 'Проценты');
-                $active_sheet->setCellValue('I1', 'Штрафы');
-                $active_sheet->setCellValue('J1', 'ПК/НК');
-                $active_sheet->setCellValue('K1', 'Менеджер');
-                $active_sheet->setCellValue('L1', 'Статус');
-                $active_sheet->setCellValue('M1', 'Источник');
-                $active_sheet->setCellValue('N1', 'Поступление заявки');
+                $active_sheet->setCellValue('D1', 'Дата рождения');
+                $active_sheet->setCellValue('E1', 'Место рождения');
+                $active_sheet->setCellValue('F1', 'Телефон');
+                $active_sheet->setCellValue('G1', 'Адрес регистрации');
+                $active_sheet->setCellValue('H1', 'Почта');
+                $active_sheet->setCellValue('I1', 'Сумма');
+                $active_sheet->setCellValue('J1', 'Проценты');
+                $active_sheet->setCellValue('K1', 'Штрафы');
+                $active_sheet->setCellValue('L1', 'ПК/НК');
+                $active_sheet->setCellValue('M1', 'Менеджер');
+                $active_sheet->setCellValue('N1', 'Статус');
+                $active_sheet->setCellValue('O1', 'Источник');
+                $active_sheet->setCellValue('P1', 'Поступление заявки');
 
                 $i = 2;
                 foreach ($contracts as $contract) {
@@ -460,18 +464,20 @@ class StatisticsController extends Controller
 
                     $active_sheet->setCellValue('A' . $i, date('d.m.Y', strtotime($contract->date)));
                     $active_sheet->setCellValue('B' . $i, $contract->number);
-                    $active_sheet->setCellValue('C' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic . ' ' . $contract->birth);
-                    $active_sheet->setCellValue('D' . $i, $contract->phone_mobile);
-                    $active_sheet->setCellValue('E' . $i, $contract->Regregion . ' ' . $contract->Regregion_shorttype);
-                    $active_sheet->setCellValue('F' . $i, $contract->email);
-                    $active_sheet->setCellValue('G' . $i, $contract->amount * 1);
-                    $active_sheet->setCellValue('H' . $i, $contract->loan_percents_summ);
-                    $active_sheet->setCellValue('I' . $i, $contract->loan_peni_summ);
-                    $active_sheet->setCellValue('J' . $i, $client_status);
-                    $active_sheet->setCellValue('K' . $i, $managers[$contract->manager_id]->name);
-                    $active_sheet->setCellValue('L' . $i, $status);
-                    $active_sheet->setCellValue('M' . $i, $contract->utm_source);
-                    $active_sheet->setCellValue('N' . $i, date('d.m.Y H:i:s', strtotime($contract->order_date)));
+                    $active_sheet->setCellValue('C' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic);
+                    $active_sheet->setCellValue('D' . $i, $contract->birth);
+                    $active_sheet->setCellValue('E' . $i, $contract->birth_place);
+                    $active_sheet->setCellValue('F' . $i, $contract->phone_mobile);
+                    $active_sheet->setCellValue('G' . $i, $contract->Regregion . ' ' . $contract->Regregion_shorttype);
+                    $active_sheet->setCellValue('H' . $i, $contract->email);
+                    $active_sheet->setCellValue('I' . $i, $contract->amount * 1);
+                    $active_sheet->setCellValue('J' . $i, $contract->loan_percents_summ);
+                    $active_sheet->setCellValue('K' . $i, $contract->loan_peni_summ);
+                    $active_sheet->setCellValue('L' . $i, $client_status);
+                    $active_sheet->setCellValue('M' . $i, $managers[$contract->manager_id]->name);
+                    $active_sheet->setCellValue('N' . $i, $status);
+                    $active_sheet->setCellValue('O' . $i, $contract->utm_source);
+                    $active_sheet->setCellValue('P' . $i, date('d.m.Y H:i:s', strtotime($contract->order_date)));
 
                     $i++;
                 }

@@ -8,6 +8,11 @@ class OrdersORM extends \Illuminate\Database\Eloquent\Model
 
     public function user()
     {
-        return $this->hasOne(UsersORM::class, 'id','user_id');
+        return $this->hasOne(UsersORM::class, 'id', 'user_id');
+    }
+
+    public function contract()
+    {
+        return $this->hasOne(ContractsORM::class, 'id', 'contract_id');
     }
 }
