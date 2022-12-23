@@ -940,7 +940,7 @@ class OrderController extends Controller
         $this->orders->update_order($order_id, array('contract_id' => $contract_id));
 
         // отправялем смс
-        $msg = 'Активируй займ ' . ($order->amount * 1) . ' в личном кабинете, код ' . $accept_code . 'mkk-barvil.ru/lk';
+        $msg = 'Активируй займ ' . ($order->amount * 1) . ' в личном кабинете, код ' . $accept_code . ' mkk-barvil.ru/lk';
         $this->sms->send($order->phone_mobile, $msg);
 
 //        ящик: sale@nalichnoeplus.com
