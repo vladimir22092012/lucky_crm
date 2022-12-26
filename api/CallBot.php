@@ -6,7 +6,7 @@ class CallBot implements ApiInterface
 
     public static function sendRequest($request)
     {
-        // TODO: Implement sendRequest() method.
+        return self::curl(1);
     }
 
     public static function curl($params)
@@ -14,12 +14,12 @@ class CallBot implements ApiInterface
         $curl = curl_init();
         self::$params =
             [
-                'apiKey'        => "HiyTXk4pKBiOdJ9K93C5zwOWhs9M5EepowzCZQBJNZDmopjK0rnHJOUU2ZCy",
-                'phone'         => '99999999999',
-                'outgoingPhone' => '99999999997',
-                'record'        => [
-                                     'text' => 'Текст для генерации аудиоролика'
-                                                                                ]
+                'apiKey' => "HiyTXk4pKBiOdJ9K93C5zwOWhs9M5EepowzCZQBJNZDmopjK0rnHJOUU2ZCy",
+                'phone' => '79966208002',
+                'outgoingPhone' => '78126042878',
+                'record' => [
+                    'text' => 'Тестовое сообщение'
+                ]
             ];
 
         curl_setopt($curl, CURLOPT_URL, 'https://lk.zvonobot.ru/apiCalls/create');
@@ -30,13 +30,16 @@ class CallBot implements ApiInterface
         $resp = curl_exec($curl);
         curl_close($curl);
 
+        var_dump(json_decode($resp));
+        exit;
+
         return self::response(json_decode($resp));
     }
 
     public static function response($response)
     {
         self::toLogs($response);
-        return $response;
+        echo '<pre>'.$response.'</pre>';
     }
 
     public static function toLogs($log)

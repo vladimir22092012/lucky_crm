@@ -94,6 +94,8 @@ RewriteRule ^test_api/?$                index.php?module=TestApiController  [L,Q
 
 RewriteRule ^reminders_events/?$        index.php?module=RemindersEventsController  [L,QSA]
 
+RewriteRule ^cron/?$                    cron/AuditCron.php  [L,QSA]
+
 RewriteRule ^scorings/?$                index.php?module=ScoringsController  [L,QSA]
 RewriteRule ^settings/?$                index.php?module=SettingsController  [L,QSA]
 RewriteRule ^settings_communications/?$ index.php?module=SettingsCommunicationsController  [L,QSA]

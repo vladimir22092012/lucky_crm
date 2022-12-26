@@ -17,7 +17,6 @@ class ActiveSegment extends SegmentsAbastract
                 case 6:
                     self::beforeDayReminder($reminder);
                     break;
-
             }
         }
     }
@@ -28,9 +27,10 @@ class ActiveSegment extends SegmentsAbastract
 
         if ($nowHour == $reminder->countTime)
         {
-            $now = date('Y-m-d');
+            $startTime = date('Y-m-d 00:00:00');
+            $endTime = date('Y-m-d 23:59:59');
 
-            $contracts = ContractsORM::where('return_date', $now)->get();
+            $contracts = ContractsORM::whereBetween('return_date', [$startTime, $endTime])->get();
 
             foreach ($contracts as $contract) {
 
@@ -81,9 +81,10 @@ class ActiveSegment extends SegmentsAbastract
 
     private static function beforeDayReminder($reminder)
     {
-        $returnDate = date('Y-m-d', strtotime('+'.$reminder->countTime.' days'));
+        $returnStartTime = date('Y-m-d 00:00:00', strtotime('+'.$reminder->countTime.' days'));
+        $returnEndTime = date('Y-m-d 23:59:59', strtotime('+'.$reminder->countTime.' days'));
 
-        $contracts = ContractsORM::where('return_date', $returnDate)->get();
+        $contracts = ContractsORM::whereBetween('return_date', [$returnStartTime, $returnEndTime])->get();
 
         foreach ($contracts as $contract) {
             $user = UsersORM::where('id', $contract->user_id)->fisrt();
