@@ -184,10 +184,6 @@ class OrderController extends Controller
                 if ($order = $this->orders->get_order($order_id)) {
                     // сохраняем историю займов из 1с
                     $client = $this->users->get_user($order->user_id);
-
-                    var_dump(CallBot::getInfo(132818136));
-                    exit;
-
                     $credits_history = $this->soap1c->get_client_credits($client->UID);
                     $this->users->save_loan_history($client->id, $credits_history);
 
