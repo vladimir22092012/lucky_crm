@@ -311,6 +311,8 @@
                                                     href="rfm/">РФМ</a></li>
                                         <li {if in_array($module, ['CollectionPeriodsController'])}class="active"{/if}>
                                             <a href="collection_periods">Периоды коллекшина</a></li>
+                                        <li {if in_array($module, ['CallbotController'])}class="active"{/if}>
+                                            <a href="callbot">Настройки звонобота</a></li>
                                     {/if}
                                 </ul>
                             </li>

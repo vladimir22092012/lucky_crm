@@ -109,6 +109,8 @@ RewriteRule ^blacklistedit/?$           ajax/BlacklistEditController.php  [L,QSA
 RewriteRule ^penalty_types/?$           index.php?module=PenaltyTypesController  [L,QSA]
 RewriteRule ^penalties/?$               index.php?module=PenaltiesController  [L,QSA]
 
+RewriteRule ^callbot/?$                 index.php?module=CallbotController  [L,QSA]
+
 RewriteRule ^statistics/?$              index.php?module=StatisticsController&action=main  [L,QSA]
 RewriteRule ^statistics/([^/]*)/?$      index.php?module=StatisticsController&action=$1  [L,QSA]
 RewriteRule ^tools/?$                   index.php?module=ToolsController&action=main  [L,QSA]
