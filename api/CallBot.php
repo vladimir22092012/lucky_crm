@@ -17,7 +17,7 @@ class CallBot implements ApiInterface
                 'phone' => $user->phone_mobile,
                 'outgoingPhone' => '78126042878',
                 'record' => [
-                    'text' => 'Тестовое сообщение'
+                    'text' => $data->text
                 ]
             ];
 
@@ -71,15 +71,9 @@ class CallBot implements ApiInterface
         $resp = json_decode($resp, true);
         curl_close($curl);
 
-        usleep(30000000);
-
         if ($resp['status'] == 'success') {
             $answeredAt = new DateTime(date("H:i:s", $resp['data'][0]['calls'][0]['answeredAt']));
             $finishedAt = new DateTime(date("H:i:s", $resp['data'][0]['calls'][0]['finishedAt']));
-
-            if (date_diff($answeredAt, $finishedAt)->s >= 6) {
-
-            }
         }
 
         return 1;
