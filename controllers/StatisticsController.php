@@ -321,7 +321,16 @@ class StatisticsController extends Controller
                     u.UID AS uid,
                     u.regaddress_id,
                     u.faktaddress_id,
-                    u.birth_place
+                    u.birth_place,
+                    u.passport_serial,
+                    u.subdivision_code,
+                    u.passport_date,
+                    u.passport_issued,
+                    u.contact_person_name,
+                    u.contact_person_phone,
+                    u.contact_person2_name,
+                    u.contact_person2_phone,
+                    u.workphone
                 FROM __contracts AS c
                 LEFT JOIN __users AS u
                 ON u.id = c.user_id
@@ -375,8 +384,11 @@ class StatisticsController extends Controller
                     }
                 }
 
-                $regAddress   = AdressesORM::find($c->regaddress_id);
+                $regAddress = AdressesORM::find($c->regaddress_id);
                 $c->Regregion = $regAddress->adressfull;
+
+                $faktAddress = AdressesORM::find($c->faktaddress_id);
+                $c->FaktRegion = $faktAddress->adressfull;
             }
 
             $statuses = $this->contracts->get_statuses();
@@ -421,6 +433,11 @@ class StatisticsController extends Controller
                 $active_sheet->getColumnDimension('N')->setWidth(20);
                 $active_sheet->getColumnDimension('O')->setWidth(20);
                 $active_sheet->getColumnDimension('P')->setWidth(20);
+                $active_sheet->getColumnDimension('Q')->setWidth(20);
+                $active_sheet->getColumnDimension('R')->setWidth(20);
+                $active_sheet->getColumnDimension('S')->setWidth(20);
+                $active_sheet->getColumnDimension('T')->setWidth(20);
+                $active_sheet->getColumnDimension('U')->setWidth(20);
 
                 $active_sheet->setCellValue('A1', 'Дата');
                 $active_sheet->setCellValue('B1', 'Договор');
@@ -438,6 +455,11 @@ class StatisticsController extends Controller
                 $active_sheet->setCellValue('N1', 'Статус');
                 $active_sheet->setCellValue('O1', 'Источник');
                 $active_sheet->setCellValue('P1', 'Поступление заявки');
+                $active_sheet->setCellValue('Q1', 'Дата окончания договора');
+                $active_sheet->setCellValue('R1', 'Паспортные данные');
+                $active_sheet->setCellValue('S1', 'Контакты 3-х лиц');
+                $active_sheet->setCellValue('T1', 'Адрес проживания');
+                $active_sheet->setCellValue('U1', 'Рабочий телефон');
 
                 $i = 2;
                 foreach ($contracts as $contract) {
@@ -462,6 +484,14 @@ class StatisticsController extends Controller
                         $status = $statuses[$contract->status];
                     }
 
+                    $passport = "Паспорт " . $contract->passport_serial
+                        . " Выдан " . $contract->passport_issued
+                        . " от " . $contract->passport_date
+                        . " код подразделения код подразделения ".$contract->subdivision_code;
+
+                    $contacts = $contract->contact_person_name.'/'.$contract->contact_person_phone
+                        .PHP_EOL.$contract->contact_person2_name.'/'.$contract->contact_person2_phone;
+
                     $active_sheet->setCellValue('A' . $i, date('d.m.Y', strtotime($contract->date)));
                     $active_sheet->setCellValue('B' . $i, $contract->number);
                     $active_sheet->setCellValue('C' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic);
@@ -478,6 +508,11 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('N' . $i, $status);
                     $active_sheet->setCellValue('O' . $i, $contract->utm_source);
                     $active_sheet->setCellValue('P' . $i, date('d.m.Y H:i:s', strtotime($contract->order_date)));
+                    $active_sheet->setCellValue('Q' . $i, $contract->return_date);
+                    $active_sheet->setCellValue('R' . $i, $passport);
+                    $active_sheet->setCellValue('S' . $i, $contacts);
+                    $active_sheet->setCellValue('T' . $i, $contract->FaktRegion);
+                    $active_sheet->setCellValue('U' . $i, $contract->workphone);
 
                     $i++;
                 }
@@ -1723,7 +1758,7 @@ class StatisticsController extends Controller
                         12 => 'Декабрь'
                     ];
 
-                if($filter['date_group_by'] == 'issuance'){
+                if ($filter['date_group_by'] == 'issuance') {
 
                     $contracts = $this->orders->get_orders_contracts_issuance($filter);
 
@@ -1951,7 +1986,7 @@ class StatisticsController extends Controller
 
                 $items_per_page = $this->request->get('page_count');
 
-                if(empty($items_per_page))
+                if (empty($items_per_page))
                     $items_per_page = 25;
 
                 $this->design->assign('page_count', $items_per_page);
@@ -2000,9 +2035,8 @@ class StatisticsController extends Controller
                     $filtres['utm_content_filter'] = $filter['utm_content_filter'];
                 }
 
-                if(isset($filtres))
+                if (isset($filtres))
                     $this->design->assign('filtres', $filtres);
-
 
 
                 if ($this->request->get('date_filter') == 1)
