@@ -101,6 +101,10 @@ class OrderController extends Controller
                 case 'add_comment':
                     $this->action_add_comment();
                     break;
+                
+                case 'add_problem_loan':
+                    $this->add_problem_loan();
+                    break;
 
                 case 'close_contract':
                     $this->action_close_contract();
@@ -2874,5 +2878,98 @@ class OrderController extends Controller
 
         ContractsORM::where('id', $contractId)->update($update);
         exit;
+    }
+
+        private function add_problem_loan() {
+        $user_id = $this->request->post('user_id', 'integer');
+        $order_id = $this->request->post('order_id', 'integer');
+        $problem_loan_name = $this->request->post('problem_loan_name', 'string');
+
+        $contract_order = $this->orders->get_order((int)$order_id);
+        $contract = $this->contracts->get_order_contract((int)$order_id);
+
+        $regaddress_full = empty($contract_order->Regindex) ? '' : $contract_order->Regindex . ', ';
+        $regaddress_full .= trim($contract_order->Regregion . ' ' . $contract_order->Regregion_shorttype);
+        $regaddress_full .= empty($contract_order->Regcity) ? '' : trim(', ' . $contract_order->Regcity . ' ' . $contract_order->Regcity_shorttype);
+        $regaddress_full .= empty($contract_order->Regdistrict) ? '' : trim(', ' . $contract_order->Regdistrict . ' ' . $contract_order->Regdistrict_shorttype);
+        $regaddress_full .= empty($contract_order->Reglocality) ? '' : trim(', ' . $contract_order->Reglocality . ' ' . $contract_order->Reglocality_shorttype);
+        $regaddress_full .= empty($contract_order->Reghousing) ? '' : ', д.' . $contract_order->Reghousing;
+        $regaddress_full .= empty($contract_order->Regbuilding) ? '' : ', стр.' . $contract_order->Regbuilding;
+        $regaddress_full .= empty($contract_order->Regroom) ? '' : ', к.' . $contract_order->Regroom;
+
+        $passport_series = substr(str_replace(array(' ', '-'), '', $contract_order->passport_serial), 0, 4);
+        $passport_number = substr(str_replace(array(' ', '-'), '', $contract_order->passport_serial), 4, 6);
+        $subdivision_code = $contract_order->subdivision_code;
+        $passport_issued = $contract_order->passport_issued;
+        $passport_date = $contract_order->passport_date;
+
+        // echo'<pre>';print_r($contract);echo'</pre>';
+
+        $todays_date = date("d.m.Y");
+
+        // $days_of_singing = 
+        //$sum_of_the_songs;
+
+        // $datetime1 = strtotime($todays_date);
+        // $datetime2 = strtotime($today);
+
+        $secs = strtotime($todays_date) - strtotime($contract->return_date);
+        $days = $secs / 86400;
+
+        $sum_of_the_songs = $contract->amount * 0.00054 * $days;
+
+        $total_amount = $contract->amount + $contract->loan_body_summ + $sum_of_the_songs;
+
+        $document_params = array(
+            'lastname' => $contract_order->lastname,
+            'firstname' => $contract_order->firstname,
+            'patronymic' => $contract_order->patronymic,
+            'birth' => $contract_order->birth,
+            'phone' => $contract_order->phone_mobile,
+            'regaddress_full' => $regaddress_full,
+            'passport_series' => $passport_series,
+            'passport_number' => $passport_number,
+            'passport_serial' => $contract_order->passport_serial,
+            'subdivision_code' => $subdivision_code,
+            'passport_issued' => $passport_issued,
+            'passport_date' => $passport_date,
+            // 'asp' => $transaction->sms,
+            'created' => date('Y-m-d H:i:s'),
+            'base_percent' => $contract->base_percent,
+            'amount' => $contract->amount,
+            'number' => $contract->number,
+            'loan_percents_summ' => $contract->loan_body_summ,
+            'return_date' => $contract->return_date,
+            'order_created' => $contract_order->date,
+            'todays_date' => $todays_date,
+            'sum_of_the_songs' => $sum_of_the_songs,
+            'total_amount' => $total_amount
+        );
+
+        // // echo'<pre>';print_r($contract->user_id);echo'</pre>';
+
+        $document = array(            
+            'user_id' => $user_id,
+            'order_id' => $order_id,
+            'contract_id' => $contract->id,
+            'type' => $problem_loan_name,
+            'params' => $document_params
+        );
+
+        // $this->json_output(array('error' => 'Не удалось добавить!'));
+        // $this->json_output(array('error' => json_encode($contract)));
+        if ($document_id = $this->documents->create_document($document)){
+            $this->json_output(array(
+                'success' => 1,
+                'created' => date('d.m.Y H:i:s'),
+                // 'text' => (string) $document_id,
+                'text' => 'Документ добавлен'
+                // 'official' => $official,
+                // 'manager_name' => $this->manager->name,
+            ));
+        }    
+        else {
+            $this->json_output(array('error' => 'Не удалось добавить!'));
+        }
     }
 }

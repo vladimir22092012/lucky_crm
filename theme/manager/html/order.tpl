@@ -851,6 +851,14 @@
                                         <span class="hidden-xs-down">Коммуникации</span>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <button class="nav-link js-event-add-click js-open-problem_loan-form"
+                                    data-order_id="{$order->order_id}" data-user_id="{$order->user_id}"
+                                    data-action="add_problem_loan"
+                                    >
+                                            <span class="hidden-xs-down">Создать документы проблемного заемщика</span>
+                                    </button>
+                                </li>
                             </ul>
 
                             <!-- Tab panes -->
@@ -3780,6 +3788,54 @@
                     </div>
                     <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
                     <input type="button" class="btn btn-success saveEditLoanProfit" value="Сохранить">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal_add_problem_loan" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md md-comment">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title">Добавить докуемнты</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" id="form_add_problem_loan" action="order/{$order->order_id}">
+
+                    <input type="hidden" name="order_id" value="{$order->order_id}"/>
+                    <input type="hidden" name="user_id" value="{$order->user_id}"/>
+                    <input type="hidden" name="block" value=""/>
+                    <input type="hidden" name="action" value="add_problem_loan"/>
+
+                    <div class="alert" style="display:none"></div>
+
+                    <div class="form-group">
+                        <label for="name" class="control-label">Выберите докуемнт для создания</label>
+                        <!--<textarea class="form-control" name="text" rows="6"></textarea>-->
+                    </div>
+                    <!--<div class="custom-control custom-checkbox mr-sm-2 mb-3">
+                        <input type="checkbox" name="official" class="custom-control-input" id="official_check"
+                               value="1">
+                        <label class="custom-control-label" for="official_check">Официальный</label>
+                    </div>-->
+                    <select class="form-control" style="    margin-bottom: 20px;" name="problem_loan_name" aria-label="Default select example">
+                    <option value="PRETRIAL_CLAIM" selected>Досудебная притензия</option>
+                    <option value="NOTIFICATION_OF_DELAY_TO_THE_CLIENT">Уведомление о просрочке клиенту</option>
+                    <option value="CERTIFICATE_OF_ABSENCE_OF_DEBT">Справка об отсутствии задолженности</option>
+                    <option value="REFUSAL_TO_TERMINATE_THE_CONTRACT">Отказ расторжения договора</option>
+                    <option value="REFUSAL_TO_TERMINATE_THE_CONTRACT">Отказ обработки персональных данных</option>
+                    </select>
+                    <div class="form-action">
+                        <button type="button" class="btn btn-danger waves-effect js-event-add-click" data-event="70"
+                                data-manager="{$manager->id}" data-order="{$order->order_id}"
+                                data-user="{$order->user_id}" data-dismiss="modal">Отмена
+                        </button>
+                        <button type="submit" class="btn btn-success waves-effect waves-light">Создать</button>
+                    </div>
                 </form>
             </div>
         </div>
