@@ -1070,6 +1070,50 @@ console.log(resp);
         return str_minutes + ':' + str_seconds;
     }
 
+    var _init_add_problem_loan = function(){
+
+        $(document).on('click', '.js-open-problem_loan-form', function(e){
+            e.preventDefault();
+            $('#modal_add_problem_loan [name=text]').text('')
+            $('#modal_add_problem_loan').modal();
+        });
+
+        $(document).on('submit', '#form_add_problem_loan', function(e){
+            e.preventDefault();
+
+            var $form = $(this);
+
+            $.ajax({
+                url: $form.attr('action'),
+                data: $form.serialize(),
+                type: 'POST',
+                success: function(resp){
+                    if (resp.success)
+                    {
+                        $('#modal_add_problem_loan').modal('hide');
+                        $form.find('[name=text]').val('')
+
+                        app.update_page();
+
+                        Swal.fire({
+                            timer: 5000,
+                            title: 'Документ добавлен.',
+                            type: 'success',
+                        });
+                    }
+                    else
+                    {
+                        Swal.fire({
+                            text: resp.error,
+                            type: 'error',
+                        });
+
+                    }
+                }
+            })
+        })
+    }
+
     var _init_close_contract = function(){
         $(document).on('click', '.js-open-close-form', function(e){
             e.preventDefault();
@@ -1617,6 +1661,9 @@ console.log(resp);
         _init_confirm_contract();
         
         _init_comment_form();
+
+        _init_add_problem_loan();
+
         _init_fssp_info();
         
         _init_upload_file();
