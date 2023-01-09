@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.18, created on 2022-11-29 17:13:43
+<?php /* Smarty version Smarty-3.1.18, created on 2022-12-27 11:38:26
          compiled from "/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/index.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:9789791756343ae1cecaf76-39358637%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '56bdde0a3a152681021839bba2d449e0b220abb4' => 
     array (
       0 => '/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/index.tpl',
-      1 => 1669731201,
+      1 => 1672130299,
       2 => 'file',
     ),
   ),
@@ -386,6 +386,8 @@ $_smarty_tpl->tpl_vars['pn']->_loop = true;
                                                     href="rfm/">РФМ</a></li>
                                         <li <?php if (in_array($_smarty_tpl->tpl_vars['module']->value,array('CollectionPeriodsController'))) {?>class="active"<?php }?>>
                                             <a href="collection_periods">Периоды коллекшина</a></li>
+                                        <li <?php if (in_array($_smarty_tpl->tpl_vars['module']->value,array('CallbotController'))) {?>class="active"<?php }?>>
+                                            <a href="callbot">Настройки звонобота</a></li>
                                     <?php }?>
                                 </ul>
                             </li>

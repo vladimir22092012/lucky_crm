@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9a5497af17c2342300ffff2997004b51",
+    "content-hash": "09632a48815503bfbd0134b6b7345abd",
     "packages": [
         {
             "name": "cloud-castle/equifax-config",
-            "version": "1.0.5",
+            "version": "1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zorinalexey/CloudCastle-EquifaxConfig.git",
-                "reference": "22b01f74f93c30157ffa82566147124b8c782338"
+                "reference": "05a6eef64ea96b780d407a745b61bd576b3de28b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zorinalexey/CloudCastle-EquifaxConfig/zipball/22b01f74f93c30157ffa82566147124b8c782338",
-                "reference": "22b01f74f93c30157ffa82566147124b8c782338",
+                "url": "https://api.github.com/repos/zorinalexey/CloudCastle-EquifaxConfig/zipball/05a6eef64ea96b780d407a745b61bd576b3de28b",
+                "reference": "05a6eef64ea96b780d407a745b61bd576b3de28b",
                 "shasum": ""
             },
             "require": {
@@ -48,9 +48,9 @@
             "description": "Библиотека для конфигурирования библиотек cloud-castle/equifax-scoring и cloud-castle/equifax-report",
             "support": {
                 "issues": "https://github.com/zorinalexey/CloudCastle-EquifaxConfig/issues",
-                "source": "https://github.com/zorinalexey/CloudCastle-EquifaxConfig/tree/1.0.5"
+                "source": "https://github.com/zorinalexey/CloudCastle-EquifaxConfig/tree/1.0.8"
             },
-            "time": "2022-12-06T05:58:16+00:00"
+            "time": "2022-12-20T06:32:30+00:00"
         },
         {
             "name": "cloud-castle/equifax-library",
@@ -97,16 +97,16 @@
         },
         {
             "name": "cloud-castle/equifax-report",
-            "version": "1.0.8",
+            "version": "2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zorinalexey/CloudCastle-EquifaxReport.git",
-                "reference": "2c7d68aefdc4a30302c26ad7845479126282fe16"
+                "reference": "a32b5a3e5d099ac5e30c916f6e348f5aaa0342fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zorinalexey/CloudCastle-EquifaxReport/zipball/2c7d68aefdc4a30302c26ad7845479126282fe16",
-                "reference": "2c7d68aefdc4a30302c26ad7845479126282fe16",
+                "url": "https://api.github.com/repos/zorinalexey/CloudCastle-EquifaxReport/zipball/a32b5a3e5d099ac5e30c916f6e348f5aaa0342fc",
+                "reference": "a32b5a3e5d099ac5e30c916f6e348f5aaa0342fc",
                 "shasum": ""
             },
             "require": {
@@ -135,9 +135,9 @@
             "description": "Библиотека для генерации xml файлов кредитных отчетов для БКИ Equifax",
             "support": {
                 "issues": "https://github.com/zorinalexey/CloudCastle-EquifaxReport/issues",
-                "source": "https://github.com/zorinalexey/CloudCastle-EquifaxReport/tree/1.0.8"
+                "source": "https://github.com/zorinalexey/CloudCastle-EquifaxReport/tree/2.0.3"
             },
-            "time": "2022-12-14T09:30:49+00:00"
+            "time": "2022-12-20T18:22:17+00:00"
         },
         {
             "name": "cloud-castle/file-system",

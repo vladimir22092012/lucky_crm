@@ -5,18 +5,18 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'c249e3e687fa1bb6ea73c98dd764349e2c02c4fd',
+        'reference' => '8eb7bbe277a45a8ea57d824a49d1e24e810d88ea',
         'name' => 'mfoproekty/public_html',
         'dev' => true,
     ),
     'versions' => array(
         'cloud-castle/equifax-config' => array(
-            'pretty_version' => '1.0.5',
-            'version' => '1.0.5.0',
+            'pretty_version' => '1.0.8',
+            'version' => '1.0.8.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../cloud-castle/equifax-config',
             'aliases' => array(),
-            'reference' => '22b01f74f93c30157ffa82566147124b8c782338',
+            'reference' => '05a6eef64ea96b780d407a745b61bd576b3de28b',
             'dev_requirement' => false,
         ),
         'cloud-castle/equifax-library' => array(
@@ -29,12 +29,12 @@
             'dev_requirement' => false,
         ),
         'cloud-castle/equifax-report' => array(
-            'pretty_version' => '1.0.8',
-            'version' => '1.0.8.0',
+            'pretty_version' => '2.0.3',
+            'version' => '2.0.3.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../cloud-castle/equifax-report',
             'aliases' => array(),
-            'reference' => '2c7d68aefdc4a30302c26ad7845479126282fe16',
+            'reference' => 'a32b5a3e5d099ac5e30c916f6e348f5aaa0342fc',
             'dev_requirement' => false,
         ),
         'cloud-castle/file-system' => array(
@@ -256,7 +256,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'c249e3e687fa1bb6ea73c98dd764349e2c02c4fd',
+            'reference' => '8eb7bbe277a45a8ea57d824a49d1e24e810d88ea',
             'dev_requirement' => false,
         ),
         'myclabs/php-enum' => array(
