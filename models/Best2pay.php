@@ -10,7 +10,7 @@ class Best2pay extends Core
         4809388889655340, 05/2022, 195 // проведена
      */
 
-    private $url = 'https://pay.best2pay.net/';
+    private $url = '';
     private $currency_code = 643;
     
     /** пары сектор => пароль
@@ -29,27 +29,35 @@ class Best2pay extends Core
     */
     
     //МИНБ
-    private $sectors = array(
-        'PAY_CREDIT' => '9811', //сектор для отправки кредита на карту клиента (P2PCredit)
-        'RECURRENT' => '9812', // сектор для совершения рекурентных платежей (token) ECOM
-        'ADD_CARD' => '9813', // сектор для привязки карты (token)
-        'PAYMENT' => '9807', // сектор для оплаты любой картой (C2A)
-    );
+    private $sectors = array();
 
     private $min_fee = 3000;
     private $fee = 0.04;
 
-    private $passwords = array(
-        '9811' => 'G824087',
-        '9812' => '7Z9q6ZD2',
-        '9813' => 'th2dn51',
-        '9807' => '9X1lxK4',
-    );
+    private $passwords = array();
 
 
     public function __construct()
     {
         parent::__construct();
+
+        $this->sectors =
+            [
+                'PAY_CREDIT' => $this->config->p2pSector,
+                'RECURRENT' => $this->config->ecomSector,
+                'ADD_CARD' => $this->config->tokenSector,
+                'PAYMENT' => $this->config->paySector,
+            ];
+
+        $this->passwords =
+            [
+                $this->config->p2pSector => $this->config->p2pSectorPassword,
+                $this->config->ecomSector => $this->config->ecomSectorPassword,
+                $this->config->tokenSector => $this->config->tokenPassword,
+                $this->config->paySector => $this->config->payPassword,
+            ];
+
+        $this->url = $this->config->b2phref;
     }
     
     public function get_sectors()
