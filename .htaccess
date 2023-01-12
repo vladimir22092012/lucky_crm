@@ -111,6 +111,8 @@ RewriteRule ^penalties/?$               index.php?module=PenaltiesController  [L
 
 RewriteRule ^callbot/?$                 index.php?module=CallbotController  [L,QSA]
 
+RewriteRule ^delete_users/?$            index.php?module=DeleteUsersController  [L,QSA]
+
 RewriteRule ^statistics/?$              index.php?module=StatisticsController&action=main  [L,QSA]
 RewriteRule ^statistics/([^/]*)/?$      index.php?module=StatisticsController&action=$1  [L,QSA]
 RewriteRule ^tools/?$                   index.php?module=ToolsController&action=main  [L,QSA]
