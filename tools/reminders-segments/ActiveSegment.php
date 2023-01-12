@@ -34,7 +34,7 @@ class ActiveSegment extends SegmentsAbastract
 
             foreach ($contracts as $contract) {
 
-                $user = UsersORM::where('id', $contract->user_id)->fisrt();
+                $user = UsersORM::where('id', $contract->user_id)->first();
 
                 $isSent = RemindersCronORM::where('userId', $user->id)->where('reminderId', $reminder->id)->first();
 
@@ -87,7 +87,7 @@ class ActiveSegment extends SegmentsAbastract
         $contracts = ContractsORM::whereBetween('return_date', [$returnStartTime, $returnEndTime])->get();
 
         foreach ($contracts as $contract) {
-            $user = UsersORM::where('id', $contract->user_id)->fisrt();
+            $user = UsersORM::where('id', $contract->user_id)->first();
 
             $isSent = RemindersCronORM::where('userId', $user->id)->where('reminderId', $reminder->id)->first();
 
