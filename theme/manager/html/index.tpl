@@ -285,6 +285,12 @@
                                             class="mdi mdi-account-multiple-outline"></i><span class="hide-menu">Пользователи</span></a>
                             </li>
                         {/if}
+                        {if in_array($manager->role, ['developer', 'admin', 'user', 'big_user'])}
+                            <li {if in_array($module, ['DeleteUsersController'])}class="active"{/if}>
+                                <a class="" href="delete_users/" aria-expanded="false"><i
+                                            class="mdi mdi-account-card-details"></i><span class="hide-menu">Удаление пользователей</span></a>
+                            </li>
+                        {/if}
                         {if in_array('changelogs', $manager->permissions)}
                             <li {if in_array($module, ['ChangelogsController'])}class="active"{/if}>
                                 <a class="" href="changelogs/" aria-expanded="false"><i
