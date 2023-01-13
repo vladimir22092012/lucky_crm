@@ -33,11 +33,14 @@ class Onec implements ApiInterface
         $item = new StdClass();
 
         $item->ID = (string)$contract->id;
+        $item->НомерДоговора = $contract->number;
         $item->Дата = date('YmdHis', strtotime($contract->inssuance_date));
         $item->Срок = $contract->period;
         $item->Периодичность = 'День';
         $item->ПроцентнаяСтавка = $contract->base_percent;
         $item->ПСК = '365';
+        $item->ПДН = '0';
+        $item->УИДСделки = $contract->number;
         $item->ИдентификаторФормыВыдачи = 'Безналичная';
         $item->ИдентификаторФормыОплаты = 'ТретьеЛицо';
         $item->Сумма = $contract->amount;
@@ -56,6 +59,9 @@ class Onec implements ApiInterface
         $client->АдресРегистрации = $user->regaddress->adressfull;
         $client->АдресПроживания = $user->faktaddress->adressfull;
         $client->Телефон = self::format_phone($user->phone_mobile);
+        $client->ИНН = $user->inn;
+        $client->СНИЛС = $user->snils;
+        $client->Email = $user->email;
         $client->ОКАТО = $user->regaddress->okato;
         $client->ОКТМО = $user->regaddress->oktmo;
 
