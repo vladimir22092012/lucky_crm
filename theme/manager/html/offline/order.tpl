@@ -1311,7 +1311,7 @@
                                                             <div class="pl-2 pr-2 {if $scorings[$scoring_type->name]->status == 'new'}bg-light-warning{elseif $scorings[$scoring_type->name]->success}bg-light-success{else}bg-light-danger{/if}">
                                                                 <div class="row {if !$scoring_type@last}border-bottom{/if}">
                                                                     <div class="col-12 col-sm-12 pt-2">
-                                                                        <h5 class="float-left">
+                                                                        <h5 class="float-left" style="width: 100%;">
                                                                             {$scoring_type->title}
                                                                             {if $scoring_type->name == 'fssp'}
                                                                                 {if $scorings[$scoring_type->name]->found_46}<span class="label label-danger">46</span>{/if}
