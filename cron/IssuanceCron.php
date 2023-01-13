@@ -131,6 +131,10 @@ class IssuanceCron extends Core
                     ));
 
                     Onec::sendRequest($contract->order_id);
+                    $order = OrdersORM::find($contract->order_id);
+
+                    if($order->utm_source == 'guruleads')
+                        Guruleads::sendRequest(['orderId' => $contract->order_id, 'method' => 'sendApprovePostback']);
 
                 } elseif ($res == false) {
 
