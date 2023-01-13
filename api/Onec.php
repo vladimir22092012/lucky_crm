@@ -23,8 +23,8 @@ class Onec implements ApiInterface
         $contract = ContractsORM::find($order->contract_id);
         $user = UsersORM::find($order->user_id);
 
-        $user->regaddress = Addresses::find($order->regaddress_id);
-        $user->faktaddress = Addresses::find($order->faktaddress_id);
+        $user->regaddress = AdressesORM::find($user->regaddress_id);
+        $user->faktaddress = AdressesORM::find($user->faktaddress_id);
 
         $passport_serial = str_replace([' ', '-'], '', $order->passport_serial);
         $passport_series = substr($passport_serial, 0, 4);
@@ -91,14 +91,15 @@ class Onec implements ApiInterface
             $client = new SoapClient($service_url, $params);
             $response = $client->__soapCall($method, array($request));
         } catch (Exception $fault) {
+            var_dump($fault);
             $response = $fault;
         }
 
         $insert =
             [
                 'orderId' => self::$orderId,
-                'request' => json_encode($request),
-                'response' => json_encode($response)
+                'request' => json_encode(json_decode($request->TextJSON), JSON_UNESCAPED_UNICODE),
+                'response' => json_encode($response, JSON_UNESCAPED_UNICODE)
             ];
 
         OnecLogs::insert($insert);

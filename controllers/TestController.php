@@ -3,6 +3,12 @@
 class TestController extends Controller
 {
     public function fetch(){
+        Onec::sendRequest(4604);
+        exit;
+    }
+
+    public function send()
+    {
         $order = $this->orders->get_order(3534);
 
         $passport_serial = explode('-', $order->passport_serial);
@@ -50,10 +56,6 @@ class TestController extends Controller
             ];
 
         $response = $this->send_request($params);
-
-        echo '<pre>';
-        var_dump($response);
-        exit;
     }
 
     private function send_request($params)
