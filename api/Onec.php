@@ -10,12 +10,12 @@ class Onec implements ApiInterface
     protected static $password = '';
     protected static $orderId;
 
-    public static function sendRequest($request)
+    public static function sendRequest($orderId)
     {
-        // TODO: Implement sendRequest() method.
+        self::send_loan($orderId);
     }
 
-    private function send_loan($order_id)
+    private static function send_loan($order_id)
     {
         self::$orderId = $order_id;
 
@@ -55,7 +55,7 @@ class Onec implements ApiInterface
         $client->МестоРождения = $user->birth_place;
         $client->АдресРегистрации = $user->regaddress->adressfull;
         $client->АдресПроживания = $user->faktaddress->adressfull;
-        $client->Телефон = $this->format_phone($user->phone_mobile);
+        $client->Телефон = self::format_phone($user->phone_mobile);
         $client->ОКАТО = $user->regaddress->okato;
         $client->ОКТМО = $user->regaddress->oktmo;
 
@@ -72,11 +72,11 @@ class Onec implements ApiInterface
 
         $request = new StdClass();
         $request->TextJSON = json_encode($item);
-        $result = $this->send_request('CRM_WebService', 'Loans', $request);
+        $result = self::send_request('CRM_WebService', 'Loans', $request);
 
         return $result;
     }
-    private function send_request($service, $method, $request)
+    private static function send_request($service, $method, $request)
     {
         $params = array();
         if (!empty(self::$login) || !empty(self::$password))
@@ -106,7 +106,7 @@ class Onec implements ApiInterface
         return $response;
     }
 
-    public function format_phone($phone)
+    public static function format_phone($phone)
     {
         if (empty($phone)) {
             return '';
