@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.18, created on 2022-12-14 15:33:28
+<?php /* Smarty version Smarty-3.1.18, created on 2023-01-09 11:02:37
          compiled from "/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/order.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2818875476343af9e6a2cf3-14201628%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'fe2aa0d83c9fc8b9ef94f66cee81e67ab66d6ce9' => 
     array (
       0 => '/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/order.tpl',
-      1 => 1671021050,
+      1 => 1673250111,
       2 => 'file',
     ),
   ),
@@ -1120,6 +1120,16 @@ $_smarty_tpl->tpl_vars['er']->_loop = true;
                                         <span class="hidden-sm-up"><i class="ti-mobile"></i></span>
                                         <span class="hidden-xs-down">Коммуникации</span>
                                     </a>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link js-event-add-click js-open-problem_loan-form"
+                                    data-order_id="<?php echo $_smarty_tpl->tpl_vars['order']->value->order_id;?>
+" data-user_id="<?php echo $_smarty_tpl->tpl_vars['order']->value->user_id;?>
+"
+                                    data-action="add_problem_loan"
+                                    >
+                                            <span class="hidden-xs-down">Создать документы проблемного заемщика</span>
+                                    </button>
                                 </li>
                             </ul>
 
@@ -4514,6 +4524,60 @@ $_smarty_tpl->tpl_vars['score']->_loop = true;
                     </div>
                     <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
                     <input type="button" class="btn btn-success saveEditLoanProfit" value="Сохранить">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal_add_problem_loan" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md md-comment">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title">Добавить докуемнты</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" id="form_add_problem_loan" action="order/<?php echo $_smarty_tpl->tpl_vars['order']->value->order_id;?>
+">
+
+                    <input type="hidden" name="order_id" value="<?php echo $_smarty_tpl->tpl_vars['order']->value->order_id;?>
+"/>
+                    <input type="hidden" name="user_id" value="<?php echo $_smarty_tpl->tpl_vars['order']->value->user_id;?>
+"/>
+                    <input type="hidden" name="block" value=""/>
+                    <input type="hidden" name="action" value="add_problem_loan"/>
+
+                    <div class="alert" style="display:none"></div>
+
+                    <div class="form-group">
+                        <label for="name" class="control-label">Выберите докуемнт для создания</label>
+                        <!--<textarea class="form-control" name="text" rows="6"></textarea>-->
+                    </div>
+                    <!--<div class="custom-control custom-checkbox mr-sm-2 mb-3">
+                        <input type="checkbox" name="official" class="custom-control-input" id="official_check"
+                               value="1">
+                        <label class="custom-control-label" for="official_check">Официальный</label>
+                    </div>-->
+                    <select class="form-control" style="    margin-bottom: 20px;" name="problem_loan_name" aria-label="Default select example">
+                    <option value="PRETRIAL_CLAIM" selected>Досудебная притензия</option>
+                    <option value="NOTIFICATION_OF_DELAY_TO_THE_CLIENT">Уведомление о просрочке клиенту</option>
+                    <option value="CERTIFICATE_OF_ABSENCE_OF_DEBT">Справка об отсутствии задолженности</option>
+                    <option value="REFUSAL_TO_TERMINATE_THE_CONTRACT">Отказ расторжения договора</option>
+                    <option value="REFUSAL_TO_TERMINATE_THE_CONTRACT">Отказ обработки персональных данных</option>
+                    </select>
+                    <div class="form-action">
+                        <button type="button" class="btn btn-danger waves-effect js-event-add-click" data-event="70"
+                                data-manager="<?php echo $_smarty_tpl->tpl_vars['manager']->value->id;?>
+" data-order="<?php echo $_smarty_tpl->tpl_vars['order']->value->order_id;?>
+"
+                                data-user="<?php echo $_smarty_tpl->tpl_vars['order']->value->user_id;?>
+" data-dismiss="modal">Отмена
+                        </button>
+                        <button type="submit" class="btn btn-success waves-effect waves-light">Создать</button>
+                    </div>
                 </form>
             </div>
         </div>

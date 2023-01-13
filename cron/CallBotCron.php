@@ -29,6 +29,7 @@ class CallBotCron extends Core
         $thisMonthFrom = date('Y-m-01 00:00:00', strtotime('monday this week'));
         $thisMonthTo = date('Y-m-t 23:59:59', strtotime('monday this week'));
 
+
         if (date('H:i', strtotime($callBotSettings->time)) != date('H:i'))
             exit;
 
@@ -36,19 +37,19 @@ class CallBotCron extends Core
             case 'twiceDay':
                 $startTime = date('Y-m-d 00:00:00', strtotime('-1 day'));
                 $endTime = date('Y-m-d 23:59:59');
-                $isSent = CallBotCron::whereBetween('created', [$startTime, $endTime])->first();
+                $isSent = CallBotCronORM::whereBetween('created', [$startTime, $endTime])->first();
                 break;
 
             case 'thriceDay':
                 $startTime = date('Y-m-d 00:00:00', strtotime('-2 day'));
                 $endTime = date('Y-m-d 23:59:59');
-                $isSent = CallBotCron::whereBetween('created', [$startTime, $endTime])->first();
+                $isSent = CallBotCronORM::whereBetween('created', [$startTime, $endTime])->first();
                 break;
 
             case 'oneToWeek':
                 $startTime = date('Y-m-d 00:00:00', strtotime('-7 day'));
                 $endTime = date('Y-m-d 23:59:59');
-                $isSent = CallBotCron::whereBetween('created', [$startTime, $endTime])->first();
+                $isSent = CallBotCronORM::whereBetween('created', [$startTime, $endTime])->first();
                 break;
         }
 
@@ -65,7 +66,7 @@ class CallBotCron extends Core
             $limitMonth = 0;
 
 
-            $communications = CallBotCron::where('userId', $contract->user_id);
+            $communications = CallBotCronORM::where('userId', $contract->user_id);
             $canSend = 1;
 
             if (!empty($communications)) {
@@ -91,7 +92,7 @@ class CallBotCron extends Core
                 }
             }
 
-            $user = UsersORM::where('id', $contract->user_id)->fisrt();
+            $user = UsersORM::where('id', $contract->user_id)->first();
 
             if (empty($user->time_zone))
                 continue;
