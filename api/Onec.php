@@ -48,6 +48,8 @@ class Onec implements ApiInterface
         $item->ИННОрганизации = '9725055162';
         $item->СпособПодачиЗаявления = 'Прямой';
 
+        $item->ГрафикПлатежей = [];
+
         $client = new StdClass();
         $client->id = $user->id;
         $client->ФИО = $user->lastname . ' ' . $user->firstname . ' ' . $user->patronymic;
