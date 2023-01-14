@@ -34,7 +34,7 @@ class Onec implements ApiInterface
 
         $item->ID = (string)$contract->id;
         $item->НомерДоговора = $contract->number;
-        $item->Дата = date('YmdHis', strtotime($contract->inssuance_date));
+        $item->Дата = date('Ymd000000', strtotime($contract->inssuance_date));
         $item->Срок = $contract->period;
         $item->Периодичность = 'День';
         $item->ПроцентнаяСтавка = $contract->base_percent;
