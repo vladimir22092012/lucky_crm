@@ -1068,6 +1068,9 @@ class OrderController extends Controller
             'user_id' => $order->user_id,
         ));
 
+        if($order->utm_source == 'guruleads')
+            Guruleads::sendRequest(['orderId' => $order_id, 'method' => 'sendCancelledPostback']);
+
         return array('success' => 1, 'status' => $status);
     }
 

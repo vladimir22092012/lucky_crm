@@ -135,6 +135,9 @@ class AuditCron extends Core
                         'order_id' => $order->order_id,
                         'user_id' => $order->user_id,
                     ));
+
+                    if($order->utm_source == 'guruleads')
+                        Guruleads::sendRequest(['orderId' => $order->order_id, 'method' => 'sendCancelledPostback']);
                 }
             }
         }
