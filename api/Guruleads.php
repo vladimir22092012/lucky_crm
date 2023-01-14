@@ -14,7 +14,7 @@ class Guruleads implements ApiInterface
 
     public static function sendApprovePostback($orderId)
     {
-        $order = Orders::find($orderId);
+        $order = OrdersORM::find($orderId);
         $click_id = $order->click_hash;
         $goal = 'loan';
         $status = 1;
