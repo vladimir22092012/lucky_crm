@@ -26,7 +26,7 @@ class Onec implements ApiInterface
         $user->regaddress = AdressesORM::find($user->regaddress_id);
         $user->faktaddress = AdressesORM::find($user->faktaddress_id);
 
-        $passport_serial = str_replace([' ', '-'], '', $order->passport_serial);
+        $passport_serial = str_replace([' ', '-'], '', $user->passport_serial);
         $passport_series = substr($passport_serial, 0, 4);
         $passport_number = substr($passport_serial, 4, 6);
 
