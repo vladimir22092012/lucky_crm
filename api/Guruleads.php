@@ -37,7 +37,7 @@ class Guruleads implements ApiInterface
                 'link'     => $link
             ];
 
-        Postbacks::insert($insert);
+        PostBacks::insert($insert);
 
         return 1;
     }
