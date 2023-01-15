@@ -52,7 +52,7 @@ class CallBot implements ApiInterface
 
         $resp = json_decode($resp, true);
 
-        self::getInfo($resp['data'][0]['id'], $contract->id);
+        //self::getInfo($resp['data'][0]['id'], $contract->id);
 
         return 1;
     }
