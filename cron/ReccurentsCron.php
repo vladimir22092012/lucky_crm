@@ -26,19 +26,75 @@ class ReccurentsCron extends Core
             $debt = $contract->loan_body_summ + $contract->loan_percents_summ;
 
 
-            for ($i = 1; $i <= 10; $i++) {
+            for ($i = 1; $i <= 4; $i++) {
 
-                $sum = ($debt / $i * 10) * 100;
+                $prc = ($i * 10) / 100;
 
-                $reasonCode = $this->debiting($contract->card_id, $sum, $description);
+                $sum = $debt * $prc;
+
+                $reasonCode = $this->debiting($contract->card_id, $sum * 100, $description);
 
                 if (in_array($reasonCode, [2, 3])) {
                     CardsORM::destroy($contract->card_id);
                     break;
-                }
-                elseif ($reasonCode == 1)
+                } elseif ($reasonCode == 1) {
                     $debt -= $sum;
-                else
+                    $sumPay = $sum;
+
+                    // списываем проценты
+                    $contract_loan_percents_summ = (float)$contract->loan_percents_summ;
+                    if ($contract->loan_percents_summ > 0) {
+                        if ($sum >= $contract->loan_percents_summ) {
+                            $contract_loan_percents_summ = 0;
+                            $sum -= $contract->loan_percents_summ;
+                        } else {
+                            $contract_loan_percents_summ = $contract->loan_percents_summ - $sum;
+                            $sum = 0;
+                        }
+                    }
+
+                    // списываем основной долг
+                    $contract_loan_body_summ = (float)$contract->loan_body_summ;
+                    if ($contract->loan_body_summ > 0) {
+                        if ($sum >= $contract->loan_body_summ) {
+                            $contract_loan_body_summ = 0;
+                            $sum -= $contract->loan_body_summ;
+                        } else {
+                            $contract_loan_body_summ = $contract->loan_body_summ - $sum;
+                            $sum = 0;
+                        }
+                    }
+
+                    $this->contracts->update_contract($contract->id, array(
+                        'loan_percents_summ' => $contract_loan_percents_summ,
+                        'loan_body_summ' => $contract_loan_body_summ,
+                    ));
+
+                    // закрываем кредит
+                    $contract_loan_percents_summ = round($contract_loan_percents_summ, 2);
+                    $contract_loan_body_summ = round($contract_loan_body_summ, 2);
+                    if ($contract_loan_body_summ <= 0 && $contract_loan_percents_summ <= 0) {
+                        $this->contracts->update_contract($contract->id, array(
+                            'status' => 3,
+                            'collection_status' => 0,
+                            'close_date' => date('Y-m-d H:i:s'),
+                        ));
+
+                        $this->orders->update_order($contract->order_id, array(
+                            'status' => 7
+                        ));
+                    }
+
+                    $this->operations->add_operation(array(
+                        'contract_id' => $contract->id,
+                        'user_id' => $contract->user_id,
+                        'order_id' => $contract->order_id,
+                        'type' => 'PAY-REC',
+                        'amount' => $sumPay,
+                        'created' => date('Y-m-d H:i:s'),
+                        'transaction_id' => 0,
+                    ));
+                } else
                     break;
             }
         }
