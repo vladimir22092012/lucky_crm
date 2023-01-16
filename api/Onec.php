@@ -30,6 +30,9 @@ class Onec implements ApiInterface
         $passport_series = substr($passport_serial, 0, 4);
         $passport_number = substr($passport_serial, 4, 6);
 
+        if (empty($user->inn))
+            self::getInn($user->id);
+
         $item = new StdClass();
 
         $item->ID = (string)$contract->id;
@@ -84,11 +87,11 @@ class Onec implements ApiInterface
 
         return $result;
     }
+
     private static function send_request($service, $method, $request)
     {
         $params = array();
-        if (!empty(self::$login) || !empty(self::$password))
-        {
+        if (!empty(self::$login) || !empty(self::$password)) {
             $params['login'] = self::$login;
             $params['password'] = self::$password;
         }
@@ -115,7 +118,7 @@ class Onec implements ApiInterface
         return $response;
     }
 
-    public static function format_phone($phone)
+    private static function format_phone($phone)
     {
         if (empty($phone)) {
             return '';
@@ -132,5 +135,67 @@ class Onec implements ApiInterface
         $format_phone = '7(' . mb_substr($substr_phone, 0, 3, 'utf8') . ')' . mb_substr($substr_phone, 3, 3, 'utf8') . '-' . mb_substr($substr_phone, 6, 2, 'utf8') . '-' . mb_substr($substr_phone, 8, 2, 'utf8');
 
         return $format_phone;
+    }
+
+    private static function getInn($userId)
+    {
+        $user = UsersORM::find($userId);
+
+        $passport_serial = str_replace([' ', '-'], '', $user->passport_serial);
+        $passport_series = substr($passport_serial, 0, 4);
+        $passport_number = substr($passport_serial, 4, 6);
+
+        $params =
+            [
+                'UserID' => 'barvil',
+                'Password' => 'KsetM+H5',
+                'sources' => 'fns',
+                'PersonReq' => [
+                    'first' => $user->firstname,
+                    'middle' => $user->patronymic,
+                    'paternal' => $user->patronymic,
+                    'birthDt' => date('Y-m-d', strtotime($user->birth)),
+                    'passport_series' => $passport_series,
+                    'passport_number' => $passport_number
+                ]
+            ];
+
+        $request = self::sendInfosphere($params);
+        $inn = 0;
+
+        foreach ($request['Source'] as $sources) {
+            if ($sources['@attributes']['checktype'] == 'fns_inn') {
+                foreach ($sources['Record'] as $fields) {
+                    foreach ($fields as $field) {
+                        if ($field['FieldName'] == 'INN')
+                            $inn = $field['FieldValue'];
+                    }
+                }
+            }
+        }
+
+        UsersORM::where('id', $user->id)->update(['inn' => $inn]);
+
+        return 1;
+    }
+
+    private static function sendInfosphere($params)
+    {
+        $xml = new XMLSerializer();
+        $request = $xml->serialize($params);
+
+        $ch = curl_init('https://i-sphere.ru/2.00/');
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        $html = curl_exec($ch);
+        $html = simplexml_load_string($html);
+        $json = json_encode($html);
+        $array = json_decode($json, TRUE);
+        curl_close($ch);
+
+        return $array;
     }
 }
