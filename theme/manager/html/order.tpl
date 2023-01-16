@@ -3025,7 +3025,8 @@
                                             </tr>
                                             {foreach $contract_operations as $operation}
                                                 <tr class="
-                                                    {if in_array($operation->type, ['PAY'])}table-success{/if} 
+                                                    {if in_array($operation->type, ['PAY'])}table-success{/if}
+                                                    {if in_array($operation->type, ['PAY-REC'])}table-success{/if}
                                                     {if in_array($operation->type, ['PERCENTS', 'CHARGE', 'PENI'])}table-danger{/if} 
                                                     {if in_array($operation->type, ['P2P'])}table-info{/if} 
                                                     {if in_array($operation->type, ['INSURANCE'])}table-warning{/if}
@@ -3050,6 +3051,7 @@
                                                             {/if}
                                                         {/if}
                                                         {if $operation->type == 'RECURRENT'}Оплата займа{/if}
+                                                        {if $operation->type == 'PAY-REC'}Реккурентное списание{/if}
                                                         {if $operation->type == 'PERCENTS'}Начисление процентов{/if}
                                                         {if $operation->type == 'INSURANCE'}Страховка{/if}
                                                         {if $operation->type == 'CHARGE'}Ответственность{/if}
