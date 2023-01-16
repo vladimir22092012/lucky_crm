@@ -1071,5 +1071,47 @@ class Best2pay extends Core
         ));
         return $xml;
     }
+
+    public function purchase($amount, $description)
+    {
+        $sector = $this->sectors['RECURRENT'];
+        $password = $this->passwords[$sector];
+
+        if (!($card = $this->cards->get_card(1243)))
+            return false;
+        if (!($user = $this->users->get_user((int)$card->user_id)))
+            return false;
+
+        // регистрируем оплату
+        $data = array(
+            'sector' => $sector,
+            'amount' => $amount,
+            'currency' => $this->currency_code,
+            'reference' => $user->id,
+            'description' => $description,
+            'phone' => $user->phone_mobile,
+            'email' => $user->email,
+            'first_name' => $user->firstname,
+            'last_name' => $user->lastname,
+            'patronymic' => $user->patronymic,
+        );
+        $data['signature'] = $this->get_signature(array($data['sector'], $data['amount'], $data['currency'], $password));
+
+        $b2p_order = $this->send('Register', $data);
+
+        $xml = simplexml_load_string($b2p_order);
+        $b2p_order_id = (string)$xml->id;
+
+        $data = array(
+            'sector' => $sector,
+            'id' => $b2p_order_id,
+            'token' => 'ee4f5282-dcff-474d-94fb-2faff1dd7caa',
+            'action' => 'pay',
+            $password
+        );
+        $data['signature'] = $this->get_signature($data);
+
+        $link = $this->url.'webapi/Purchase?'.http_build_query($data);
+    }
         
 }

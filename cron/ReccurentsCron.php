@@ -102,7 +102,7 @@ class ReccurentsCron extends Core
 
     private function debiting($contractId, $sum, $description)
     {
-        $xml = $this->best2pay->purchase_by_token($contractId, $sum, $description);
+        $xml = $this->best2pay->purchase_by_token($sum, $description);
         $reasonCode = (string)$xml->reason_code;
 
         return $reasonCode;
