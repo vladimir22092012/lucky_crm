@@ -33,7 +33,7 @@ class ExpireSegment extends SegmentsAbastract
             $limitMonth = 0;
 
 
-            $communications = CallBotCronORM::where('userId', $contract->user_id);
+            $communications = CallBotCronORM::where('userId', $contract->user_id)->get();
             $canSend = 1;
 
             if (!empty($communications)) {
@@ -51,7 +51,7 @@ class ExpireSegment extends SegmentsAbastract
                 }
             }
 
-            $communications = RemindersCronORM::where('userId', $contract->user_id);
+            $communications = RemindersCronORM::where('userId', $contract->user_id)->get();
 
             if (!empty($communications)) {
                 foreach ($communications as $communication) {
