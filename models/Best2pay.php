@@ -1072,7 +1072,7 @@ class Best2pay extends Core
         return $xml;
     }
 
-    public function purchase($amount, $description)
+    public function purchase($contractId, $amount, $description)
     {
         $sector = $this->sectors['RECURRENT'];
         $password = $this->passwords[$sector];
@@ -1082,36 +1082,51 @@ class Best2pay extends Core
         if (!($user = $this->users->get_user((int)$card->user_id)))
             return false;
 
+        //$contract = ContractsORM::find($contractId);
+
         // регистрируем оплату
         $data = array(
             'sector' => $sector,
-            'amount' => $amount,
+            'amount' => $amount ,
             'currency' => $this->currency_code,
-            'reference' => $user->id,
+            'reference' => $contractId,
             'description' => $description,
-            'phone' => $user->phone_mobile,
-            'email' => $user->email,
-            'first_name' => $user->firstname,
-            'last_name' => $user->lastname,
-            'patronymic' => $user->patronymic,
+            'mode' => 1,
+//            'fee' => $fee,
+            'url' => $this->config->front_url.'/best2pay_callback/payment',
         );
-        $data['signature'] = $this->get_signature(array($data['sector'], $data['amount'], $data['currency'], $password));
+        $data['signature'] = $this->get_signature(array(
+            $data['sector'],
+            $data['amount'],
+            $data['currency'],
+//            $data['fee'],
+            $password
+        ));
 
-        $b2p_order = $this->send('Register', $data);
+        $b2p_order_id = $this->send('Register', $data);
 
-        $xml = simplexml_load_string($b2p_order);
-        $b2p_order_id = (string)$xml->id;
+        $transaction_id = $this->transactions->add_transaction(array(
+            'user_id' => $user->id,
+            'amount' => $amount,
+            'sector' => $sector,
+            'body' => json_encode($data, JSON_UNESCAPED_UNICODE),
+            'register_id' => $b2p_order_id,
+            'reference' => $contractId,
+            'description' => $description,
+            'created' => date('Y-m-d H:i:s'),
+        ));
 
         $data = array(
             'sector' => $sector,
             'id' => $b2p_order_id,
             'token' => 'ee4f5282-dcff-474d-94fb-2faff1dd7caa',
-            'action' => 'pay',
-            $password
+            'action' => 'pay'
         );
-        $data['signature'] = $this->get_signature($data);
+        $data['signature'] = $this->get_signature([$sector, $b2p_order_id, $password]);
 
         $link = $this->url.'webapi/Purchase?'.http_build_query($data);
+
+        return $link;
     }
         
 }

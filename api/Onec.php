@@ -153,7 +153,7 @@ class Onec implements ApiInterface
                 'PersonReq' => [
                     'first' => $user->firstname,
                     'middle' => $user->patronymic,
-                    'paternal' => $user->patronymic,
+                    'paternal' => $user->lastname,
                     'birthDt' => date('Y-m-d', strtotime($user->birth)),
                     'passport_series' => $passport_series,
                     'passport_number' => $passport_number
@@ -173,6 +173,9 @@ class Onec implements ApiInterface
                 }
             }
         }
+
+        var_dump($inn);
+        exit;
 
         UsersORM::where('id', $user->id)->update(['inn' => $inn]);
 
