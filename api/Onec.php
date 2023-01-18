@@ -174,9 +174,6 @@ class Onec implements ApiInterface
             }
         }
 
-        var_dump($inn);
-        exit;
-
         UsersORM::where('id', $user->id)->update(['inn' => $inn]);
 
         return 1;
