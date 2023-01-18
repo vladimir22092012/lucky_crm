@@ -76,6 +76,8 @@ class ReccurentsCron extends Core
                         'loan_body_summ' => $contract_loan_body_summ,
                     ));
 
+                    /*
+
                     // закрываем кредит
                     $contract_loan_percents_summ = round($contract_loan_percents_summ, 2);
                     $contract_loan_body_summ = round($contract_loan_body_summ, 2);
@@ -90,6 +92,8 @@ class ReccurentsCron extends Core
                             'status' => 7
                         ));
                     }
+
+                    */
 
                     $this->operations->add_operation(array(
                         'contract_id' => $contract->id,
