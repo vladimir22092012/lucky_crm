@@ -39,9 +39,68 @@ class CheckCallCron extends Core
                 if ($callBot['status'] != 'success')
                     CallBotCronORM::where('id', $callBot->id)->update(['status_sent_sms' => 'errorCallbot']);
 
-                $id = $callBot['data'][0]['id'];
-
                 $contract = ContractsORM::where('order_id', $callBot->orderId)->first();
+
+                $thisDayFrom = date('Y-m-d 00:00:00');
+                $thisDayTo = date('Y-m-d 23:59:59');
+
+                $thisWeekFrom = date('Y-m-d 00:00:00', strtotime('monday this week'));
+                $thisWeekTo = date('Y-m-d 23:59:59', strtotime('sunday this week'));
+
+                $thisMonthFrom = date('Y-m-01 00:00:00', strtotime('monday this week'));
+                $thisMonthTo = date('Y-m-t 23:59:59', strtotime('monday this week'));
+
+                $settings = new Settings();
+                $limitCommunications = $settings->limit_communications;
+
+                $limitDays = 0;
+                $limitWeek = 0;
+                $limitMonth = 0;
+
+
+                $communications = CallBotCronORM::where('userId', $contract->user_id);
+
+                if (!empty($communications)) {
+                    foreach ($communications as $communication) {
+                        $created = date('Y-m-d H:i:s', strtotime($communication->created));
+
+                        if ($created >= $thisDayFrom && $created <= $thisDayTo)
+                            $limitDays++;
+
+                        if ($created >= $thisWeekFrom && $created <= $thisWeekTo)
+                            $limitWeek++;
+
+                        if ($created >= $thisMonthFrom && $created <= $thisMonthTo)
+                            $limitMonth++;
+                    }
+                }
+
+                $communications = RemindersCronORM::where('userId', $contract->user_id);
+
+                if (!empty($communications)) {
+                    foreach ($communications as $communication) {
+                        $created = date('Y-m-d H:i:s', strtotime($communication->created));
+
+                        if ($created >= $thisDayFrom && $created <= $thisDayTo)
+                            $limitDays++;
+
+                        if ($created >= $thisWeekFrom && $created <= $thisWeekTo)
+                            $limitWeek++;
+
+                        if ($created >= $thisMonthFrom && $created <= $thisMonthTo)
+                            $limitMonth++;
+                    }
+                }
+
+                if (
+                    $limitDays >= $limitCommunications['day']
+                    || $limitWeek >= $limitCommunications['week']
+                    || $limitMonth >= $limitCommunications['month']
+                ) {
+                    CallBotCronORM::where('id', $callBot->id)->update(['status_sent_sms' => 'limit']);
+                }
+
+                $id = $callBot['data'][0]['id'];
 
                 $curl = curl_init();
                 curl_setopt($curl, CURLOPT_URL, 'https://lk.zvonobot.ru/apiCalls/get?apiCallIdList[]=' . $id);
