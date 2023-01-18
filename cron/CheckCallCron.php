@@ -25,7 +25,7 @@ class CheckCallCron extends Core
         $nowTime = new DateTime(date('H:i'));
 
         if ($nowTime > $time && date_diff($time, $nowTime)->h >= 1) {
-            $callBotCron = CallBotCronORM::whereBetween('created', [date('2023-01-17 00:00:00'), date('2023-01-17 23:59:59')])->where('status_sent_sms', null)->get();
+            $callBotCron = CallBotCronORM::where('created', date('Y-m-d'))->where('status_sent_sms', null)->get();
 
             $requestArray = array(
                 'apiKey' => self::$apiKey
@@ -34,14 +34,73 @@ class CheckCallCron extends Core
             $json = json_encode($requestArray);
 
             foreach ($callBotCron as $callBot) {
-                $callBotResp = json_decode($callBot->resp, true);
+                $callBot = json_decode($callBot->resp, true);
 
-                if ($callBotResp['status'] != 'success')
+                if ($callBot['status'] != 'success')
                     CallBotCronORM::where('id', $callBot->id)->update(['status_sent_sms' => 'errorCallbot']);
 
-                $id = $callBotResp['data'][0]['id'];
-
                 $contract = ContractsORM::where('order_id', $callBot->orderId)->first();
+
+                $thisDayFrom = date('Y-m-d 00:00:00');
+                $thisDayTo = date('Y-m-d 23:59:59');
+
+                $thisWeekFrom = date('Y-m-d 00:00:00', strtotime('monday this week'));
+                $thisWeekTo = date('Y-m-d 23:59:59', strtotime('sunday this week'));
+
+                $thisMonthFrom = date('Y-m-01 00:00:00', strtotime('monday this week'));
+                $thisMonthTo = date('Y-m-t 23:59:59', strtotime('monday this week'));
+
+                $settings = new Settings();
+                $limitCommunications = $settings->limit_communications;
+
+                $limitDays = 0;
+                $limitWeek = 0;
+                $limitMonth = 0;
+
+
+                $communications = CallBotCronORM::where('userId', $contract->user_id);
+
+                if (!empty($communications)) {
+                    foreach ($communications as $communication) {
+                        $created = date('Y-m-d H:i:s', strtotime($communication->created));
+
+                        if ($created >= $thisDayFrom && $created <= $thisDayTo)
+                            $limitDays++;
+
+                        if ($created >= $thisWeekFrom && $created <= $thisWeekTo)
+                            $limitWeek++;
+
+                        if ($created >= $thisMonthFrom && $created <= $thisMonthTo)
+                            $limitMonth++;
+                    }
+                }
+
+                $communications = RemindersCronORM::where('userId', $contract->user_id);
+
+                if (!empty($communications)) {
+                    foreach ($communications as $communication) {
+                        $created = date('Y-m-d H:i:s', strtotime($communication->created));
+
+                        if ($created >= $thisDayFrom && $created <= $thisDayTo)
+                            $limitDays++;
+
+                        if ($created >= $thisWeekFrom && $created <= $thisWeekTo)
+                            $limitWeek++;
+
+                        if ($created >= $thisMonthFrom && $created <= $thisMonthTo)
+                            $limitMonth++;
+                    }
+                }
+
+                if (
+                    $limitDays >= $limitCommunications['day']
+                    || $limitWeek >= $limitCommunications['week']
+                    || $limitMonth >= $limitCommunications['month']
+                ) {
+                    CallBotCronORM::where('id', $callBot->id)->update(['status_sent_sms' => 'limit']);
+                }
+
+                $id = $callBot['data'][0]['id'];
 
                 $curl = curl_init();
                 curl_setopt($curl, CURLOPT_URL, 'https://lk.zvonobot.ru/apiCalls/get?apiCallIdList[]=' . $id);
@@ -70,7 +129,7 @@ class CheckCallCron extends Core
                         $message = $callBotSettings->textSms;
                         $message .= ' ' . $shortLink;
 
-                        $smsru = new Smsru($api_code);
+                        $smsru = new SMSRU($api_code);
 
                         $data = new stdClass();
                         $data->to = $resp['data'][0]['calls'][0]['phone'];
