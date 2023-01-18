@@ -34,7 +34,7 @@ class CheckCallCron extends Core
         $nowTime = new DateTime(date('H:i'));
 
         if ($nowTime > $time && date_diff($time, $nowTime)->h >= 1) {
-            $callBotCron = CallBotCron::where('created', date('Y-m-d'))->where('status_sent_sms', null)->get();
+            $callBotCron = CallBotCronORM::where('created', date('Y-m-d'))->where('status_sent_sms', null)->get();
 
             $requestArray = array(
                 'apiKey' => self::$apiKey
@@ -46,7 +46,7 @@ class CheckCallCron extends Core
                 $callBot = json_decode($callBot->resp, true);
 
                 if ($callBot['status'] != 'success')
-                    CallBotCron::where('id', $callBot->id)->update(['status_sent_sms' => 'errorCallbot']);
+                    CallBotCronORM::where('id', $callBot->id)->update(['status_sent_sms' => 'errorCallbot']);
 
                 $id = $callBot['data'][0]['id'];
 
@@ -101,10 +101,10 @@ class CheckCallCron extends Core
 
                         LogsORM::insert($insert);
 
-                        CallBotCron::where('id', $callBot->id)->update(['status_sent_sms' => 'success', 'is_sent_sms' => 1]);
+                        CallBotCronORM::where('id', $callBot->id)->update(['status_sent_sms' => 'success', 'is_sent_sms' => 1]);
                     }
                 } else {
-                        CallBotCron::where('id', $callBot->id)->update(['status_sent_sms' => 'errorSendSms', 'resp_sent_sms' => json_encode($resp, JSON_UNESCAPED_UNICODE)]);
+                    CallBotCronORM::where('id', $callBot->id)->update(['status_sent_sms' => 'errorSendSms', 'resp_sent_sms' => json_encode($resp, JSON_UNESCAPED_UNICODE)]);
                 }
             }
         }
