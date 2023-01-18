@@ -34,7 +34,7 @@ class CheckCallCron extends Core
         $nowTime = new DateTime(date('H:i'));
 
         if ($nowTime > $time && date_diff($time, $nowTime)->h >= 1) {
-            $callBotCron = CallBotCronORM::where('created', date('Y-m-d'))->where('status_sent_sms', null)->get();
+            $callBotCron = CallBotCronORM::whereBetween('created', [date('2023-01-17 00:00:00'), date('2023-01-17 23:59:59')])->where('status_sent_sms', null)->get();
 
             $requestArray = array(
                 'apiKey' => self::$apiKey
@@ -43,12 +43,12 @@ class CheckCallCron extends Core
             $json = json_encode($requestArray);
 
             foreach ($callBotCron as $callBot) {
-                $callBot = json_decode($callBot->resp, true);
+                $callBotResp = json_decode($callBot->resp, true);
 
-                if ($callBot['status'] != 'success')
+                if ($callBotResp['status'] != 'success')
                     CallBotCronORM::where('id', $callBot->id)->update(['status_sent_sms' => 'errorCallbot']);
 
-                $id = $callBot['data'][0]['id'];
+                $id = $callBotResp['data'][0]['id'];
 
                 $contract = ContractsORM::where('order_id', $callBot->orderId)->first();
 
@@ -72,19 +72,14 @@ class CheckCallCron extends Core
 
                         $callBotSettings = CallBotSettingsORM::find(1);
 
-                        $code = '';
-
-                        $chars = str_split($contract->id);
-
-                        for ($i = 0; $i < count($chars); $i++)
-                            $code .= self::$c2o_codes[$i][$chars[$i]];
+                        $code = $this->helpers->c2o_encode($contract->id);
 
                         $shortLink = 'https://mkk-barvil.ru/p/' . $code;
 
                         $message = $callBotSettings->textSms;
                         $message .= ' ' . $shortLink;
 
-                        $smsru = new SMSRU($api_code);
+                        $smsru = new Smsru($api_code);
 
                         $data = new stdClass();
                         $data->to = $resp['data'][0]['calls'][0]['phone'];

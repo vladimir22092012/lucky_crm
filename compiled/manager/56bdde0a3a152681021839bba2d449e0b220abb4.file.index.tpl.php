@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.18, created on 2022-12-27 11:38:26
+<?php /* Smarty version Smarty-3.1.18, created on 2023-01-12 15:03:15
          compiled from "/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/index.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:9789791756343ae1cecaf76-39358637%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '56bdde0a3a152681021839bba2d449e0b220abb4' => 
     array (
       0 => '/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/index.tpl',
-      1 => 1672130299,
+      1 => 1673524619,
       2 => 'file',
     ),
   ),
@@ -358,6 +358,12 @@ $_smarty_tpl->tpl_vars['pn']->_loop = true;
                             <li <?php if (in_array($_smarty_tpl->tpl_vars['module']->value,array('ManagerController','ManagersController'))) {?>class="active"<?php }?>>
                                 <a class="" href="managers/" aria-expanded="false"><i
                                             class="mdi mdi-account-multiple-outline"></i><span class="hide-menu">Пользователи</span></a>
+                            </li>
+                        <?php }?>
+                        <?php if (in_array($_smarty_tpl->tpl_vars['manager']->value->role,array('developer','admin','user','big_user'))) {?>
+                            <li <?php if (in_array($_smarty_tpl->tpl_vars['module']->value,array('DeleteUsersController'))) {?>class="active"<?php }?>>
+                                <a class="" href="delete_users/" aria-expanded="false"><i
+                                            class="mdi mdi-account-card-details"></i><span class="hide-menu">Удаление пользователей</span></a>
                             </li>
                         <?php }?>
                         <?php if (in_array('changelogs',$_smarty_tpl->tpl_vars['manager']->value->permissions)) {?>
