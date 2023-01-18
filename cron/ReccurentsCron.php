@@ -37,9 +37,6 @@ class ReccurentsCron extends Core
 
                 $reasonCode = $this->debiting($contract->card_id, $sum * 100, $description);
 
-                var_dump($reasonCode);
-                exit;
-
                 if (in_array($reasonCode, [2, 3])) {
                     CardsORM::destroy($contract->card_id);
                     break;
@@ -112,9 +109,9 @@ class ReccurentsCron extends Core
 
     private function debiting($contractId, $sum, $description)
     {
-        $xml = $this->best2pay->purchase($contractId, $sum, $description);
-        return $xml;
+        $xml = $this->best2pay->purchase_by_token($contractId, $sum, $description);
         $reasonCode = (string)$xml->reason_code;
+        return $reasonCode;
     }
 }
 
