@@ -30,7 +30,7 @@ class ActiveSegment extends SegmentsAbastract
             $startTime = date('Y-m-d 00:00:00');
             $endTime = date('Y-m-d 23:59:59');
 
-            $contracts = ContractsORM::whereBetween('return_date', [$startTime, $endTime])->get();
+            $contracts = ContractsORM::whereBetween('return_date', [$startTime, $endTime])->where('status', 2)->get();
 
             foreach ($contracts as $contract) {
 
@@ -84,7 +84,7 @@ class ActiveSegment extends SegmentsAbastract
         $returnStartTime = date('Y-m-d 00:00:00', strtotime('+'.$reminder->countTime.' days'));
         $returnEndTime = date('Y-m-d 23:59:59', strtotime('+'.$reminder->countTime.' days'));
 
-        $contracts = ContractsORM::whereBetween('return_date', [$returnStartTime, $returnEndTime])->get();
+        $contracts = ContractsORM::whereBetween('return_date', [$returnStartTime, $returnEndTime])->where('status', 2)->get();
 
         foreach ($contracts as $contract) {
             $user = UsersORM::where('id', $contract->user_id)->first();
