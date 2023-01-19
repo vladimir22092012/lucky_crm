@@ -25,6 +25,11 @@ class ReccurentsCron extends Core
 
             $debt = $contract->loan_body_summ + $contract->loan_percents_summ;
 
+            $card = CardsORM::find($contract->card_id);
+
+            if(!empty($card->deleted))
+                continue;
+
 
             for ($i = 1; $i <= 4; $i++) {
 
@@ -38,7 +43,7 @@ class ReccurentsCron extends Core
                 $reasonCode = $this->debiting($contract->card_id, $sum * 100, $description);
 
                 if (in_array($reasonCode, [2, 3])) {
-                    CardsORM::destroy($contract->card_id);
+                    CardsORM::where('id', $contract->card_id)->update(['deleted' => 1]);
                     break;
                 } elseif ($reasonCode == 1) {
                     $debt -= $sum;
