@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.18, created on 2023-01-09 11:02:37
+<?php /* Smarty version Smarty-3.1.18, created on 2023-01-18 18:05:37
          compiled from "/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/order.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2818875476343af9e6a2cf3-14201628%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'fe2aa0d83c9fc8b9ef94f66cee81e67ab66d6ce9' => 
     array (
       0 => '/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/order.tpl',
-      1 => 1673250111,
+      1 => 1674044724,
       2 => 'file',
     ),
   ),
@@ -3648,7 +3648,8 @@ foreach ($_from as $_smarty_tpl->tpl_vars['operation']->key => $_smarty_tpl->tpl
 $_smarty_tpl->tpl_vars['operation']->_loop = true;
 ?>
                                                 <tr class="
-                                                    <?php if (in_array($_smarty_tpl->tpl_vars['operation']->value->type,array('PAY'))) {?>table-success<?php }?> 
+                                                    <?php if (in_array($_smarty_tpl->tpl_vars['operation']->value->type,array('PAY'))) {?>table-success<?php }?>
+                                                    <?php if (in_array($_smarty_tpl->tpl_vars['operation']->value->type,array('PAY-REC'))) {?>table-success<?php }?>
                                                     <?php if (in_array($_smarty_tpl->tpl_vars['operation']->value->type,array('PERCENTS','CHARGE','PENI'))) {?>table-danger<?php }?> 
                                                     <?php if (in_array($_smarty_tpl->tpl_vars['operation']->value->type,array('P2P'))) {?>table-info<?php }?> 
                                                     <?php if (in_array($_smarty_tpl->tpl_vars['operation']->value->type,array('INSURANCE'))) {?>table-warning<?php }?>
@@ -3671,6 +3672,7 @@ $_smarty_tpl->tpl_vars['operation']->_loop = true;
                                                             <?php }?>
                                                         <?php }?>
                                                         <?php if ($_smarty_tpl->tpl_vars['operation']->value->type=='RECURRENT') {?>Оплата займа<?php }?>
+                                                        <?php if ($_smarty_tpl->tpl_vars['operation']->value->type=='PAY-REC') {?>Реккурентное списание<?php }?>
                                                         <?php if ($_smarty_tpl->tpl_vars['operation']->value->type=='PERCENTS') {?>Начисление процентов<?php }?>
                                                         <?php if ($_smarty_tpl->tpl_vars['operation']->value->type=='INSURANCE') {?>Страховка<?php }?>
                                                         <?php if ($_smarty_tpl->tpl_vars['operation']->value->type=='CHARGE') {?>Ответственность<?php }?>

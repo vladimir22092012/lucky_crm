@@ -8,7 +8,7 @@ class ExpireSegment extends SegmentsAbastract
         $reminders = RemindersORM::where('segmentId', 5)->get();
 
         foreach ($reminders as $reminder) {
-            self::expiredDaysReminder($reminder);
+            return self::expiredDaysReminder($reminder);
         }
     }
 
@@ -33,7 +33,7 @@ class ExpireSegment extends SegmentsAbastract
             $limitMonth = 0;
 
 
-            $communications = CallBotCronORM::where('userId', $contract->user_id);
+            $communications = CallBotCronORM::where('userId', $contract->user_id)->get();
             $canSend = 1;
 
             if (!empty($communications)) {
@@ -51,7 +51,7 @@ class ExpireSegment extends SegmentsAbastract
                 }
             }
 
-            $communications = RemindersCronORM::where('userId', $contract->user_id);
+            $communications = RemindersCronORM::where('userId', $contract->user_id)->get();
 
             if (!empty($communications)) {
                 foreach ($communications as $communication) {
@@ -76,6 +76,9 @@ class ExpireSegment extends SegmentsAbastract
                 $canSend = 0;
             }
 
+            var_dump($communications);
+            exit;
+
             $user = UsersORM::where('id', $contract->user_id)->first();
 
             if (empty($user->time_zone))
@@ -91,6 +94,8 @@ class ExpireSegment extends SegmentsAbastract
 
             if (empty($isHoliday) && date('G', strtotime($clientTime)) < $settings->workday_worktime['from'] && date('G', strtotime($clientTime)) > $settings->workday_worktime['to'])
                 $canSend = 0;
+
+            /*
 
 
             if ($canSend == 1) {
@@ -112,6 +117,8 @@ class ExpireSegment extends SegmentsAbastract
 
                 self::send($send);
             }
+
+            */
         }
     }
 }

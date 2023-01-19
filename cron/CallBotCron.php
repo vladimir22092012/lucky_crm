@@ -66,7 +66,7 @@ class CallBotCron extends Core
             $limitMonth = 0;
 
 
-            $communications = CallBotCronORM::where('userId', $contract->user_id);
+            $communications = CallBotCronORM::where('userId', $contract->user_id)->get();
             $canSend = 1;
 
             if (!empty($communications)) {
