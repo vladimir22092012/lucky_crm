@@ -1,23 +1,23 @@
 <?php
 
+use CloudCastle\EquifaxReport\Config\Config;
 use CloudCastle\EquifaxReport\Individual\Client;
-use CloudCastle\EquifaxReport\Individual\Report as Report;
-use CloudCastle\EquifaxConfig\Config;
-use CloudCastle\EquifaxReport\Report as Generator;
-use CloudCastle\EquifaxConfig\Info;
-
+use CloudCastle\EquifaxReport\Report;
+use CloudCastle\EquifaxReport\Report\Events;
 class EquifaxUploads implements ToolsInterface
 {
 
     public static function processing($count)
     {
-        $config = new Config('config.json');
+        Config::$configFile = 'config.json';
+        $config = Config::instance();
 
         $reports = [];
 
         $contracts = ContractsORM::with('user')->orderBy('id', 'desc')->limit($count)->get();
 
         foreach ($contracts as $contract) {
+
             $title_part = new stdClass();
             $report = new stdClass();
             $report->info = new Info();

@@ -1,9 +1,10 @@
 <?php
 
+
 class TestController extends Controller
 {
     public function fetch(){
-        Onec::sendRequest(4612);
+        EquiTest::processing(1);
         exit;
     }
 
