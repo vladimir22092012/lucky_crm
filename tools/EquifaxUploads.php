@@ -13,21 +13,20 @@ class EquifaxUploads implements ToolsInterface
     {
         $conf = new Server();
 
-        Config::$configFile = $conf->root_dir.'config.json';
+        Config::$configFile = $conf->root_dir . 'config.json';
         $config = Config::instance();
-        $config->path = $conf->root_dir.'reports-equifax';
+        $config->path = $conf->root_dir . 'reports-equifax';
 
         $reports = [];
 
         $contracts = ContractsORM::with('user')->orderBy('id', 'desc')->limit($count)->get();
 
-        foreach ($contracts as $contract)
-        {
+        foreach ($contracts as $contract) {
 
-            if(empty($contract->user->regaddress_id))
+            if (empty($contract->user->regaddress_id))
                 continue;
 
-            if(empty($contract->user->faktaddress_id))
+            if (empty($contract->user->faktaddress_id))
                 continue;
 
             $regAddress = AdressesORM::find($contract->user->regaddress_id);
@@ -43,8 +42,9 @@ class EquifaxUploads implements ToolsInterface
             /**
              * Номер СНИЛС
              */
-            $client->snils = $contract->user->snils;
 
+            if(!empty($contract->user->snils))
+                $client->snils = $contract->user->snils;
             /**
              * Номер ИНН
              */
@@ -136,7 +136,7 @@ class EquifaxUploads implements ToolsInterface
             //$report->base_part->addr_reg->domain = '15';
             //$report->base_part->addr_reg->block = '1';
             $report->base_part->addr_reg->build = $regAddress->building;
-            $report->base_part->addr_reg->apartment = $regAddress->room;
+            $report->base_part->addr_reg->apartment = !empty($regAddress->room) ? $regAddress->room : 1;
             //$report->base_part->addr_reg->reg_date = '01.01.2010';
             //$report->base_part->addr_reg->reg_place = 'УВД г.Москвы';
             //$report->base_part->addr_reg->reg_department_code = '555-555';
@@ -154,7 +154,7 @@ class EquifaxUploads implements ToolsInterface
             //$report->base_part->addr_fact->domain = '10';
             //$report->base_part->addr_fact->block = '14';
             $report->base_part->addr_fact->build = $faktAddress->building;
-            $report->base_part->addr_fact->apartment = $faktAddress->room;
+            $report->base_part->addr_fact->apartment = !empty($faktAddress->room) ? $faktAddress->room : 1;;
 
             // Контактные данные
             $report->base_part->contacts[] = [
@@ -361,6 +361,8 @@ class EquifaxUploads implements ToolsInterface
 
         $file = Report::generate($reports, $config);
 
+        /*
+
         header('Content-Description: File Transfer');
         header('Content-Type: application/octet-stream');
         header('Content-Disposition: attachment; filename="' . basename($file) . '"');
@@ -370,7 +372,10 @@ class EquifaxUploads implements ToolsInterface
         header('Content-Length: ' . filesize($file));
         readfile($file);
 
-        self::deleteDir($config->path.'reports-equifax');
+        */
+
+        echo self::sendFile($file);
+        self::deleteDir($config->path . 'reports-equifax');
         exit;
     }
 
@@ -389,5 +394,53 @@ class EquifaxUploads implements ToolsInterface
         }
 
         return false;
+    }
+
+    private static function sendFile($file)
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'http://51.250.97.26/send/history',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => array('file' => new CURLFILE($file)),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        echo $response;
+    }
+
+    public static function checkUploads($date = '')
+    {
+        $curl = curl_init();
+
+        $period = !empty($date) ? '?day=' . date('d.m.Y', strtotime($date)) : '';
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'http://51.250.97.26/report/result' . $period,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+        ));
+
+        $response = curl_exec($curl);
+        $response = json_decode($response, true);
+
+        curl_close($curl);
+
+        echo '<pre>';
+        print_r($response);
     }
 }
