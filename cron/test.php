@@ -16,7 +16,7 @@ class test extends Core
     public function __construct()
     {
         parent::__construct();
-        $this->import_clients();
+        $this->sendOnec();
     }
 
     private function import_clients()
@@ -370,6 +370,16 @@ class test extends Core
                 'loan_charge_summ' => $contract->loan_charge_summ,
                 'loan_peni_summ' => $contract->loan_peni_summ,
             ));
+        }
+    }
+
+    private function sendOnec()
+    {
+        $contracts = ContractsORM::where('sent_status', 0)->get();
+
+        foreach ($contracts as $contract) {
+            $result = Onec::sendRequest($contract->order_id);
+            ContractsORM::where('id', $contract->id)->update(['sent_date' => date('Y-m-d H:i:s'), 'sent_status' => $result]);
         }
     }
 }

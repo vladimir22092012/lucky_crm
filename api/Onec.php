@@ -12,7 +12,7 @@ class Onec implements ApiInterface
 
     public static function sendRequest($orderId)
     {
-        self::send_loan($orderId);
+        return self::send_loan($orderId);
     }
 
     private static function send_loan($order_id)
@@ -23,8 +23,8 @@ class Onec implements ApiInterface
         $contract = ContractsORM::find($order->contract_id);
         $user = UsersORM::find($order->user_id);
 
-        if(empty($contract->inssuance_date))
-            return 'Контракт не выдан';
+        if (empty($contract->inssuance_date))
+            return 3;
 
         $user->regaddress = AdressesORM::find($user->regaddress_id);
         $user->faktaddress = AdressesORM::find($user->faktaddress_id);
@@ -95,6 +95,11 @@ class Onec implements ApiInterface
         $request->TextJSON = json_encode($item);
         $result = self::send_request('CRM_WebService', 'Loans', $request);
 
+        if (isset($result->return) && $result->return == 'OK')
+            $result = 1;
+        else
+            $result = 2;
+
         return $result;
     }
 
@@ -116,11 +121,13 @@ class Onec implements ApiInterface
             $response = $fault;
         }
 
+        $response = json_encode($response, JSON_UNESCAPED_UNICODE);
+
         $insert =
             [
                 'orderId' => self::$orderId,
                 'request' => json_encode(json_decode($request->TextJSON), JSON_UNESCAPED_UNICODE),
-                'response' => json_encode($response, JSON_UNESCAPED_UNICODE)
+                'response' => $response
             ];
 
         OnecLogs::insert($insert);
