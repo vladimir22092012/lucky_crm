@@ -96,11 +96,9 @@ class Onec implements ApiInterface
         $result = self::send_request('CRM_WebService', 'Loans', $request);
 
         if (isset($result->return) && $result->return == 'OK')
-            $result = 1;
+            return 1;
         else
-            $result = 2;
-
-        return $result;
+            return 2;
     }
 
     private static function send_request($service, $method, $request)
