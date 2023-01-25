@@ -16,19 +16,19 @@ class test extends Core
     public function __construct()
     {
         parent::__construct();
-        $this->import_clients();
+        $this->sendOnec();
     }
 
     private function import_clients()
     {
-        $tmp_name = $this->config->root_dir . '/files/clients.xlsx';
+        $tmp_name = $this->config->root_dir . '/files/reestr.xlsx';
         $format = IOFactory::identify($tmp_name);
         $reader = IOFactory::createReader($format);
         $spreadsheet = $reader->load($tmp_name);
 
         $active_sheet = $spreadsheet->getActiveSheet();
 
-        $first_row = 5;
+        $first_row = 3;
         $last_row = $active_sheet->getHighestRow();
 
         for ($row = $first_row; $row <= $last_row; $row++) {
@@ -41,15 +41,15 @@ class test extends Core
                 continue;
 
             $birth = $active_sheet->getCell('E' . $row)->getFormattedValue();
-            $passport_date = $active_sheet->getCell('AG' . $row)->getFormattedValue();
+            $passport_date = $active_sheet->getCell('AE' . $row)->getFormattedValue();
 
-            $regaddress = $Faktroom = $active_sheet->getCell('AB' . $row)->getValue();
-            $faktaddress = $Faktroom = $active_sheet->getCell('AA' . $row)->getValue();
+            $regaddress = $Faktroom = $active_sheet->getCell('V' . $row)->getValue();
+            $faktaddress = $Faktroom = $active_sheet->getCell('W' . $row)->getValue();
 
             $reg_id = $this->Addresses->add_address(['adressfull' => $regaddress]);
             $fakt_id = $this->Addresses->add_address(['adressfull' => $faktaddress]);
 
-            $phone = preg_replace("/[^,.0-9]/", '', $active_sheet->getCell('I' . $row)->getValue());
+            $phone = preg_replace("/[^,.0-9]/", '', $active_sheet->getCell('H' . $row)->getValue());
             $phone = str_split($phone);
             $phone[0] = '7';
             $phone = implode('', $phone);
@@ -62,12 +62,13 @@ class test extends Core
                     'phone_mobile' => $phone,
                     'email' => $active_sheet->getCell('F' . $row)->getValue(),
                     'birth' => date('d.m.Y', strtotime($birth)),
-                    'passport_serial' => $active_sheet->getCell('AD' . $row)->getValue() . '-' . $active_sheet->getCell('AE' . $row)->getValue(),
+                    'birth_place' => $active_sheet->getCell('AC' . $row)->getValue(),
+                    'passport_serial' => $active_sheet->getCell('X' . $row)->getValue() . '-' . $active_sheet->getCell('Y' . $row)->getValue(),
                     'passport_date' => date('d.m.Y', strtotime($passport_date)),
-                    'passport_issued' => $active_sheet->getCell('AF' . $row)->getValue(),
-                    'snils' => $active_sheet->getCell('Y' . $row)->getValue(),
-                    'inn' => $active_sheet->getCell('Z' . $row)->getValue(),
-                    'workphone' => $active_sheet->getCell('H' . $row)->getValue(),
+                    'passport_issued' => $active_sheet->getCell('Z' . $row)->getValue(),
+                    'subdivision_code' => $active_sheet->getCell('AA' . $row)->getValue(),
+                    'snils' => $active_sheet->getCell('U' . $row)->getValue(),
+                    'workphone' => $active_sheet->getCell('G' . $row)->getValue(),
                     'regaddress_id' => $reg_id,
                     'faktaddress_id' => $fakt_id,
                     'created' => date('Y-m-d H:i:s'),
@@ -81,14 +82,14 @@ class test extends Core
 
             $userId = $this->users->add_user($user);
 
-            $issuance_date = $active_sheet->getCell('K' . $row)->getFormattedValue();
-            $returnDate = $active_sheet->getCell('L' . $row)->getFormattedValue();
+            $issuance_date = $active_sheet->getCell('J' . $row)->getFormattedValue();
+            $returnDate = $active_sheet->getCell('K' . $row)->getFormattedValue();
 
             $new_order = [
                 'date' => date('Y-m-d H:i:s', strtotime($issuance_date)),
                 'user_id' => $userId,
                 'period' => 30,
-                'amount' => $active_sheet->getCell('Q' . $row)->getValue(),
+                'amount' => $active_sheet->getCell('N' . $row)->getValue(),
                 'accept_date' => date('Y-m-d H:i:s', strtotime($issuance_date)),
                 'confirm_date' => date('Y-m-d H:i:s', strtotime($issuance_date)),
                 'status' => 5,
@@ -101,19 +102,19 @@ class test extends Core
                 [
                     'user_id' => $userId,
                     'order_id' => $orderId,
-                    'number' => $active_sheet->getCell('J' . $row)->getValue(),
+                    'number' => $active_sheet->getCell('I' . $row)->getValue(),
                     'type' => 'base',
                     'period' => 30,
                     'base_percent' => 1,
-                    'amount' => $active_sheet->getCell('Q' . $row)->getValue(),
+                    'amount' => $active_sheet->getCell('N' . $row)->getValue(),
                     'status' => 4,
-                    'expired_days' => $active_sheet->getCell('U' . $row)->getValue(),
+                    'expired_days' => $active_sheet->getCell('S' . $row)->getValue(),
                     'create_date' => $issuance_date,
                     'inssuance_date' => date('Y-m-d H:i:s', strtotime($issuance_date)),
                     'return_date' => date('Y-m-d', strtotime($returnDate)),
-                    'loan_body_summ' => $active_sheet->getCell('Q' . $row)->getValue(),
-                    'loan_percents_summ' => $active_sheet->getCell('R' . $row)->getValue(),
-                    'loan_peni_summ' => $active_sheet->getCell('S' . $row)->getValue(),
+                    'loan_body_summ' => $active_sheet->getCell('O' . $row)->getValue(),
+                    'loan_percents_summ' => $active_sheet->getCell('P' . $row)->getValue(),
+                    'loan_peni_summ' => $active_sheet->getCell('Q' . $row)->getValue(),
                 ];
 
             $contractId = $this->contracts->add_contract($new_contract);
@@ -369,6 +370,16 @@ class test extends Core
                 'loan_charge_summ' => $contract->loan_charge_summ,
                 'loan_peni_summ' => $contract->loan_peni_summ,
             ));
+        }
+    }
+
+    private function sendOnec()
+    {
+        $contracts = ContractsORM::where('sent_status', 0)->get();
+
+        foreach ($contracts as $contract) {
+            $result = Onec::sendRequest($contract->order_id);
+            ContractsORM::where('id', $contract->id)->update(['sent_date' => date('Y-m-d H:i:s'), 'sent_status' => $result]);
         }
     }
 }

@@ -12,7 +12,7 @@ class Onec implements ApiInterface
 
     public static function sendRequest($orderId)
     {
-        self::send_loan($orderId);
+        return self::send_loan($orderId);
     }
 
     private static function send_loan($order_id)
@@ -22,6 +22,9 @@ class Onec implements ApiInterface
         $order = OrdersORM::find($order_id);
         $contract = ContractsORM::find($order->contract_id);
         $user = UsersORM::find($order->user_id);
+
+        if (empty($contract->inssuance_date))
+            return 3;
 
         $user->regaddress = AdressesORM::find($user->regaddress_id);
         $user->faktaddress = AdressesORM::find($user->faktaddress_id);
@@ -33,6 +36,13 @@ class Onec implements ApiInterface
         if (empty($user->inn))
             self::getInn($user->id);
 
+        $equiScore = ScoringsORM::where('order_id', $order_id)
+            ->where('type', 'equifax')
+            ->where('success', 1)
+            ->first();
+
+        $equiScore = json_decode($equiScore->body, true);
+
         $item = new StdClass();
 
         $item->ID = (string)$contract->id;
@@ -42,7 +52,7 @@ class Onec implements ApiInterface
         $item->Периодичность = 'День';
         $item->ПроцентнаяСтавка = $contract->base_percent;
         $item->ПСК = '365';
-        $item->ПДН = '0';
+        $item->ПДН = round((($user->expenses + $equiScore['all_payment_active_credit_month']) / $user->income) * 100, 3);
         $item->УИДСделки = $contract->number;
         $item->ИдентификаторФормыВыдачи = 'Безналичная';
         $item->ИдентификаторФормыОплаты = 'ТретьеЛицо';
@@ -85,6 +95,11 @@ class Onec implements ApiInterface
         $request->TextJSON = json_encode($item);
         $result = self::send_request('CRM_WebService', 'Loans', $request);
 
+        if (isset($result->return) && $result->return == 'OK')
+            $result = 1;
+        else
+            $result = 2;
+
         return $result;
     }
 
@@ -106,11 +121,13 @@ class Onec implements ApiInterface
             $response = $fault;
         }
 
+        $response = json_encode($response, JSON_UNESCAPED_UNICODE);
+
         $insert =
             [
                 'orderId' => self::$orderId,
                 'request' => json_encode(json_decode($request->TextJSON), JSON_UNESCAPED_UNICODE),
-                'response' => json_encode($response, JSON_UNESCAPED_UNICODE)
+                'response' => $response
             ];
 
         OnecLogs::insert($insert);

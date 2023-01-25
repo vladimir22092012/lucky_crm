@@ -196,8 +196,8 @@ class OrderController extends Controller
 
                     $regaddress = $this->Addresses->get_address($client->regaddress_id);
                     $faktaddress = $this->Addresses->get_address($client->faktaddress_id);
-                    $this->design->assign('regaddress', $regaddress->adressfull);
-                    $this->design->assign('faktaddress', $faktaddress->adressfull);
+                    $this->design->assign('regaddress', $regaddress);
+                    $this->design->assign('faktaddress', $faktaddress);
 
                     $communication_orders = array();
                     $communication_contracts = array();
@@ -330,6 +330,8 @@ class OrderController extends Controller
                             {
                                 $scoring->body = json_decode($scoring->body, true);
                                 $equifaxScore = $scoring->body;
+
+                                $order->pdn = (($order->expenses + $equifaxScore['all_payment_active_credit_month']) / $order->income) * 100;
 
                                 $equifaxScore =
                                     [
@@ -1548,151 +1550,55 @@ class OrderController extends Controller
 
     private function addresses_action()
     {
-        $order_id = $this->request->post('order_id', 'integer');
-        $user_id = $this->request->post('user_id', 'integer');
+        $regaddr_id = $this->request->post('regaddr_id');
+        $faktaddr_id = $this->request->post('faktaddr_id');
 
-        $order = new StdClass();
-        $order->Regindex = trim($this->request->post('Regindex'));
-        $order->Regregion = trim($this->request->post('Regregion'));
-        $order->Regregion_shorttype = trim($this->request->post('Regregion_shorttype'));
-        $order->Regdistrict = trim($this->request->post('Regdistrict'));
-        $order->Regdistrict_shorttype = trim($this->request->post('Regdistrict_shorttype'));
-        $order->Reglocality = trim($this->request->post('Reglocality'));
-        $order->Reglocality_shorttype = trim($this->request->post('Reglocality_shorttype'));
-        $order->Regcity = trim($this->request->post('Regcity'));
-        $order->Regcity_shorttype = trim($this->request->post('Regcity_shorttype'));
-        $order->Regstreet = trim($this->request->post('Regstreet'));
-        $order->Regstreet_shorttype = trim($this->request->post('Regstreet_shorttype'));
-        $order->Reghousing = trim($this->request->post('Reghousing'));
-        $order->Regbuilding = trim($this->request->post('Regbuilding'));
-        $order->Regroom = trim($this->request->post('Regroom'));
+        $Regadress = json_decode($this->request->post('Regadress'));
 
-        $order->Faktindex = trim($this->request->post('Faktindex'));
-        $order->Faktregion = trim($this->request->post('Faktregion'));
-        $order->Faktregion_shorttype = trim($this->request->post('Faktregion_shorttype'));
-        $order->Faktdistrict = trim($this->request->post('Faktdistrict'));
-        $order->Faktdistrict_shorttype = trim($this->request->post('Faktdistrict_shorttype'));
-        $order->Faktlocality = trim($this->request->post('Faktlocality'));
-        $order->Faktlocality_shorttype = trim($this->request->post('Faktlocality_shorttype'));
-        $order->Faktcity = trim($this->request->post('Faktcity'));
-        $order->Faktcity_shorttype = trim($this->request->post('Faktcity_shorttype'));
-        $order->Faktstreet = trim($this->request->post('Faktstreet'));
-        $order->Faktstreet_shorttype = trim($this->request->post('Faktstreet_shorttype'));
-        $order->Fakthousing = trim($this->request->post('Fakthousing'));
-        $order->Faktbuilding = trim($this->request->post('Faktbuilding'));
-        $order->Faktroom = trim($this->request->post('Faktroom'));
+        $regaddress = [];
+        $regaddress['adressfull'] = $this->request->post('Regadressfull');
+        $regaddress['zip'] = $Regadress->data->postal_code ?? '';
+        $regaddress['region'] = $Regadress->data->region ?? '';
+        $regaddress['region_type'] = $Regadress->data->region_type ?? '';
+        $regaddress['city'] = $Regadress->data->city ?? '';
+        $regaddress['city_type'] = $Regadress->data->city_type ?? '';
+        $regaddress['district'] = $Regadress->data->city_district ?? '';
+        $regaddress['district_type'] = $Regadress->data->city_district_type ?? '';
+        $regaddress['locality'] = $Regadress->data->settlement ?? '';
+        $regaddress['locality_type'] = $Regadress->data->settlement_type ?? '';
+        $regaddress['street'] = $Regadress->data->street ?? '';
+        $regaddress['street_type'] = $Regadress->data->street_type ?? '';
+        $regaddress['house'] = $Regadress->data->house ?? '';
+        $regaddress['building'] = $Regadress->data->block ?? '';
+        $regaddress['room'] = $Regadress->data->flat ?? '';
+        $regaddress['okato'] = $Regadress->data->okato ?? '';
+        $regaddress['oktmo'] = $Regadress->data->oktmo ?? '';
 
-        $addresses_error = array();
+        $Fakt_adress = json_decode($this->request->post('Fakt_adress'));
 
-        if (empty($order->Regregion))
-            $addresses_error[] = 'empty_regregion';
+        $faktaddress = [];
+        $faktaddress['adressfull'] = $this->request->post('Faktadressfull');
+        $faktaddress['zip'] = $Fakt_adress->data->postal_code ?? '';
+        $faktaddress['region'] = $Fakt_adress->data->region ?? '';
+        $faktaddress['region_type'] = $Fakt_adress->data->region_type ?? '';
+        $faktaddress['city'] = $Fakt_adress->data->city ?? '';
+        $faktaddress['city_type'] = $Fakt_adress->data->city_type ?? '';
+        $faktaddress['district'] = $Fakt_adress->data->city_district ?? '';
+        $faktaddress['district_type'] = $Fakt_adress->data->city_district_type ?? '';
+        $faktaddress['locality'] = $Fakt_adress->data->settlement ?? '';
+        $faktaddress['locality_type'] = $Fakt_adress->data->settlement_type ?? '';
+        $faktaddress['street'] = $Fakt_adress->data->street ?? '';
+        $faktaddress['street_type'] = $Fakt_adress->data->street_type ?? '';
+        $faktaddress['house'] = $Fakt_adress->data->house ?? '';
+        $faktaddress['building'] = $Fakt_adress->data->block ?? '';
+        $faktaddress['room'] = $Fakt_adress->data->flat ?? '';
+        $faktaddress['okato'] = $Fakt_adress->data->okato ?? '';
+        $faktaddress['oktmo'] = $Fakt_adress->data->oktmo ?? '';
 
-        if (empty($order->Faktregion))
-            $addresses_error[] = 'empty_faktregion';
+        AdressesORM::where('id', $regaddr_id)->update($regaddress);
+        AdressesORM::where('id', $faktaddr_id)->update($faktaddress);
 
-        if (empty($addresses_error)) {
-            $update = array(
-                'Regregion' => $order->Regregion,
-                'Regregion_shorttype' => $order->Regregion_shorttype,
-                'Regcity' => $order->Regcity,
-                'Regcity_shorttype' => $order->Regcity_shorttype,
-                'Regdistrict' => $order->Regdistrict,
-                'Regdistrict_shorttype' => $order->Regdistrict_shorttype,
-                'Reglocality' => $order->Reglocality,
-                'Reglocality_shorttype' => $order->Reglocality_shorttype,
-                'Regstreet' => $order->Regstreet,
-                'Regstreet_shorttype' => $order->Regstreet_shorttype,
-                'Reghousing' => $order->Reghousing,
-                'Regbuilding' => $order->Regbuilding,
-                'Regroom' => $order->Regroom,
-                'Regindex' => $order->Regindex,
-            );
-
-            $old_user = $this->users->get_user($user_id);
-            $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
-                    $old_values[$key] = $old_user->$key;
-
-            $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
-                    $log_update[$k] = $u;
-
-            $this->changelogs->add_changelog(array(
-                'manager_id' => $this->manager->id,
-                'created' => date('Y-m-d H:i:s'),
-                'type' => 'regaddress',
-                'old_values' => serialize($old_values),
-                'new_values' => serialize($log_update),
-                'order_id' => $order_id,
-                'user_id' => $user_id,
-            ));
-
-            $this->users->update_user($user_id, $update);
-
-            $update = array(
-                'Faktregion' => $order->Faktregion,
-                'Faktregion_shorttype' => $order->Faktregion_shorttype,
-                'Faktcity' => $order->Faktcity,
-                'Faktcity_shorttype' => $order->Faktcity_shorttype,
-                'Faktdistrict' => $order->Faktdistrict,
-                'Faktdistrict_shorttype' => $order->Faktdistrict_shorttype,
-                'Faktlocality' => $order->Faktlocality,
-                'Faktlocality_shorttype' => $order->Faktlocality_shorttype,
-                'Faktstreet' => $order->Faktstreet,
-                'Faktstreet_shorttype' => $order->Faktstreet_shorttype,
-                'Fakthousing' => $order->Fakthousing,
-                'Faktbuilding' => $order->Faktbuilding,
-                'Faktroom' => $order->Faktroom,
-                'Faktindex' => $order->Faktindex,
-            );
-
-            $old_user = $this->users->get_user($user_id);
-            $old_values = array();
-            foreach ($update as $key => $val)
-                if ($old_user->$key != $update[$key])
-                    $old_values[$key] = $old_user->$key;
-
-            $log_update = array();
-            foreach ($update as $k => $u)
-                if (isset($old_values[$k]))
-                    $log_update[$k] = $u;
-
-            $this->changelogs->add_changelog(array(
-                'manager_id' => $this->manager->id,
-                'created' => date('Y-m-d H:i:s'),
-                'type' => 'faktaddress',
-                'old_values' => serialize($old_values),
-                'new_values' => serialize($log_update),
-                'order_id' => $order_id,
-                'user_id' => $user_id,
-            ));
-
-            $this->users->update_user($user_id, $update);
-
-        }
-
-        $this->design->assign('addresses_error', $addresses_error);
-
-        $this->ordertimers->update_ordertimer($order_id, array(
-            'last_active_date' => date('Y-m-d H:i:s'),
-            'border_date' => date('Y-m-d H:i:s', time() + $this->ordertimer_delay),
-        ));
-
-        $order->order_id = $order_id;
-        $order->user_id = $user_id;
-
-        $isset_order = $this->orders->get_order((int)$order_id);
-
-        $order->status = $isset_order->status;
-        $order->manager_id = $isset_order->manager_id;
-
-        if (!empty($update))
-            $this->soap1c->update_fields($update, '', $isset_order->id_1c);
-
-        $this->design->assign('order', $order);
-
+        return 1;
     }
 
     private function work_action()

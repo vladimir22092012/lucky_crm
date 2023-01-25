@@ -1,9 +1,11 @@
 <?php
 
+use PhpOffice\PhpSpreadsheet\IOFactory;
+
 class TestController extends Controller
 {
     public function fetch(){
-        Onec::sendRequest(4604);
+        Onec::sendRequest(676);
         exit;
     }
 
@@ -86,5 +88,25 @@ class TestController extends Controller
         $resp = json_decode($resp, true);
 
         return $resp;
+    }
+
+    private function parseExcell()
+    {
+        $tmp_name = $this->config->root_dir . '/files/reestr.xlsx';
+        $format = IOFactory::identify($tmp_name);
+        $reader = IOFactory::createReader($format);
+        $spreadsheet = $reader->load($tmp_name);
+
+        $active_sheet = $spreadsheet->getActiveSheet();
+
+        $first_row = 2;
+        $last_row = $active_sheet->getHighestRow();
+
+        for ($row = $first_row; $row <= $last_row; $row++) {
+
+            $created = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($active_sheet->getCell('AN' . $row)->getValue());
+            $birth = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($active_sheet->getCell('B' . $row)->getValue());
+            $passport_date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($active_sheet->getCell('AH' . $row)->getValue());
+        }
     }
 }

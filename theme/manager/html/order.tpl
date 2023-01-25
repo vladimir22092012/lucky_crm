@@ -6,12 +6,52 @@
     <script src="theme/{$settings->theme|escape}/assets/plugins/fancybox3/dist/jquery.fancybox.js"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/order.js?v=1.28"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/movements.app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
     <script>
         $(function () {
             let phone_num = "{$order->phone_mobile}";
             let firstname = "{$order->firstname}";
             let lastname = "{$order->lastname}";
             let patronymic = "{$order->patronymic}";
+
+            let token_dadata = "25c845f063f9f3161487619f630663b2d1e4dcd7";
+
+            $('.Regadress').suggestions({
+                token: token_dadata,
+                type: "ADDRESS",
+                minChars: 3,
+                /* Вызывается, когда пользователь выбирает одну из подсказок */
+                onSelect: function (suggestion) {
+                    $('input[name="Regadressfull"]').val(suggestion.value);
+                    $('.Registration').val(JSON.stringify(suggestion));
+                    $(this).val('');
+                }
+            });
+
+            $('.Faktaddress').suggestions({
+                token: token_dadata,
+                type: "ADDRESS",
+                minChars: 3,
+                /* Вызывается, когда пользователь выбирает одну из подсказок */
+                onSelect: function (suggestion) {
+                    $('input[name="Faktadressfull"]').val(suggestion.value);
+                    $('.Fakt_adress').val(JSON.stringify(suggestion));
+                    $(this).val('');
+                }
+            });
+
+            $('.saveAddress').on('click', function () {
+
+                let form = $(this).closest('form').serialize();
+
+                $.ajax({
+                    method: 'POST',
+                    data: form,
+                    success: function () {
+                        location.reload();
+                    }
+                });
+            });
 
             $.ajax({
                 url: "ajax/BlacklistCheck.php",
@@ -101,6 +141,7 @@
 {capture name='page_styles'}
     <link href="theme/{$settings->theme|escape}/assets/plugins/Magnific-Popup-master/dist/magnific-popup.css"
           rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/css/suggestions.min.css" rel="stylesheet"/>
     <!--link href="theme/{$settings->theme|escape}/assets/plugins/fancybox3/dist/jquery.fancybox.css?v=1.03" rel="stylesheet" /-->
     <style>
         .js-open-popup-image .label {
@@ -422,14 +463,19 @@
                                         {if $order->status == 5}
                                             <br>
                                             <div class="mt-3 card card-danger mb-2 text-center">
-                                                <form id="send_short_link" action="/ajax/send_short_link.php" title="" method="POST">
+                                                <form id="send_short_link" action="/ajax/send_short_link.php" title=""
+                                                      method="POST">
                                                     <div style="padding-top: 10px;padding-bottom: 10px;">
-                                                        <label id="result" class="title text-white">Короткая ссылка на оплату</label>
+                                                        <label id="result" class="title text-white">Короткая ссылка на
+                                                            оплату</label>
                                                         <br>
                                                         <input type="hidden" name="userId" value="{$order->user_id}">
-                                                        <input type="text" id="short_link" name="short_link" value="{$short_link}" size="21" readonly>
-                                                        <input type="text" id="phone_short_link" name="phone" value="{$order->phone_mobile}" size="9">
-                                                        <input type="submit" id="submit_short_link" name="submit_short_link" value="Отправить смс">
+                                                        <input type="text" id="short_link" name="short_link"
+                                                               value="{$short_link}" size="21" readonly>
+                                                        <input type="text" id="phone_short_link" name="phone"
+                                                               value="{$order->phone_mobile}" size="9">
+                                                        <input type="submit" id="submit_short_link"
+                                                               name="submit_short_link" value="Отправить смс">
                                                         <br>
                                                     </div>
                                                 </form>
@@ -853,10 +899,10 @@
                                 </li>
                                 <li class="nav-item">
                                     <button class="nav-link js-event-add-click js-open-problem_loan-form"
-                                    data-order_id="{$order->order_id}" data-user_id="{$order->user_id}"
-                                    data-action="add_problem_loan"
+                                            data-order_id="{$order->order_id}" data-user_id="{$order->user_id}"
+                                            data-action="add_problem_loan"
                                     >
-                                            <span class="hidden-xs-down">Создать документы проблемного заемщика</span>
+                                        <span class="hidden-xs-down">Создать документы проблемного заемщика</span>
                                     </button>
                                 </li>
                             </ul>
@@ -1430,12 +1476,13 @@
                                                 </form>
 
                                                 <form action="{url}"
-                                                      class="js-order-item-form mb-3 border {if $penalties['addresses'] && $penalties['addresses']->status!=3}card-outline-danger{/if}"
-                                                      id="address_form">
+                                                      class="js-order-item-form mb-3 border">
 
                                                     <input type="hidden" name="action" value="addresses"/>
                                                     <input type="hidden" name="order_id" value="{$order->order_id}"/>
                                                     <input type="hidden" name="user_id" value="{$order->user_id}"/>
+                                                    <input type="hidden" name="faktaddr_id" value="{$faktaddress->id}"/>
+                                                    <input type="hidden" name="regaddr_id" value="{$regaddress->id}"/>
 
                                                     <h5 class="card-header">
                                                         <span class="text-white">Адрес</span>
@@ -1455,425 +1502,59 @@
                                                             <table class="table table-hover mb-0">
                                                                 <tr>
                                                                     <td>Адрес прописки</td>
-                                                                    <td>{$regaddress}</td>
+                                                                    <td>{$regaddress->adressfull}</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td>Адрес проживания</td>
-                                                                    <td>{$faktaddress}</td>
+                                                                    <td>{$faktaddress->adressfull}</td>
                                                                 </tr>
                                                             </table>
                                                         </div>
                                                     </div>
 
                                                     <div class="edit-block m-0 {if !$addresses_error}hide{/if}">
-
-                                                        <div class="row m-0 mb-2 mt-2 js-dadata-address">
-                                                            <h6 class="col-12 nav-small-cap">Адрес прописки</h6>
-                                                            {if $addresses_error}
-                                                                <div class="col-md-12">
-                                                                    <ul class="alert alert-danger">
-                                                                        {if in_array('empty_regregion', (array)$addresses_error)}
-                                                                            <li>Укажите область!</li>
-                                                                        {/if}
-                                                                        {if in_array('empty_regcity', (array)$addresses_error)}
-                                                                            <li>Укажите город!</li>
-                                                                        {/if}
-                                                                        {if in_array('empty_regstreet', (array)$addresses_error)}
-                                                                            <li>Укажите улицу!</li>
-                                                                        {/if}
-                                                                        {if in_array('empty_reghousing', (array)$addresses_error)}
-                                                                            <li>Укажите дом!</li>
-                                                                        {/if}
-                                                                        {if in_array('empty_faktregion', (array)$addresses_error)}
-                                                                            <li>Укажите область!</li>
-                                                                        {/if}
-                                                                        {if in_array('empty_faktcity', (array)$addresses_error)}
-                                                                            <li>Укажите город!</li>
-                                                                        {/if}
-                                                                        {if in_array('empty_faktstreet', (array)$addresses_error)}
-                                                                            <li>Укажите улицу!</li>
-                                                                        {/if}
-                                                                        {if in_array('empty_fakthousing', (array)$addresses_error)}
-                                                                            <li>Укажите дом!</li>
-                                                                        {/if}
-                                                                    </ul>
-                                                                </div>
-                                                            {/if}
-                                                            <div class="col-md-12">
-                                                                <div class="form-group mb-1 {if in_array('empty_regregion', (array)$addresses_error)}has-danger{/if}">
-                                                                    <input type="text"
-                                                                           class="form-control js-dadata-onestring"
-                                                                           name=""
-                                                                           value="{$order->Regaddress_full|escape}"
-                                                                           placeholder=""/>
-                                                                </div>
+                                                        <br>
+                                                        <div class="form_group -fs-18 js-dadata-address">
+                                                            <div class="form_group-title -gil-m ml-1">Адрес
+                                                                регистрации
                                                             </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group mb-1 {if in_array('empty_regregion', (array)$addresses_error)}has-danger{/if}">
-                                                                    <label class="control-label">Область</label>
-                                                                    <div class="row">
-                                                                        <div class="col-9">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-region"
-                                                                                   name="Regregion"
-                                                                                   value="{$order->Regregion|escape}"
-                                                                                   placeholder="" required="true"/>
-                                                                        </div>
-                                                                        <div class="col-3">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-region-type"
-                                                                                   name="Regregion_shorttype"
-                                                                                   value="{$order->Regregion_shorttype|escape}"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                    </div>
-                                                                    {if in_array('empty_regregion', (array)$addresses_error)}
-                                                                        <small class="form-control-feedback">Укажите
-                                                                            область!
-                                                                        </small>
-                                                                    {/if}
-                                                                </div>
+                                                            <br>
+                                                            <input class="form-control casing-upper-mask Regadress"
+                                                                   style="width: 700px; margin-left: 25px"
+                                                                   placeholder="Поиск">
+                                                            <br><br>
+                                                            <input class="form-control casing-upper-mask"
+                                                                   name="Regadressfull"
+                                                                   style="width: 700px; margin-left: 25px" type="text"
+                                                                   value="{$regaddress->adressfull}" readonly/>
+                                                            <input style="display: none" class="Registration"
+                                                                   name="Regadress"/>
+                                                        </div>
+                                                        <br>
+                                                        <div class="form_group -fs-18 js-dadata-address js-dadata-okato">
+                                                            <div class="form_group-title -gil-m ml-1">Адрес места
+                                                                жительства
                                                             </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group mb-1 {if in_array('empty_regcity', (array)$addresses_error)}has-danger{/if}">
-                                                                    <label class="control-label">Город</label>
-                                                                    <div class="row">
-                                                                        <div class="col-9">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-city"
-                                                                                   name="Regcity"
-                                                                                   value="{$order->Regcity|escape}"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                        <div class="col-3">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-city-type"
-                                                                                   name="Regcity_shorttype"
-                                                                                   value="{$order->Regcity_shorttype|escape}"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                    </div>
-                                                                    {if in_array('empty_regcity', (array)$addresses_error)}
-                                                                        <small class="form-control-feedback">Укажите
-                                                                            город!
-                                                                        </small>
-                                                                    {/if}
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group mb-1 ">
-                                                                    <label class="control-label">Район</label>
-                                                                    <div class="row">
-                                                                        <div class="col-9">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-district"
-                                                                                   name="Regdistrict"
-                                                                                   value="{$order->Regdistrict|escape}"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                        <div class="col-3">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-district-type"
-                                                                                   name="Regdistrict_shorttype"
-                                                                                   value="{$order->Regdistrict_shorttype|escape}"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group mb-1 ">
-                                                                    <label class="control-label">Нас. пункт</label>
-                                                                    <div class="row">
-                                                                        <div class="col-9">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-locality"
-                                                                                   name="Reglocality"
-                                                                                   value="{$order->Reglocality|escape}"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                        <div class="col-3">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-locality-type"
-                                                                                   name="Reglocality_shorttype"
-                                                                                   value="{$order->Reglocality_shorttype|escape}"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group mb-1 {if in_array('empty_regstreet', (array)$addresses_error)}has-danger{/if}">
-                                                                    <label class="control-label">Улица</label>
-                                                                    <div class="row">
-                                                                        <div class="col-9">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-street"
-                                                                                   name="Regstreet"
-                                                                                   value="{$order->Regstreet|escape}"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                        <div class="col-3">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-street-type"
-                                                                                   name="Regstreet_shorttype"
-                                                                                   value="{$order->Regstreet_shorttype|escape}"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                    </div>
-                                                                    {if in_array('empty_regstreet', (array)$addresses_error)}
-                                                                        <small class="form-control-feedback">Укажите
-                                                                            улицу!
-                                                                        </small>
-                                                                    {/if}
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                                <div class="form-group">
-                                                                    <label class="control-label">Индекс</label>
-                                                                    <input type="text"
-                                                                           class="form-control js-dadata-index"
-                                                                           name="Regindex"
-                                                                           value="{$order->Regindex|escape}"
-                                                                           placeholder=""/>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group {if in_array('empty_reghousing', (array)$addresses_error)}has-danger{/if}">
-                                                                    <label class="control-label">Дом</label>
-                                                                    <input type="text"
-                                                                           class="form-control js-dadata-house"
-                                                                           name="Reghousing"
-                                                                           value="{$order->Reghousing|escape}"
-                                                                           placeholder=""/>
-                                                                    {if in_array('empty_reghousing', (array)$addresses_error)}
-                                                                        <small class="form-control-feedback">Укажите
-                                                                            дом!
-                                                                        </small>
-                                                                    {/if}
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label class="control-label">Строение</label>
-                                                                    <input type="text"
-                                                                           class="form-control js-dadata-building"
-                                                                           name="Regbuilding"
-                                                                           value="{$order->Regbuilding|escape}"
-                                                                           placeholder=""/>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label class="control-label">Квартира</label>
-                                                                    <input type="text"
-                                                                           class="form-control js-dadata-room"
-                                                                           name="Regroom"
-                                                                           value="{$order->Regroom|escape}"
-                                                                           placeholder=""/>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-12">
-                                                                <div class="custom-checkbox">
-                                                                    <input type="checkbox" name="equal" value="1"
-                                                                           class="js-equal-address" id="equal_address"/>
-                                                                    <label class="" for="equal_address">Адрес проживания
-                                                                        совпадает с адресом прописки</label>
-                                                                </div>
+                                                            <br>
+                                                            <div class="js-regaddress-block">
+                                                                <input class="form-control casing-upper-mask Faktaddress"
+                                                                       style="width: 700px; margin-left: 25px"
+                                                                       placeholder="Поиск">
+                                                                <br><br>
+                                                                <input class="form-control casing-upper-mask"
+                                                                       style="width: 700px; margin-left: 25px;"
+                                                                       name="Faktadressfull"
+                                                                       value="{$faktaddress->adressfull}" readonly>
+                                                                <input style="display: none" class="Fakt_adress"
+                                                                       name="Fakt_adress"/>
                                                             </div>
                                                         </div>
-
-                                                        <div class="row m-0 js-dadata-address">
-                                                            <h6 class="col-12 nav-small-cap">Адрес проживания</h6>
-                                                            <div class="col-md-12">
-                                                                <div class="form-group mb-1 {if in_array('empty_regregion', (array)$addresses_error)}has-danger{/if}">
-                                                                    <input type="text"
-                                                                           class="form-control js-dadata-onestring"
-                                                                           name=""
-                                                                           value="{$order->Regaddress_full|escape}"
-                                                                           placeholder=""/>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group mb-1 {if in_array('empty_faktregion', (array)$addresses_error)}has-danger{/if}">
-                                                                    <label class="control-label">Область</label>
-                                                                    <div class="row">
-                                                                        <div class="col-9">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-region"
-                                                                                   name="Faktregion"
-                                                                                   value="{$order->Faktregion|escape}"
-                                                                                   placeholder="" required="true"/>
-                                                                        </div>
-                                                                        <div class="col-3">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-region-type"
-                                                                                   name="Faktregion_shorttype"
-                                                                                   value="{$order->Faktregion_shorttype|escape}"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                    </div>
-                                                                    {if in_array('empty_faktregion', (array)$addresses_error)}
-                                                                        <small class="form-control-feedback">Укажите
-                                                                            область!
-                                                                        </small>
-                                                                    {/if}
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group mb-1 {if in_array('empty_faktcity', (array)$addresses_error)}has-danger{/if}">
-                                                                    <label class="control-label">Город</label>
-                                                                    <div class="row">
-                                                                        <div class="col-9">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-city"
-                                                                                   name="Faktcity"
-                                                                                   value="{$order->Faktcity|escape}"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                        <div class="col-3">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-city-type"
-                                                                                   name="Faktcity_shorttype"
-                                                                                   value="{$order->Faktcity_shorttype|escape}"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                    </div>
-                                                                    {if in_array('empty_faktcity', (array)$addresses_error)}
-                                                                        <small class="form-control-feedback">Укажите
-                                                                            город!
-                                                                        </small>
-                                                                    {/if}
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group mb-1 ">
-                                                                    <label class="control-label">Район</label>
-                                                                    <div class="row">
-                                                                        <div class="col-9">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-district"
-                                                                                   name="Faktdistrict"
-                                                                                   value="{$order->Faktdistrict|escape}"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                        <div class="col-3">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-district-type"
-                                                                                   name="Faktdistrict_shorttype"
-                                                                                   value="{$order->Faktdistrict_shorttype|escape}"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group mb-1 ">
-                                                                    <label class="control-label">Нас. пункт</label>
-                                                                    <div class="row">
-                                                                        <div class="col-9">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-locality"
-                                                                                   name="Faktlocality"
-                                                                                   value="{$order->Faktlocality|escape}"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                        <div class="col-3">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-locality-type"
-                                                                                   name="Faktlocality_shorttype"
-                                                                                   value="{$order->Faktlocality_shorttype|escape}"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group mb-1 {if in_array('empty_faktstreet', (array)$addresses_error)}has-danger{/if}">
-                                                                    <label class="control-label">Улица</label>
-                                                                    <div class="row">
-                                                                        <div class="col-9">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-street"
-                                                                                   name="Faktstreet"
-                                                                                   value="{$order->Faktstreet|escape}"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                        <div class="col-3">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-street-type"
-                                                                                   name="Faktstreet_shorttype"
-                                                                                   value="{$order->Faktstreet_shorttype|escape}"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                    </div>
-                                                                    {if in_array('empty_faktstreet', (array)$addresses_error)}
-                                                                        <small class="form-control-feedback">Укажите
-                                                                            улицу!
-                                                                        </small>
-                                                                    {/if}
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                                <div class="form-group">
-                                                                    <label class="control-label">Индекс</label>
-                                                                    <input type="text"
-                                                                           class="form-control js-dadata-index"
-                                                                           name="Faktindex"
-                                                                           value="{$order->Faktindex|escape}"
-                                                                           placeholder=""/>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group {if in_array('empty_fakthousing', (array)$addresses_error)}has-danger{/if}">
-                                                                    <label class="control-label">Дом</label>
-                                                                    <input type="text"
-                                                                           class="form-control js-dadata-house"
-                                                                           name="Fakthousing"
-                                                                           value="{$order->Fakthousing|escape}"
-                                                                           placeholder=""/>
-                                                                    {if in_array('empty_fakthousing', (array)$addresses_error)}
-                                                                        <small class="form-control-feedback">Укажите
-                                                                            дом!
-                                                                        </small>
-                                                                    {/if}
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label class="control-label">Строение</label>
-                                                                    <input type="text"
-                                                                           class="form-control js-dadata-building"
-                                                                           name="Faktbuilding"
-                                                                           value="{$order->Faktbuilding|escape}"
-                                                                           placeholder=""/>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label class="control-label">Квартира</label>
-                                                                    <input type="text"
-                                                                           class="form-control js-dadata-room"
-                                                                           name="Faktroom"
-                                                                           value="{$order->Faktroom|escape}"
-                                                                           placeholder=""/>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
+                                                        <br>
                                                         <div class="row m-0 mt-2 mb-2">
                                                             <div class="col-md-12">
                                                                 <div class="form-actions">
                                                                     <button type="submit"
-                                                                            class="btn btn-success js-event-add-click"
-                                                                            data-event="44"
-                                                                            data-manager="{$manager->id}"
-                                                                            data-order="{$order->order_id}"
-                                                                            data-user="{$order->user_id}"><i
+                                                                            class="btn btn-success saveAddress"><i
                                                                                 class="fa fa-check"></i> Сохранить
                                                                     </button>
                                                                     <button type="button"
@@ -2318,7 +1999,11 @@
                                                                                    target="_blank">Ссылка на фото</a>
                                                                                 <br>
 
+
+
 {else}
+
+
 
                                                                                 <span>Аватар: Скрыт</span>
                                                                                 <br>
@@ -2335,6 +2020,8 @@
                                                                             {if $scoring_type->name == 'fssp'}
                                                                                 <span>Сумма долга: {$scorings[$scoring_type->name]->body['amount']}</span>
                                                                                 <br>
+
+
 
 
 
@@ -2618,6 +2305,20 @@
                                                     </div>
 
 
+                                                </form>
+
+                                                <form class="mb-4 border">
+                                                    <h6 class="card-header text-white">
+                                                        <span>ПДН</span>
+                                                    </h6>
+                                                    <div class="row view-block p-2 snils-front">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group mb-0 row">
+                                                                <label class="control-label col-md-8 col-7 snils-number">{$order->pdn}
+                                                                    %</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </form>
 
                                             </div>
@@ -3747,7 +3448,7 @@
                                 <label>{$key}: {$score}</label>
                             </div>
                         {/foreach}
-                        {else}
+                    {else}
                         <div class="form-group">
                             <label>Скоринг пуст</label>
                         </div>
@@ -3783,7 +3484,8 @@
                         <input type="text" class="form-control" name="peni" value="{$contract->loan_peni_summ}">
                     </div>
                     <div class="custom-control custom-checkbox mr-sm-2 mb-3">
-                        <input type="checkbox" id="stopProfit" name="stopProfit" class="custom-control-input" {if $contract->stop_profit == 1}checked{/if}>
+                        <input type="checkbox" id="stopProfit" name="stopProfit" class="custom-control-input"
+                               {if $contract->stop_profit == 1}checked{/if}>
                         <label class="custom-control-label" for="stopProfit">
                             Остановить начисления
                         </label>
@@ -3824,12 +3526,13 @@
                                value="1">
                         <label class="custom-control-label" for="official_check">Официальный</label>
                     </div>-->
-                    <select class="form-control" style="    margin-bottom: 20px;" name="problem_loan_name" aria-label="Default select example">
-                    <option value="PRETRIAL_CLAIM" selected>Досудебная притензия</option>
-                    <option value="NOTIFICATION_OF_DELAY_TO_THE_CLIENT">Уведомление о просрочке клиенту</option>
-                    <option value="CERTIFICATE_OF_ABSENCE_OF_DEBT">Справка об отсутствии задолженности</option>
-                    <option value="REFUSAL_TO_TERMINATE_THE_CONTRACT">Отказ расторжения договора</option>
-                    <option value="REFUSAL_TO_TERMINATE_THE_CONTRACT">Отказ обработки персональных данных</option>
+                    <select class="form-control" style="    margin-bottom: 20px;" name="problem_loan_name"
+                            aria-label="Default select example">
+                        <option value="PRETRIAL_CLAIM" selected>Досудебная притензия</option>
+                        <option value="NOTIFICATION_OF_DELAY_TO_THE_CLIENT">Уведомление о просрочке клиенту</option>
+                        <option value="CERTIFICATE_OF_ABSENCE_OF_DEBT">Справка об отсутствии задолженности</option>
+                        <option value="REFUSAL_TO_TERMINATE_THE_CONTRACT">Отказ расторжения договора</option>
+                        <option value="REFUSAL_TO_TERMINATE_THE_CONTRACT">Отказ обработки персональных данных</option>
                     </select>
                     <div class="form-action">
                         <button type="button" class="btn btn-danger waves-effect js-event-add-click" data-event="70"
