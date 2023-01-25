@@ -23,6 +23,9 @@ class Onec implements ApiInterface
         $contract = ContractsORM::find($order->contract_id);
         $user = UsersORM::find($order->user_id);
 
+        if(empty($contract->inssuance_date))
+            return 'Контракт не выдан';
+
         $user->regaddress = AdressesORM::find($user->regaddress_id);
         $user->faktaddress = AdressesORM::find($user->faktaddress_id);
 
