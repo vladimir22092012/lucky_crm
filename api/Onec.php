@@ -34,7 +34,7 @@ class Onec implements ApiInterface
             self::getInn($user->id);
 
         $equiScore = ScoringsORM::where('order_id', $order_id)
-            ->where('type', 'type')
+            ->where('type', 'equifax')
             ->where('success', 1)
             ->first();
 

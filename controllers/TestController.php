@@ -5,7 +5,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 class TestController extends Controller
 {
     public function fetch(){
-        Onec::sendRequest(4613);
+        Onec::sendRequest(676);
         exit;
     }
 
