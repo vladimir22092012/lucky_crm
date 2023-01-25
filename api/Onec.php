@@ -33,6 +33,13 @@ class Onec implements ApiInterface
         if (empty($user->inn))
             self::getInn($user->id);
 
+        $equiScore = ScoringsORM::where('order_id', $order_id)
+            ->where('type', 'type')
+            ->where('success', 1)
+            ->first();
+
+        $equiScore = json_decode($equiScore->body, true);
+
         $item = new StdClass();
 
         $item->ID = (string)$contract->id;
@@ -42,7 +49,7 @@ class Onec implements ApiInterface
         $item->Периодичность = 'День';
         $item->ПроцентнаяСтавка = $contract->base_percent;
         $item->ПСК = '365';
-        $item->ПДН = '0';
+        $item->ПДН = round((($user->expenses + $equiScore['all_payment_active_credit_month']) / $user->income) * 100, 3);
         $item->УИДСделки = $contract->number;
         $item->ИдентификаторФормыВыдачи = 'Безналичная';
         $item->ИдентификаторФормыОплаты = 'ТретьеЛицо';
