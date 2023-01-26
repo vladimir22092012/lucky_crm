@@ -43,6 +43,13 @@ class Onec implements ApiInterface
 
         $equiScore = json_decode($equiScore->body, true);
 
+        $card = CardsORM::find($contract->card_id);
+
+        if(!empty($card))
+            $cardPan = $card->pan;
+        else
+            $cardPan = '';
+
         $item = new StdClass();
 
         $item->ID = (string)$contract->id;
@@ -60,6 +67,7 @@ class Onec implements ApiInterface
         $item->Порог = '1.5';
         $item->ИННОрганизации = '7801323165';
         $item->СпособПодачиЗаявления = 'Прямой';
+        $item->НомерКарты = $cardPan;
 
         $item->ГрафикПлатежей = [];
 
