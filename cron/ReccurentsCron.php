@@ -23,8 +23,6 @@ class ReccurentsCron extends Core
         foreach ($contracts as $contract) {
             $description = 'Оплата по договору ' . $contract->number;
 
-            $debt = $contract->loan_body_summ + $contract->loan_percents_summ;
-
             $card = CardsORM::find($contract->card_id);
 
             if(!empty($card->deleted))
@@ -32,6 +30,10 @@ class ReccurentsCron extends Core
 
 
             for ($i = 1; $i <= 4; $i++) {
+
+                $contract = ContractsORM::find($contract->id);
+
+                $debt = $contract->loan_body_summ + $contract->loan_percents_summ;
 
                 $prc = ($i * 10) / 100;
 
@@ -46,7 +48,6 @@ class ReccurentsCron extends Core
                     CardsORM::where('id', $contract->card_id)->update(['deleted' => 1]);
                     break;
                 } elseif ($reasonCode == 1) {
-                    $debt -= $sum;
                     $sumPay = $sum;
 
                     // списываем проценты
@@ -66,10 +67,8 @@ class ReccurentsCron extends Core
                     if ($contract->loan_body_summ > 0) {
                         if ($sum >= $contract->loan_body_summ) {
                             $contract_loan_body_summ = 0;
-                            $sum -= $contract->loan_body_summ;
                         } else {
                             $contract_loan_body_summ = $contract->loan_body_summ - $sum;
-                            $sum = 0;
                         }
                     }
 
@@ -77,25 +76,6 @@ class ReccurentsCron extends Core
                         'loan_percents_summ' => $contract_loan_percents_summ,
                         'loan_body_summ' => $contract_loan_body_summ,
                     ));
-
-                    /*
-
-                    // закрываем кредит
-                    $contract_loan_percents_summ = round($contract_loan_percents_summ, 2);
-                    $contract_loan_body_summ = round($contract_loan_body_summ, 2);
-                    if ($contract_loan_body_summ <= 0 && $contract_loan_percents_summ <= 0) {
-                        $this->contracts->update_contract($contract->id, array(
-                            'status' => 3,
-                            'collection_status' => 0,
-                            'close_date' => date('Y-m-d H:i:s'),
-                        ));
-
-                        $this->orders->update_order($contract->order_id, array(
-                            'status' => 7
-                        ));
-                    }
-
-                    */
 
                     $this->operations->add_operation(array(
                         'contract_id' => $contract->id,
@@ -105,6 +85,8 @@ class ReccurentsCron extends Core
                         'amount' => $sumPay,
                         'created' => date('Y-m-d H:i:s'),
                         'transaction_id' => 0,
+                        'loan_body_summ' => $contract_loan_body_summ,
+                        'loan_percents_summ' => $contract_loan_percents_summ
                     ));
                 } else
                     break;

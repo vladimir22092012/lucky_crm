@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.18, created on 2023-01-18 18:05:37
+<?php /* Smarty version Smarty-3.1.18, created on 2023-01-25 16:50:15
          compiled from "/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/order.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2818875476343af9e6a2cf3-14201628%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'fe2aa0d83c9fc8b9ef94f66cee81e67ab66d6ce9' => 
     array (
       0 => '/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/order.tpl',
-      1 => 1674044724,
+      1 => 1674648428,
       2 => 'file',
     ),
   ),
@@ -53,9 +53,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'field' => 0,
     'old_value' => 0,
     'contacts_error' => 0,
-    'addresses_error' => 0,
-    'regaddress' => 0,
     'faktaddress' => 0,
+    'regaddress' => 0,
+    'addresses_error' => 0,
     'work_error' => 0,
     'need_update_scorings' => 0,
     'scoring_types' => 0,
@@ -123,6 +123,7 @@ if ($_smarty_tpl->parent != null) $_smarty_tpl->parent->tpl_vars['meta_title'] =
 /js/apps/order.js?v=1.28"></script>
     <script type="text/javascript" src="theme/<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['settings']->value->theme, ENT_QUOTES, 'UTF-8', true);?>
 /js/apps/movements.app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
     <script>
         $(function () {
             let phone_num = "<?php echo $_smarty_tpl->tpl_vars['order']->value->phone_mobile;?>
@@ -133,6 +134,45 @@ if ($_smarty_tpl->parent != null) $_smarty_tpl->parent->tpl_vars['meta_title'] =
 ";
             let patronymic = "<?php echo $_smarty_tpl->tpl_vars['order']->value->patronymic;?>
 ";
+
+            let token_dadata = "25c845f063f9f3161487619f630663b2d1e4dcd7";
+
+            $('.Regadress').suggestions({
+                token: token_dadata,
+                type: "ADDRESS",
+                minChars: 3,
+                /* Вызывается, когда пользователь выбирает одну из подсказок */
+                onSelect: function (suggestion) {
+                    $('input[name="Regadressfull"]').val(suggestion.value);
+                    $('.Registration').val(JSON.stringify(suggestion));
+                    $(this).val('');
+                }
+            });
+
+            $('.Faktaddress').suggestions({
+                token: token_dadata,
+                type: "ADDRESS",
+                minChars: 3,
+                /* Вызывается, когда пользователь выбирает одну из подсказок */
+                onSelect: function (suggestion) {
+                    $('input[name="Faktadressfull"]').val(suggestion.value);
+                    $('.Fakt_adress').val(JSON.stringify(suggestion));
+                    $(this).val('');
+                }
+            });
+
+            $('.saveAddress').on('click', function () {
+
+                let form = $(this).closest('form').serialize();
+
+                $.ajax({
+                    method: 'POST',
+                    data: form,
+                    success: function () {
+                        location.reload();
+                    }
+                });
+            });
 
             $.ajax({
                 url: "ajax/BlacklistCheck.php",
@@ -228,6 +268,7 @@ if (!empty($_capture_buffer)) {
     <link href="theme/<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['settings']->value->theme, ENT_QUOTES, 'UTF-8', true);?>
 /assets/plugins/Magnific-Popup-master/dist/magnific-popup.css"
           rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/css/suggestions.min.css" rel="stylesheet"/>
     <!--link href="theme/<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['settings']->value->theme, ENT_QUOTES, 'UTF-8', true);?>
 /assets/plugins/fancybox3/dist/jquery.fancybox.css?v=1.03" rel="stylesheet" /-->
     <style>
@@ -585,17 +626,22 @@ $_smarty_tpl->tpl_vars['m']->_loop = true;
                                         <?php if ($_smarty_tpl->tpl_vars['order']->value->status==5) {?>
                                             <br>
                                             <div class="mt-3 card card-danger mb-2 text-center">
-                                                <form id="send_short_link" action="/ajax/send_short_link.php" title="" method="POST">
+                                                <form id="send_short_link" action="/ajax/send_short_link.php" title=""
+                                                      method="POST">
                                                     <div style="padding-top: 10px;padding-bottom: 10px;">
-                                                        <label id="result" class="title text-white">Короткая ссылка на оплату</label>
+                                                        <label id="result" class="title text-white">Короткая ссылка на
+                                                            оплату</label>
                                                         <br>
                                                         <input type="hidden" name="userId" value="<?php echo $_smarty_tpl->tpl_vars['order']->value->user_id;?>
 ">
-                                                        <input type="text" id="short_link" name="short_link" value="<?php echo $_smarty_tpl->tpl_vars['short_link']->value;?>
+                                                        <input type="text" id="short_link" name="short_link"
+                                                               value="<?php echo $_smarty_tpl->tpl_vars['short_link']->value;?>
 " size="21" readonly>
-                                                        <input type="text" id="phone_short_link" name="phone" value="<?php echo $_smarty_tpl->tpl_vars['order']->value->phone_mobile;?>
+                                                        <input type="text" id="phone_short_link" name="phone"
+                                                               value="<?php echo $_smarty_tpl->tpl_vars['order']->value->phone_mobile;?>
 " size="9">
-                                                        <input type="submit" id="submit_short_link" name="submit_short_link" value="Отправить смс">
+                                                        <input type="submit" id="submit_short_link"
+                                                               name="submit_short_link" value="Отправить смс">
                                                         <br>
                                                     </div>
                                                 </form>
@@ -1123,12 +1169,12 @@ $_smarty_tpl->tpl_vars['er']->_loop = true;
                                 </li>
                                 <li class="nav-item">
                                     <button class="nav-link js-event-add-click js-open-problem_loan-form"
-                                    data-order_id="<?php echo $_smarty_tpl->tpl_vars['order']->value->order_id;?>
+                                            data-order_id="<?php echo $_smarty_tpl->tpl_vars['order']->value->order_id;?>
 " data-user_id="<?php echo $_smarty_tpl->tpl_vars['order']->value->user_id;?>
 "
-                                    data-action="add_problem_loan"
+                                            data-action="add_problem_loan"
                                     >
-                                            <span class="hidden-xs-down">Создать документы проблемного заемщика</span>
+                                        <span class="hidden-xs-down">Создать документы проблемного заемщика</span>
                                     </button>
                                 </li>
                             </ul>
@@ -1789,13 +1835,16 @@ $_smarty_tpl->tpl_vars['old_value']->_loop = true;
 
                                                 <form action="<?php echo $_smarty_tpl->smarty->registered_plugins[Smarty::PLUGIN_FUNCTION]['url'][0][0]->url_modifier(array(),$_smarty_tpl);?>
 "
-                                                      class="js-order-item-form mb-3 border <?php if ($_smarty_tpl->tpl_vars['penalties']->value['addresses']&&$_smarty_tpl->tpl_vars['penalties']->value['addresses']->status!=3) {?>card-outline-danger<?php }?>"
-                                                      id="address_form">
+                                                      class="js-order-item-form mb-3 border">
 
                                                     <input type="hidden" name="action" value="addresses"/>
                                                     <input type="hidden" name="order_id" value="<?php echo $_smarty_tpl->tpl_vars['order']->value->order_id;?>
 "/>
                                                     <input type="hidden" name="user_id" value="<?php echo $_smarty_tpl->tpl_vars['order']->value->user_id;?>
+"/>
+                                                    <input type="hidden" name="faktaddr_id" value="<?php echo $_smarty_tpl->tpl_vars['faktaddress']->value->id;?>
+"/>
+                                                    <input type="hidden" name="regaddr_id" value="<?php echo $_smarty_tpl->tpl_vars['regaddress']->value->id;?>
 "/>
 
                                                     <h5 class="card-header">
@@ -1820,12 +1869,12 @@ $_smarty_tpl->tpl_vars['old_value']->_loop = true;
                                                             <table class="table table-hover mb-0">
                                                                 <tr>
                                                                     <td>Адрес прописки</td>
-                                                                    <td><?php echo $_smarty_tpl->tpl_vars['regaddress']->value;?>
+                                                                    <td><?php echo $_smarty_tpl->tpl_vars['regaddress']->value->adressfull;?>
 </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td>Адрес проживания</td>
-                                                                    <td><?php echo $_smarty_tpl->tpl_vars['faktaddress']->value;?>
+                                                                    <td><?php echo $_smarty_tpl->tpl_vars['faktaddress']->value->adressfull;?>
 </td>
                                                                 </tr>
                                                             </table>
@@ -1833,447 +1882,50 @@ $_smarty_tpl->tpl_vars['old_value']->_loop = true;
                                                     </div>
 
                                                     <div class="edit-block m-0 <?php if (!$_smarty_tpl->tpl_vars['addresses_error']->value) {?>hide<?php }?>">
-
-                                                        <div class="row m-0 mb-2 mt-2 js-dadata-address">
-                                                            <h6 class="col-12 nav-small-cap">Адрес прописки</h6>
-                                                            <?php if ($_smarty_tpl->tpl_vars['addresses_error']->value) {?>
-                                                                <div class="col-md-12">
-                                                                    <ul class="alert alert-danger">
-                                                                        <?php if (in_array('empty_regregion',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>
-                                                                            <li>Укажите область!</li>
-                                                                        <?php }?>
-                                                                        <?php if (in_array('empty_regcity',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>
-                                                                            <li>Укажите город!</li>
-                                                                        <?php }?>
-                                                                        <?php if (in_array('empty_regstreet',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>
-                                                                            <li>Укажите улицу!</li>
-                                                                        <?php }?>
-                                                                        <?php if (in_array('empty_reghousing',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>
-                                                                            <li>Укажите дом!</li>
-                                                                        <?php }?>
-                                                                        <?php if (in_array('empty_faktregion',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>
-                                                                            <li>Укажите область!</li>
-                                                                        <?php }?>
-                                                                        <?php if (in_array('empty_faktcity',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>
-                                                                            <li>Укажите город!</li>
-                                                                        <?php }?>
-                                                                        <?php if (in_array('empty_faktstreet',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>
-                                                                            <li>Укажите улицу!</li>
-                                                                        <?php }?>
-                                                                        <?php if (in_array('empty_fakthousing',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>
-                                                                            <li>Укажите дом!</li>
-                                                                        <?php }?>
-                                                                    </ul>
-                                                                </div>
-                                                            <?php }?>
-                                                            <div class="col-md-12">
-                                                                <div class="form-group mb-1 <?php if (in_array('empty_regregion',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>has-danger<?php }?>">
-                                                                    <input type="text"
-                                                                           class="form-control js-dadata-onestring"
-                                                                           name=""
-                                                                           value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Regaddress_full, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                           placeholder=""/>
-                                                                </div>
+                                                        <br>
+                                                        <div class="form_group -fs-18 js-dadata-address">
+                                                            <div class="form_group-title -gil-m ml-1">Адрес
+                                                                регистрации
                                                             </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group mb-1 <?php if (in_array('empty_regregion',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>has-danger<?php }?>">
-                                                                    <label class="control-label">Область</label>
-                                                                    <div class="row">
-                                                                        <div class="col-9">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-region"
-                                                                                   name="Regregion"
-                                                                                   value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Regregion, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                                   placeholder="" required="true"/>
-                                                                        </div>
-                                                                        <div class="col-3">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-region-type"
-                                                                                   name="Regregion_shorttype"
-                                                                                   value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Regregion_shorttype, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                    </div>
-                                                                    <?php if (in_array('empty_regregion',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>
-                                                                        <small class="form-control-feedback">Укажите
-                                                                            область!
-                                                                        </small>
-                                                                    <?php }?>
-                                                                </div>
+                                                            <br>
+                                                            <input class="form-control casing-upper-mask Regadress"
+                                                                   style="width: 700px; margin-left: 25px"
+                                                                   placeholder="Поиск">
+                                                            <br><br>
+                                                            <input class="form-control casing-upper-mask"
+                                                                   name="Regadressfull"
+                                                                   style="width: 700px; margin-left: 25px" type="text"
+                                                                   value="<?php echo $_smarty_tpl->tpl_vars['regaddress']->value->adressfull;?>
+" readonly/>
+                                                            <input style="display: none" class="Registration"
+                                                                   name="Regadress"/>
+                                                        </div>
+                                                        <br>
+                                                        <div class="form_group -fs-18 js-dadata-address js-dadata-okato">
+                                                            <div class="form_group-title -gil-m ml-1">Адрес места
+                                                                жительства
                                                             </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group mb-1 <?php if (in_array('empty_regcity',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>has-danger<?php }?>">
-                                                                    <label class="control-label">Город</label>
-                                                                    <div class="row">
-                                                                        <div class="col-9">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-city"
-                                                                                   name="Regcity"
-                                                                                   value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Regcity, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                        <div class="col-3">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-city-type"
-                                                                                   name="Regcity_shorttype"
-                                                                                   value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Regcity_shorttype, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                    </div>
-                                                                    <?php if (in_array('empty_regcity',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>
-                                                                        <small class="form-control-feedback">Укажите
-                                                                            город!
-                                                                        </small>
-                                                                    <?php }?>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group mb-1 ">
-                                                                    <label class="control-label">Район</label>
-                                                                    <div class="row">
-                                                                        <div class="col-9">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-district"
-                                                                                   name="Regdistrict"
-                                                                                   value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Regdistrict, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                        <div class="col-3">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-district-type"
-                                                                                   name="Regdistrict_shorttype"
-                                                                                   value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Regdistrict_shorttype, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group mb-1 ">
-                                                                    <label class="control-label">Нас. пункт</label>
-                                                                    <div class="row">
-                                                                        <div class="col-9">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-locality"
-                                                                                   name="Reglocality"
-                                                                                   value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Reglocality, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                        <div class="col-3">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-locality-type"
-                                                                                   name="Reglocality_shorttype"
-                                                                                   value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Reglocality_shorttype, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group mb-1 <?php if (in_array('empty_regstreet',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>has-danger<?php }?>">
-                                                                    <label class="control-label">Улица</label>
-                                                                    <div class="row">
-                                                                        <div class="col-9">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-street"
-                                                                                   name="Regstreet"
-                                                                                   value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Regstreet, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                        <div class="col-3">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-street-type"
-                                                                                   name="Regstreet_shorttype"
-                                                                                   value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Regstreet_shorttype, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                    </div>
-                                                                    <?php if (in_array('empty_regstreet',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>
-                                                                        <small class="form-control-feedback">Укажите
-                                                                            улицу!
-                                                                        </small>
-                                                                    <?php }?>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                                <div class="form-group">
-                                                                    <label class="control-label">Индекс</label>
-                                                                    <input type="text"
-                                                                           class="form-control js-dadata-index"
-                                                                           name="Regindex"
-                                                                           value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Regindex, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                           placeholder=""/>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group <?php if (in_array('empty_reghousing',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>has-danger<?php }?>">
-                                                                    <label class="control-label">Дом</label>
-                                                                    <input type="text"
-                                                                           class="form-control js-dadata-house"
-                                                                           name="Reghousing"
-                                                                           value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Reghousing, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                           placeholder=""/>
-                                                                    <?php if (in_array('empty_reghousing',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>
-                                                                        <small class="form-control-feedback">Укажите
-                                                                            дом!
-                                                                        </small>
-                                                                    <?php }?>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label class="control-label">Строение</label>
-                                                                    <input type="text"
-                                                                           class="form-control js-dadata-building"
-                                                                           name="Regbuilding"
-                                                                           value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Regbuilding, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                           placeholder=""/>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label class="control-label">Квартира</label>
-                                                                    <input type="text"
-                                                                           class="form-control js-dadata-room"
-                                                                           name="Regroom"
-                                                                           value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Regroom, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                           placeholder=""/>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-12">
-                                                                <div class="custom-checkbox">
-                                                                    <input type="checkbox" name="equal" value="1"
-                                                                           class="js-equal-address" id="equal_address"/>
-                                                                    <label class="" for="equal_address">Адрес проживания
-                                                                        совпадает с адресом прописки</label>
-                                                                </div>
+                                                            <br>
+                                                            <div class="js-regaddress-block">
+                                                                <input class="form-control casing-upper-mask Faktaddress"
+                                                                       style="width: 700px; margin-left: 25px"
+                                                                       placeholder="Поиск">
+                                                                <br><br>
+                                                                <input class="form-control casing-upper-mask"
+                                                                       style="width: 700px; margin-left: 25px;"
+                                                                       name="Faktadressfull"
+                                                                       value="<?php echo $_smarty_tpl->tpl_vars['faktaddress']->value->adressfull;?>
+" readonly>
+                                                                <input style="display: none" class="Fakt_adress"
+                                                                       name="Fakt_adress"/>
                                                             </div>
                                                         </div>
-
-                                                        <div class="row m-0 js-dadata-address">
-                                                            <h6 class="col-12 nav-small-cap">Адрес проживания</h6>
-                                                            <div class="col-md-12">
-                                                                <div class="form-group mb-1 <?php if (in_array('empty_regregion',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>has-danger<?php }?>">
-                                                                    <input type="text"
-                                                                           class="form-control js-dadata-onestring"
-                                                                           name=""
-                                                                           value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Regaddress_full, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                           placeholder=""/>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group mb-1 <?php if (in_array('empty_faktregion',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>has-danger<?php }?>">
-                                                                    <label class="control-label">Область</label>
-                                                                    <div class="row">
-                                                                        <div class="col-9">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-region"
-                                                                                   name="Faktregion"
-                                                                                   value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Faktregion, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                                   placeholder="" required="true"/>
-                                                                        </div>
-                                                                        <div class="col-3">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-region-type"
-                                                                                   name="Faktregion_shorttype"
-                                                                                   value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Faktregion_shorttype, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                    </div>
-                                                                    <?php if (in_array('empty_faktregion',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>
-                                                                        <small class="form-control-feedback">Укажите
-                                                                            область!
-                                                                        </small>
-                                                                    <?php }?>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group mb-1 <?php if (in_array('empty_faktcity',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>has-danger<?php }?>">
-                                                                    <label class="control-label">Город</label>
-                                                                    <div class="row">
-                                                                        <div class="col-9">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-city"
-                                                                                   name="Faktcity"
-                                                                                   value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Faktcity, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                        <div class="col-3">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-city-type"
-                                                                                   name="Faktcity_shorttype"
-                                                                                   value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Faktcity_shorttype, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                    </div>
-                                                                    <?php if (in_array('empty_faktcity',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>
-                                                                        <small class="form-control-feedback">Укажите
-                                                                            город!
-                                                                        </small>
-                                                                    <?php }?>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group mb-1 ">
-                                                                    <label class="control-label">Район</label>
-                                                                    <div class="row">
-                                                                        <div class="col-9">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-district"
-                                                                                   name="Faktdistrict"
-                                                                                   value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Faktdistrict, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                        <div class="col-3">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-district-type"
-                                                                                   name="Faktdistrict_shorttype"
-                                                                                   value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Faktdistrict_shorttype, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group mb-1 ">
-                                                                    <label class="control-label">Нас. пункт</label>
-                                                                    <div class="row">
-                                                                        <div class="col-9">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-locality"
-                                                                                   name="Faktlocality"
-                                                                                   value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Faktlocality, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                        <div class="col-3">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-locality-type"
-                                                                                   name="Faktlocality_shorttype"
-                                                                                   value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Faktlocality_shorttype, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group mb-1 <?php if (in_array('empty_faktstreet',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>has-danger<?php }?>">
-                                                                    <label class="control-label">Улица</label>
-                                                                    <div class="row">
-                                                                        <div class="col-9">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-street"
-                                                                                   name="Faktstreet"
-                                                                                   value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Faktstreet, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                        <div class="col-3">
-                                                                            <input type="text"
-                                                                                   class="form-control js-dadata-street-type"
-                                                                                   name="Faktstreet_shorttype"
-                                                                                   value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Faktstreet_shorttype, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                                   placeholder=""/>
-                                                                        </div>
-                                                                    </div>
-                                                                    <?php if (in_array('empty_faktstreet',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>
-                                                                        <small class="form-control-feedback">Укажите
-                                                                            улицу!
-                                                                        </small>
-                                                                    <?php }?>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                                <div class="form-group">
-                                                                    <label class="control-label">Индекс</label>
-                                                                    <input type="text"
-                                                                           class="form-control js-dadata-index"
-                                                                           name="Faktindex"
-                                                                           value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Faktindex, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                           placeholder=""/>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group <?php if (in_array('empty_fakthousing',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>has-danger<?php }?>">
-                                                                    <label class="control-label">Дом</label>
-                                                                    <input type="text"
-                                                                           class="form-control js-dadata-house"
-                                                                           name="Fakthousing"
-                                                                           value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Fakthousing, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                           placeholder=""/>
-                                                                    <?php if (in_array('empty_fakthousing',(array)$_smarty_tpl->tpl_vars['addresses_error']->value)) {?>
-                                                                        <small class="form-control-feedback">Укажите
-                                                                            дом!
-                                                                        </small>
-                                                                    <?php }?>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label class="control-label">Строение</label>
-                                                                    <input type="text"
-                                                                           class="form-control js-dadata-building"
-                                                                           name="Faktbuilding"
-                                                                           value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Faktbuilding, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                           placeholder=""/>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label class="control-label">Квартира</label>
-                                                                    <input type="text"
-                                                                           class="form-control js-dadata-room"
-                                                                           name="Faktroom"
-                                                                           value="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['order']->value->Faktroom, ENT_QUOTES, 'UTF-8', true);?>
-"
-                                                                           placeholder=""/>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
+                                                        <br>
                                                         <div class="row m-0 mt-2 mb-2">
                                                             <div class="col-md-12">
                                                                 <div class="form-actions">
                                                                     <button type="submit"
-                                                                            class="btn btn-success js-event-add-click"
-                                                                            data-event="44"
-                                                                            data-manager="<?php echo $_smarty_tpl->tpl_vars['manager']->value->id;?>
-"
-                                                                            data-order="<?php echo $_smarty_tpl->tpl_vars['order']->value->order_id;?>
-"
-                                                                            data-user="<?php echo $_smarty_tpl->tpl_vars['order']->value->user_id;?>
-"><i
+                                                                            class="btn btn-success saveAddress"><i
                                                                                 class="fa fa-check"></i> Сохранить
                                                                     </button>
                                                                     <button type="button"
@@ -2784,7 +2436,11 @@ $_smarty_tpl->tpl_vars['scoring_type']->_loop = true;
                                                                                    target="_blank">Ссылка на фото</a>
                                                                                 <br>
 
+
+
 <?php } else { ?>
+
+
 
                                                                                 <span>Аватар: Скрыт</span>
                                                                                 <br>
@@ -2810,6 +2466,8 @@ $_smarty_tpl->tpl_vars['fio']->_loop = true;
                                                                                 <span>Сумма долга: <?php echo $_smarty_tpl->tpl_vars['scorings']->value[$_smarty_tpl->tpl_vars['scoring_type']->value->name]->body['amount'];?>
 </span>
                                                                                 <br>
+
+
 
 
 
@@ -3123,6 +2781,21 @@ $_smarty_tpl->tpl_vars['card']->_loop = true;
                                                     </div>
 
 
+                                                </form>
+
+                                                <form class="mb-4 border">
+                                                    <h6 class="card-header text-white">
+                                                        <span>ПДН</span>
+                                                    </h6>
+                                                    <div class="row view-block p-2 snils-front">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group mb-0 row">
+                                                                <label class="control-label col-md-8 col-7 snils-number"><?php echo $_smarty_tpl->tpl_vars['order']->value->pdn;?>
+
+                                                                    %</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </form>
 
                                             </div>
@@ -4479,7 +4152,7 @@ $_smarty_tpl->tpl_vars['score']->_loop = true;
 </label>
                             </div>
                         <?php } ?>
-                        <?php } else { ?>
+                    <?php } else { ?>
                         <div class="form-group">
                             <label>Скоринг пуст</label>
                         </div>
@@ -4519,7 +4192,8 @@ $_smarty_tpl->tpl_vars['score']->_loop = true;
 ">
                     </div>
                     <div class="custom-control custom-checkbox mr-sm-2 mb-3">
-                        <input type="checkbox" id="stopProfit" name="stopProfit" class="custom-control-input" <?php if ($_smarty_tpl->tpl_vars['contract']->value->stop_profit==1) {?>checked<?php }?>>
+                        <input type="checkbox" id="stopProfit" name="stopProfit" class="custom-control-input"
+                               <?php if ($_smarty_tpl->tpl_vars['contract']->value->stop_profit==1) {?>checked<?php }?>>
                         <label class="custom-control-label" for="stopProfit">
                             Остановить начисления
                         </label>
@@ -4563,12 +4237,13 @@ $_smarty_tpl->tpl_vars['score']->_loop = true;
                                value="1">
                         <label class="custom-control-label" for="official_check">Официальный</label>
                     </div>-->
-                    <select class="form-control" style="    margin-bottom: 20px;" name="problem_loan_name" aria-label="Default select example">
-                    <option value="PRETRIAL_CLAIM" selected>Досудебная притензия</option>
-                    <option value="NOTIFICATION_OF_DELAY_TO_THE_CLIENT">Уведомление о просрочке клиенту</option>
-                    <option value="CERTIFICATE_OF_ABSENCE_OF_DEBT">Справка об отсутствии задолженности</option>
-                    <option value="REFUSAL_TO_TERMINATE_THE_CONTRACT">Отказ расторжения договора</option>
-                    <option value="REFUSAL_TO_TERMINATE_THE_CONTRACT">Отказ обработки персональных данных</option>
+                    <select class="form-control" style="    margin-bottom: 20px;" name="problem_loan_name"
+                            aria-label="Default select example">
+                        <option value="PRETRIAL_CLAIM" selected>Досудебная притензия</option>
+                        <option value="NOTIFICATION_OF_DELAY_TO_THE_CLIENT">Уведомление о просрочке клиенту</option>
+                        <option value="CERTIFICATE_OF_ABSENCE_OF_DEBT">Справка об отсутствии задолженности</option>
+                        <option value="REFUSAL_TO_TERMINATE_THE_CONTRACT">Отказ расторжения договора</option>
+                        <option value="REFUSAL_TO_TERMINATE_THE_CONTRACT">Отказ обработки персональных данных</option>
                     </select>
                     <div class="form-action">
                         <button type="button" class="btn btn-danger waves-effect js-event-add-click" data-event="70"
