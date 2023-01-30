@@ -331,7 +331,7 @@ class OrderController extends Controller
                                 $scoring->body = json_decode($scoring->body, true);
                                 $equifaxScore = $scoring->body;
 
-                                $order->pdn = (($order->expenses + $equifaxScore['all_payment_active_credit_month']) / $order->income) * 100;
+                                $order->pdn = round(($equifaxScore['all_payment_active_credit_month'] / $order->income) * 100, 3);
 
                                 $equifaxScore =
                                     [
