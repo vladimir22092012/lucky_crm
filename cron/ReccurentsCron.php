@@ -105,6 +105,8 @@ class ReccurentsCron extends Core
                         'amount' => $sumPay,
                         'created' => date('Y-m-d H:i:s'),
                         'transaction_id' => 0,
+                        'loan_body_summ' => $contract_loan_body_summ,
+                        'loan_percents_summ' => $contract_loan_percents_summ
                     ));
                 } else
                     break;

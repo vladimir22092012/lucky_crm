@@ -59,7 +59,7 @@ class Onec implements ApiInterface
         $item->Периодичность = 'День';
         $item->ПроцентнаяСтавка = $contract->base_percent;
         $item->ПСК = '365';
-        $item->ПДН = round((($user->expenses + $equiScore['all_payment_active_credit_month']) / $user->income) * 100, 3);
+        $item->ПДН = round(($equiScore['all_payment_active_credit_month'] / $user->income) * 100, 3);
         $item->УИДСделки = $contract->number;
         $item->ИдентификаторФормыВыдачи = 'Безналичная';
         $item->ИдентификаторФормыОплаты = 'ТретьеЛицо';
