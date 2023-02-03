@@ -1,6 +1,6 @@
 <?php
 
-class PendingSegment extends SegmentsAbastract
+class PendingSegment extends SegmentsAbstract
 {
 
     public static function sendReminder($reminder)

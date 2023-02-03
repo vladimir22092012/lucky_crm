@@ -1,6 +1,6 @@
 <?php
 
-class ExpireSegment extends SegmentsAbastract
+class ExpireSegment extends SegmentsAbstract
 {
 
     public static function sendReminder($reminder)
