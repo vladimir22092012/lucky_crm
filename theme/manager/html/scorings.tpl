@@ -240,7 +240,7 @@
                                 {elseif $type->name == 'scorista'}
                                 <div class="col-md-6">
                                     <div class="form-group ">
-                                        <label class="control-label">Проходной бал</label>
+                                        <label class="control-label">Проходной бал { $type->name}</label>
                                         <input type="text" name="settings[{$type->id}][params][scorebal]" value="{$type->params['scorebal']}" class="form-control" placeholder="" />
                                     </div>
                                 </div>
