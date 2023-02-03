@@ -41,11 +41,16 @@ class Onec implements ApiInterface
             ->where('success', 1)
             ->first();
 
-        $equiScore = json_decode($equiScore->body, true);
+        if (empty($equiScore))
+            $pdn = 0;
+        else {
+            $equiScore = json_decode($equiScore->body, true);
+            $pdn = round(($equiScore['all_payment_active_credit_month'] / $user->income) * 100, 3);
+        }
 
         $card = CardsORM::find($contract->card_id);
 
-        if(!empty($card))
+        if (!empty($card))
             $cardPan = $card->pan;
         else
             $cardPan = '';
@@ -59,7 +64,7 @@ class Onec implements ApiInterface
         $item->Периодичность = 'День';
         $item->ПроцентнаяСтавка = $contract->base_percent;
         $item->ПСК = '365';
-        $item->ПДН = round(($equiScore['all_payment_active_credit_month'] / $user->income) * 100, 3);
+        $item->ПДН = $pdn;
         $item->УИДСделки = $contract->number;
         $item->ИдентификаторФормыВыдачи = 'Безналичная';
         $item->ИдентификаторФормыОплаты = 'ТретьеЛицо';
@@ -101,6 +106,7 @@ class Onec implements ApiInterface
 
         $request = new StdClass();
         $request->TextJSON = json_encode($item);
+
         $result = self::send_request('CRM_WebService', 'Loans', $request);
 
         if (isset($result->return) && $result->return == 'OK')
