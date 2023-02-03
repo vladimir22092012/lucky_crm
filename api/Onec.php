@@ -66,7 +66,7 @@ class Onec implements ApiInterface
         $item->ПСК = '365';
         $item->ПДН = $pdn;
         $item->УИДСделки = $contract->number;
-        $item->ИдентификаторФормыВыдачи = 'Безналичная';
+        $item->ИдентификаторФормыВыдачи = 'ТекущийСчетРасчетов';
         $item->ИдентификаторФормыОплаты = 'ТретьеЛицо';
         $item->Сумма = $contract->amount;
         $item->Порог = '1.5';
