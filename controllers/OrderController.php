@@ -367,7 +367,8 @@ class OrderController extends Controller
                                         'credit_count_with_active_not_0_3_20_deliqfrom_60_deliqto_90' => $equifaxScore['credit_count_with_active_not_0_3_20_deliqfrom_60_deliqto_90']
                                     ];
                             }
-
+                            echo '<pre>';print_r($equifaxScore);echo'</pre>';
+                    
                             if ($scoring->type == 'scorista') {
                                 $scoring->body = json_decode($scoring->body);
                                 if (!empty($scoring->body->equifaxCH))
@@ -421,7 +422,7 @@ class OrderController extends Controller
                     $this->design->assign('inactive_run_scorings', $inactive_run_scorings);
                     $this->design->assign('juiceScore', $juiceScore);
                     $this->design->assign('equifaxScore', $equifaxScore);
-
+                    echo '<pre>';print_r($scorings);echo'</pre>';
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scorings, $scoring_types);echo '</pre><hr />';
 
                     $user = $this->users->get_user((int)$order->user_id);
