@@ -390,12 +390,6 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group ">
-                                        <label class="control-label">Значение кредитной оценки</label> 
-                                        <input type="text" name="settings[{$type->id}][params][bkiscoring]" value="{$type->params['bkiscoring']}" class="form-control" placeholder="" />
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group ">
                                         <label class="control-label">Значение кредитной оценки минимальное</label> 
                                         <input type="text" name="settings[{$type->id}][params][bkiscoring_min]" value="{$type->params['bkiscoring_min']}" class="form-control" placeholder="" />
                                     </div>
