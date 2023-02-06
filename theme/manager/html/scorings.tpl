@@ -332,7 +332,49 @@
                                         <input type="text" name="settings[{$type->id}][params][credit_count_delay_5]" value="{$type->params['credit_count_delay_5']}" class="form-control" placeholder="" />
                                     </div>
                                 </div>
-                                
+                                {elseif $type->name == 'EquifaxCompanies'}
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Кредиты созданные за последние 7 дней</label> 
+                                        <input type="text" name="settings[{$type->id}][params][creditsCreatedlast7day]" value="{$type->params['creditsCreatedlast7day']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Количество просрочек с суммой более 1000</label> 
+                                        <input type="text" name="settings[{$type->id}][params][credit_count_active_overdue_11_12_13_sum_1000]" value="{$type->params['credit_count_active_overdue_11_12_13_sum_1000']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Кол–во закрытых просрочек – от 30 до 60 дней</label> 
+                                        <input type="text" name="settings[{$type->id}][params][credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60]" value="{$type->params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Кол–во закрытых просрочек – от 30 до 60 дней</label> 
+                                        <input type="text" name="settings[{$type->id}][params][credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60]" value="{$type->params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Кол–во закрытых просрочек – от 30 до 60 дней</label> 
+                                        <input type="text" name="settings[{$type->id}][params][credit_avg_paid_for_type_19_days_90]" value="{$type->params['credit_avg_paid_for_type_19_days_90']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Количество активных займов (не закрытых по всем типам)</label> 
+                                        <input type="text" name="settings[{$type->id}][params][bkicountactivecredit]" value="{$type->params['bkicountactivecredit']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Количество запросов за последний месяц</label> 
+                                        <input type="text" name="settings[{$type->id}][params][interestForLastMonth]" value="{$type->params['interestForLastMonth']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
                                 
                                 {/if}
                                 
