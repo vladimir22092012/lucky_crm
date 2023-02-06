@@ -294,11 +294,42 @@
                                     </div>
                                 {elseif $type->name == 'mbki'}
 
-                                 {elseif $type->name == 'EquifaxOverdue'}
+                                {elseif $type->name == 'EquifaxOverdue'}
                                 <div class="col-md-6">
                                     <div class="form-group ">
                                         <label class="control-label">Количество активных и просроченных займов</label> 
                                         <input type="text" name="settings[{$type->id}][params][credit_count_active_overdue_11_12_13_sum_1000]" value="{$type->params['credit_count_active_overdue_11_12_13_sum_1000']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                {elseif $type->name == 'EquifaxExpired'}
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Кол–во закрытых просрочек – от 30 до 60 дней(условия прохождения проверки)</label> 
+                                        <input type="text" name="settings[{$type->id}][params][credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60]" value="{$type->params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Кол–во закрытых просрочек – от 30 до 60 дней(условия добавление параметра в скоринг)</label> 
+                                        <input type="text" name="settings[{$type->id}][params][credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60_param_2]" value="{$type->params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60_param_2']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Kоличество просрочек с суммой более 1000</label> 
+                                        <input type="text" name="settings[{$type->id}][params][credit_count_active_overdue_11_12_13_sum_1000]" value="{$type->params['credit_count_active_overdue_11_12_13_sum_1000']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Число закрытых микрозаймов из взятых за последние 90 дней</label> 
+                                        <input type="text" name="settings[{$type->id}][params][credit_avg_paid_for_type_19_days_90]" value="{$type->params['credit_avg_paid_for_type_19_days_90']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Число закрытых просрочек 5 дней и менее</label> 
+                                        <input type="text" name="settings[{$type->id}][params][credit_count_delay_5]" value="{$type->params['credit_count_delay_5']}" class="form-control" placeholder="" />
                                     </div>
                                 </div>
                                 

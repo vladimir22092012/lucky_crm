@@ -5,6 +5,7 @@ class EquifaxExpired_scoring extends Core
     public function run_scoring($scoring_id)
     {
         $scoring = $this->scorings->get_scoring($scoring_id);
+        $scoring_type = $this->scorings->get_type('EquifaxExpired');
 
         $this->db->query("
         SELECT *
