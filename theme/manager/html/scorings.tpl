@@ -394,6 +394,18 @@
                                         <input type="text" name="settings[{$type->id}][params][bkiscoring]" value="{$type->params['bkiscoring']}" class="form-control" placeholder="" />
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Значение кредитной оценки минимальное</label> 
+                                        <input type="text" name="settings[{$type->id}][params][bkiscoring_min]" value="{$type->params['bkiscoring_min']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Значение кредитной оценки максимальное</label> 
+                                        <input type="text" name="settings[{$type->id}][params][bkiscoring_max]" value="{$type->params['bkiscoring_max']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
                                  <div class="col-md-6">
                                     <div class="form-group ">
                                         <label class="control-label">Максимальное количество пролонгаций за последние полгода по микрозаймам</label> 
