@@ -369,7 +369,45 @@
                                         <input type="text" name="settings[{$type->id}][params][interestForLastMonth]" value="{$type->params['interestForLastMonth']}" class="form-control" placeholder="" />
                                     </div>
                                 </div>
-                                
+                                {elseif $type->name == 'EquifaxBankrupt'}
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Количество активных займов (не закрытых по всем типам) для новых клиентов</label> 
+                                        <input type="text" name="settings[{$type->id}][params][bkicountactivecredit_new]" value="{$type->params['bkicountactivecredit_new']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Количество активных займов (не закрытых по всем типам) для старых клиентов</label> 
+                                        <input type="text" name="settings[{$type->id}][params][bkicountactivecredit_old]" value="{$type->params['bkicountactivecredit_old']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Кредиты созданные за последние 7 дней</label> 
+                                        <input type="text" name="settings[{$type->id}][params][creditsCreatedlast7day]" value="{$type->params['creditsCreatedlast7day']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Значение кредитной оценки</label> 
+                                        <input type="text" name="settings[{$type->id}][params][bkiscoring]" value="{$type->params['bkiscoring']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                 <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Максимальное количество пролонгаций за последние полгода по микрозаймам</label> 
+                                        <input type="text" name="settings[{$type->id}][params][credit_prolongation_count_contracts_with_age_180_type_19]" value="{$type->params['credit_prolongation_count_contracts_with_age_180_type_19']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Количество запросов за последний месяц</label> 
+                                        <input type="text" name="settings[{$type->id}][params][interestForLastMonth]" value="{$type->params['interestForLastMonth']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+
+
                                 {/if}
                                 
                             </div>
