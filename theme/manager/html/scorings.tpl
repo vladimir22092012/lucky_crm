@@ -240,7 +240,7 @@
                                 {elseif $type->name == 'scorista'}
                                 <div class="col-md-6">
                                     <div class="form-group ">
-                                        <label class="control-label">Проходной бал { $type->name} </label> 
+                                        <label class="control-label">Проходной бал </label> 
                                         <input type="text" name="settings[{$type->id}][params][scorebal]" value="{$type->params['scorebal']}" class="form-control" placeholder="" />
                                     </div>
                                 </div>
@@ -293,6 +293,14 @@
                                         </div>
                                     </div>
                                 {elseif $type->name == 'mbki'}
+
+                                 {elseif $type->name == 'EquifaxOverdue'}
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Количество активных и просроченных займов</label> 
+                                        <input type="text" name="settings[{$type->id}][params][credit_count_active_overdue_11_12_13_sum_1000]" value="{$type->params['credit_count_active_overdue_11_12_13_sum_1000']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
                                 
                                 
                                 {/if}
