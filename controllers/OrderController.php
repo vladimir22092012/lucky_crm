@@ -422,7 +422,7 @@ class OrderController extends Controller
                     $this->design->assign('inactive_run_scorings', $inactive_run_scorings);
                     $this->design->assign('juiceScore', $juiceScore);
                     $this->design->assign('equifaxScore', $equifaxScore);
-                    //echo '<pre>';print_r($scorings);echo'</pre>';
+                    echo '<pre>';print_r($scorings);echo'</pre>';
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scorings, $scoring_types);echo '</pre><hr />';
 
                     $user = $this->users->get_user((int)$order->user_id);
