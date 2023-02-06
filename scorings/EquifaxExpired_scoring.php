@@ -21,18 +21,18 @@ class EquifaxExpired_scoring extends Core
 
         $params = json_decode($equifax->body, true);
 
-        if ($params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] > 1) {
+        if ($params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] > $scoring_type->params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60']) {
 
-            if ($params['credit_count_active_overdue_11_12_13_sum_1000'] > 2) {
+            if ($params['credit_count_active_overdue_11_12_13_sum_1000'] >  $scoring_type->params['credit_count_active_overdue_11_12_13_sum_1000']) {
                 $reason = 'credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60';
             }
-            if ($params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] > 2) {
+            if ($params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] >  $scoring_type->params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60_param_2']) {
                 $reason = 'credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60';
             }
-            if ($params['credit_avg_paid_for_type_19_days_90'] < 3000) {
+            if ($params['credit_avg_paid_for_type_19_days_90'] < $scoring_type->params['credit_avg_paid_for_type_19_days_90']) {
                 $reason = 'credit_avg_paid_for_type_19_days_90';
             }
-            if ($params['credit_count_delay_5'] < 5) {
+            if ($params['credit_count_delay_5'] < $scoring_type->params['credit_count_delay_5']) {
                 $reason = 'credit_count_delay_5';
             }
         }
