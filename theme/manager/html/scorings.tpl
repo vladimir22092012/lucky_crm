@@ -353,13 +353,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group ">
-                                        <label class="control-label">Кол–во закрытых просрочек – от 30 до 60 дней</label> 
-                                        <input type="text" name="settings[{$type->id}][params][credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60]" value="{$type->params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60']}" class="form-control" placeholder="" />
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group ">
-                                        <label class="control-label">Кол–во закрытых просрочек – от 30 до 60 дней</label> 
+                                        <label class="control-label">Cредний платеж за 90 дней</label> 
                                         <input type="text" name="settings[{$type->id}][params][credit_avg_paid_for_type_19_days_90]" value="{$type->params['credit_avg_paid_for_type_19_days_90']}" class="form-control" placeholder="" />
                                     </div>
                                 </div>
