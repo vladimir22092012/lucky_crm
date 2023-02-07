@@ -130,7 +130,7 @@ class IssuanceCron extends Core
                         'created' => date('Y-m-d H:i:s'),
                     ));
 
-                    Onec::sendRequest($contract->order_id);
+                    Onec::sendRequest(['method' => 'send_loan', 'order_id' => $contract->order_id]);
                     $order = OrdersORM::find($contract->order_id);
 
                     if($order->utm_source == 'guruleads')

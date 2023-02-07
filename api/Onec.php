@@ -10,9 +10,9 @@ class Onec implements ApiInterface
     protected static $password = '';
     protected static $orderId;
 
-    public static function sendRequest($orderId)
+    public static function sendRequest($params)
     {
-        return self::send_loan($orderId);
+        return self::$params['method']($params['order_id']);
     }
 
     private static function send_loan($order_id)
@@ -45,7 +45,7 @@ class Onec implements ApiInterface
 
         $card = CardsORM::find($contract->card_id);
 
-        if(!empty($card))
+        if (!empty($card))
             $cardPan = $card->pan;
         else
             $cardPan = '';
@@ -53,7 +53,7 @@ class Onec implements ApiInterface
         $item = new StdClass();
 
         $item->ID = (string)$contract->id;
-        $item->НомерДоговора = $contract->number;
+        $item->НомерДоговора = !empty($contract->number) ? $contract->number : date('md', $contract->create_date) . '-' . $contract->id;
         $item->Дата = date('Ymd000000', strtotime($contract->inssuance_date));
         $item->Срок = $contract->period;
         $item->Периодичность = 'День';
@@ -220,5 +220,34 @@ class Onec implements ApiInterface
         curl_close($ch);
 
         return $array;
+    }
+
+    private static function sendTaxing()
+    {
+        $operations = OperationsORM::whereBetween('created', [date('Y-m-d 00:00:00'), date('Y-m-d 23:59:59')])->get();
+
+        $item = [];
+
+        foreach ($operations as $operation) {
+
+            $contract = ContractsORM::find($operation->contract_id);
+
+            $item[] =
+                [
+                    'НомерДоговора' => $contract->number,
+                    'ВидНачисления' => 'Проценты',
+                    'ДатаПлатежа' => date('Ymd000000', strtotime($contract->return_date)),
+                    'Сумма' => $operation->amount
+                ];
+        }
+
+        $request = new StdClass();
+        $request->TextJSON = json_encode($item);
+        $request->Date = date('YmdHis');
+        $request->INN = '7801323165';
+
+        $result = self::send_request('CRM_WebService', 'Payments', $request);
+
+        return $result;
     }
 }
