@@ -240,7 +240,7 @@
                                 {elseif $type->name == 'scorista'}
                                 <div class="col-md-6">
                                     <div class="form-group ">
-                                        <label class="control-label">Проходной бал</label>
+                                        <label class="control-label">Проходной бал </label> 
                                         <input type="text" name="settings[{$type->id}][params][scorebal]" value="{$type->params['scorebal']}" class="form-control" placeholder="" />
                                     </div>
                                 </div>
@@ -293,8 +293,127 @@
                                         </div>
                                     </div>
                                 {elseif $type->name == 'mbki'}
-                                
-                                
+
+                                {elseif $type->name == 'EquifaxOverdue'}
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Количество активных и просроченных займов</label> 
+                                        <input type="text" name="settings[{$type->id}][params][credit_count_active_overdue_11_12_13_sum_1000]" value="{$type->params['credit_count_active_overdue_11_12_13_sum_1000']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                {elseif $type->name == 'EquifaxExpired'}
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Кол–во закрытых просрочек – от 30 до 60 дней(условия прохождения проверки)</label> 
+                                        <input type="text" name="settings[{$type->id}][params][credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60]" value="{$type->params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Кол–во закрытых просрочек – от 30 до 60 дней(условия добавление параметра в скоринг)</label> 
+                                        <input type="text" name="settings[{$type->id}][params][credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60_param_2]" value="{$type->params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60_param_2']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Kоличество просрочек с суммой более 1000</label> 
+                                        <input type="text" name="settings[{$type->id}][params][credit_count_active_overdue_11_12_13_sum_1000]" value="{$type->params['credit_count_active_overdue_11_12_13_sum_1000']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Число закрытых микрозаймов из взятых за последние 90 дней</label> 
+                                        <input type="text" name="settings[{$type->id}][params][credit_avg_paid_for_type_19_days_90]" value="{$type->params['credit_avg_paid_for_type_19_days_90']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Число закрытых просрочек 5 дней и менее</label> 
+                                        <input type="text" name="settings[{$type->id}][params][credit_count_delay_5]" value="{$type->params['credit_count_delay_5']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                {elseif $type->name == 'EquifaxCompanies'}
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Кредиты созданные за последние 7 дней</label> 
+                                        <input type="text" name="settings[{$type->id}][params][creditsCreatedlast7day]" value="{$type->params['creditsCreatedlast7day']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Количество просрочек с суммой более 1000</label> 
+                                        <input type="text" name="settings[{$type->id}][params][credit_count_active_overdue_11_12_13_sum_1000]" value="{$type->params['credit_count_active_overdue_11_12_13_sum_1000']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Кол–во закрытых просрочек – от 30 до 60 дней</label> 
+                                        <input type="text" name="settings[{$type->id}][params][credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60]" value="{$type->params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Cредний платеж за 90 дней</label> 
+                                        <input type="text" name="settings[{$type->id}][params][credit_avg_paid_for_type_19_days_90]" value="{$type->params['credit_avg_paid_for_type_19_days_90']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Количество активных займов (не закрытых по всем типам)</label> 
+                                        <input type="text" name="settings[{$type->id}][params][bkicountactivecredit]" value="{$type->params['bkicountactivecredit']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Количество запросов за последний месяц</label> 
+                                        <input type="text" name="settings[{$type->id}][params][interestForLastMonth]" value="{$type->params['interestForLastMonth']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                {elseif $type->name == 'EquifaxBankrupt'}
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Количество активных займов (не закрытых по всем типам) для новых клиентов</label> 
+                                        <input type="text" name="settings[{$type->id}][params][bkicountactivecredit_new]" value="{$type->params['bkicountactivecredit_new']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Количество активных займов (не закрытых по всем типам) для старых клиентов</label> 
+                                        <input type="text" name="settings[{$type->id}][params][bkicountactivecredit_old]" value="{$type->params['bkicountactivecredit_old']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Кредиты созданные за последние 7 дней</label> 
+                                        <input type="text" name="settings[{$type->id}][params][creditsCreatedlast7day]" value="{$type->params['creditsCreatedlast7day']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Значение кредитной оценки минимальное</label> 
+                                        <input type="text" name="settings[{$type->id}][params][bkiscoring_min]" value="{$type->params['bkiscoring_min']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Значение кредитной оценки максимальное</label> 
+                                        <input type="text" name="settings[{$type->id}][params][bkiscoring_max]" value="{$type->params['bkiscoring_max']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                 <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Максимальное количество пролонгаций за последние полгода по микрозаймам</label> 
+                                        <input type="text" name="settings[{$type->id}][params][credit_prolongation_count_contracts_with_age_180_type_19]" value="{$type->params['credit_prolongation_count_contracts_with_age_180_type_19']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Количество запросов за последний месяц</label> 
+                                        <input type="text" name="settings[{$type->id}][params][interestForLastMonth]" value="{$type->params['interestForLastMonth']}" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+
+
                                 {/if}
                                 
                             </div>

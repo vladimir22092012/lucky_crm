@@ -130,11 +130,14 @@ class IssuanceCron extends Core
                         'created' => date('Y-m-d H:i:s'),
                     ));
 
-                    Onec::sendRequest($contract->order_id);
+                    Onec::sendRequest(['method' => 'send_loan', 'order_id' => $contract->order_id]);
                     $order = OrdersORM::find($contract->order_id);
 
                     if($order->utm_source == 'guruleads')
                         Guruleads::sendRequest(['orderId' => $contract->order_id, 'method' => 'sendApprovePostback']);
+
+                    $equifax = EquifaxFactory::get('issuance');
+                    $equifax->processing($contract->id);
 
                 } elseif ($res == false) {
 

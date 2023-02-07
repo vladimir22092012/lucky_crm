@@ -81,6 +81,8 @@ class TaxingCron extends Core
                     'loan_percents_summ' => $contract->loan_percents_summ + $percents_summ,
                     'stop_profit' => $stop_taxing
                 ));
+
+                //Передаем в 1с
             }
         }
     }

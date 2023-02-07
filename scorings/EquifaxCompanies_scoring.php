@@ -5,6 +5,7 @@ class EquifaxCompanies_scoring extends Core
     public function run_scoring($scoring_id)
     {
         $scoring = $this->scorings->get_scoring($scoring_id);
+        $scoring_type = $this->scorings->get_type('EquifaxExpired');
 
         $this->db->query("
         SELECT *
@@ -21,19 +22,19 @@ class EquifaxCompanies_scoring extends Core
         $params = json_decode($equifax->body, true);
 
         if ($params['creditsCreatedlast7day'] == 0) {
-            if ($params['credit_count_active_overdue_11_12_13_sum_1000'] > 2) {
+            if ($params['credit_count_active_overdue_11_12_13_sum_1000'] > $scoring_type->params['credit_count_active_overdue_11_12_13_sum_1000']) {
                 $reason = 'credit_count_active_overdue_11_12_13_sum_1000';
             }
-            if ($params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] > 1) {
+            if ($params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] > $scoring_type->params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60']) {
                 $reason = 'credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60';
             }
-            if ($params['credit_avg_paid_for_type_19_days_90'] < 4000) {
+            if ($params['credit_avg_paid_for_type_19_days_90'] < $scoring_type->params['credit_avg_paid_for_type_19_days_90']) {
                 $reason = 'credit_avg_paid_for_type_19_days_90';
             }
-            if ($params['bkicountactivecredit'] > 25) {
+            if ($params['bkicountactivecredit'] > $scoring_type->params['bkicountactivecredit']) {
                 $reason = 'bkicountactivecredit';
             }
-            if ($params['interestForLastMonth'] > 21) {
+            if ($params['interestForLastMonth'] > $scoring_type->params['interestForLastMonth']) {
                 $reason = 'interestForLastMonth';
             }
         }

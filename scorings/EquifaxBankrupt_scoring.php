@@ -5,6 +5,7 @@ class EquifaxBankrupt_scoring extends Core
     public function run_scoring($scoring_id)
     {
         $scoring = $this->scorings->get_scoring($scoring_id);
+        $scoring_type = $this->scorings->get_type('EquifaxExpired');
 
         $order = $this->orders->get_order($scoring->order_id);
 
@@ -22,18 +23,18 @@ class EquifaxBankrupt_scoring extends Core
 
         $params = json_decode($equifax->body, true);
 
-        if (in_array($order->client_status, ['nk', 'rep']) && $params['bkicountactivecredit'] > 22 || in_array($order->client_status, ['pk', 'crm']) && $params['bkicountactivecredit'] > 25) {
+        if (in_array($order->client_status, ['nk', 'rep']) && $params['bkicountactivecredit'] > $scoring_type->params['bkicountactivecredit_new'] || in_array($order->client_status, ['pk', 'crm']) && $params['bkicountactivecredit'] > $scoring_type->params['bkicountactivecredit_old']) {
 
-            if ($params['creditsCreatedlast7day'] == 0) {
+            if ($params['creditsCreatedlast7day'] == $scoring_type->params['creditsCreatedlast7day']) {
                 $reason = 'creditsCreatedlast7day';
             }
-            if ($params['bkiscoring'] < 550 || $params['bkiscoring'] > 690) {
+            if ($params['bkiscoring'] < $scoring_type->params['bkiscoring_min'] || $params['bkiscoring'] > $scoring_type->params['bkiscoring_max']) {
                 $reason = 'bkiscoring';
             }
-            if ($params['interestForLastMonth'] > 20) {
+            if ($params['interestForLastMonth'] > $scoring_type->params['interestForLastMonth']) {
                 $reason = 'interestForLastMonth';
             }
-            if ($params['credit_prolongation_count_contracts_with_age_180_type_19'] < 2) {
+            if ($params['credit_prolongation_count_contracts_with_age_180_type_19'] < $scoring_type->params['credit_prolongation_count_contracts_with_age_180_type_19']) {
                 $reason = 'credit_prolongation_count_contracts_with_age_180_type_19';
             }
         }
