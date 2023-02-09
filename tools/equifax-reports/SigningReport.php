@@ -117,8 +117,8 @@ class SigningReport extends ReportsAbstract
          */
         $event = new Events($client);
         $event->action = 'A';
-        $event->event = '1.4';
-        $event->action_reason = 'Новый договор. Передача КИ в БКИ';
+        $event->event = '1.4.1';
+        $event->action_reason = 'Субъект и источник заключили договор лизинга либо поручительства по лизингу и предмет лизинга передан лизингополучателю';
         $report = new Report($client, $event, $config);
 
         /**
@@ -193,7 +193,7 @@ class SigningReport extends ReportsAbstract
         /*
          * Дата совершения сделки (свойство обязательно)
          */
-        $report->base_part->contract->deal->date = date('d.m.Y', strtotime($contract->inssuance_date));
+        $report->base_part->contract->deal->date = date('d.m.Y', strtotime($contract->accept_date));
         /*
          * Дата прекращения обязательства субъекта по условиям сделки (свойство обязательно)
          */
@@ -242,7 +242,7 @@ class SigningReport extends ReportsAbstract
         /*
          * Дата расчета полной стоимости кредита (займа)
          */
-        $report->base_part->contract->full_cost->date = date('d.m.Y', strtotime($contract->inssuance_date));
+        $report->base_part->contract->full_cost->date = date('d.m.Y', strtotime($contract->accept_date));
         /*
          * Полная стоимость кредита (займа) в процентах годовых
          */

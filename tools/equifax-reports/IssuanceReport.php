@@ -117,8 +117,9 @@ class IssuanceReport extends ReportsAbstract
          */
         $event = new Events($client);
         $event->action = 'A';
-        $event->event = '1.4';
-        $event->action_reason = 'Новый договор. Передача КИ в БКИ';
+        $event->event = '2.2';
+        $event->action_reason = 'Субъекту передана сумма займа (кредита) либо субъект '
+            . 'стал принципалом по гарантии или поручителем по сделке, кроме договора лизинга';
         $report = new Report($client, $event, $config);
 
         /**
