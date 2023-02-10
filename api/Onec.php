@@ -224,30 +224,78 @@ class Onec implements ApiInterface
 
     private static function sendTaxing()
     {
-        $operations = OperationsORM::whereBetween('created', [date('Y-m-d 00:00:00'), date('Y-m-d 23:59:59')])->get();
+        $start = date('Y-m-d 00:00:00', strtotime('2022-11-08'));
+        $end = date('Y-m-d 23:59:59', strtotime('2023-02-08'));
+
+        $percents = OperationsORM::where('type', 'PERCENTS')
+            ->whereBetween('created', [$start, $end])
+            ->groupBy()
+            ->get();
+
+        $groupsOperations = [];
+
+
+        foreach ($percents as $percent)
+            $groupsOperations[$percent->created][] = $percent;
+
 
         $item = [];
 
-        foreach ($operations as $operation) {
+        foreach ($groupsOperations as $date => $operations) {
 
-            $contract = ContractsORM::find($operation->contract_id);
+            foreach ($operations as $operation) {
+                $contract = ContractsORM::find($operation->contract_id);
 
-            $item[] =
-                [
-                    'НомерДоговора' => $contract->number,
-                    'ВидНачисления' => 'Проценты',
-                    'ДатаПлатежа' => date('Ymd000000', strtotime($contract->return_date)),
-                    'Сумма' => $operation->amount
-                ];
+                $item[] =
+                    [
+                        'НомерДоговора' => $contract->number,
+                        'ВидНачисления' => 'Проценты',
+                        'ДатаПлатежа' => date('Ymd000000', strtotime($contract->return_date)),
+                        'Сумма' => $operation->amount
+                    ];
+            }
+            $request = new StdClass();
+            $request->TextJSON = json_encode($item);
+            $request->Date = date('YmdHis');
+            $request->INN = '7801323165';
+
+            self::send_request('CRM_WebService', 'Payments', $request);
         }
 
+        return 1;
+    }
+
+    public function send_payment($payment)
+    {
+        $item = new StdClass();
+        $item->ID = $payment->id;
+        $item->Дата = date('YmdHis');
+        $item->ЗаймID = $payment->order_id;
+        $item->Пролонгация = !empty($payment->prolongation) ? 1 : 0;
+
+        if($payment->prolongation == 1)
+            $item->СрокПролонгации = '30';
+        else
+            $item->СрокПролонгации = 0;
+
+        $item->Закрытие = !empty($payment->closed) ? 1 : 0;
+        $item->ИдентификаторФормыОплаты = 'ТретьеЛицо';
+
+        $operation = [];
+        $operation[] = ['ИдентификаторВидаНачисления' => 'ОсновнойДолг', 'Сумма' => $payment->od];
+        $operation[] = ['ИдентификаторВидаНачисления' => 'Проценты', 'Сумма' => $payment->prc];
+        $operation[] = ['ИдентификаторВидаНачисления' => 'Пени', 'Сумма' => $payment->peni];
+
+        $item->Оплаты = $operation;
+
         $request = new StdClass();
-        $request->TextJSON = json_encode($item);
-        $request->Date = date('YmdHis');
-        $request->INN = '7801323165';
+        $request->TextJSON = json_encode($item, JSON_UNESCAPED_UNICODE);
 
-        $result = self::send_request('CRM_WebService', 'Payments', $request);
+        $result = $this->send_request('CRM_WebService', 'Payments', $request);
 
-        return $result;
+        if (isset($result['return']) && $result['return'] == 'OK')
+            return 1;
+        else
+            return 2;
     }
 }
