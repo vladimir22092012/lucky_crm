@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.18, created on 2022-10-12 08:33:15
+<?php /* Smarty version Smarty-3.1.18, created on 2023-02-07 12:21:32
          compiled from "/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/scorings.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:20958834186346519ba2c5b5-87925187%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'e44778ac98c8c41f6862686b0572dc62dacb4d26' => 
     array (
       0 => '/home/e/ecofinance/lucky_crm/public_html/theme/manager/html/scorings.tpl',
-      1 => 1660295918,
+      1 => 1675750996,
       2 => 'file',
     ),
   ),
@@ -15,6 +15,8 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'function' => 
   array (
   ),
+  'version' => 'Smarty-3.1.18',
+  'unifunc' => 'content_6346519ba4ae47_50068095',
   'variables' => 
   array (
     'settings' => 0,
@@ -24,8 +26,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'reason' => 0,
   ),
   'has_nocache_code' => false,
-  'version' => 'Smarty-3.1.18',
-  'unifunc' => 'content_6346519ba4ae47_50068095',
 ),false); /*/%%SmartyHeaderCode%%*/?>
 <?php if ($_valid && !is_callable('content_6346519ba4ae47_50068095')) {function content_6346519ba4ae47_50068095($_smarty_tpl) {?><?php $_smarty_tpl->tpl_vars['meta_title'] = new Smarty_variable('Настройки cкорингов', null, 1);
 if ($_smarty_tpl->parent != null) $_smarty_tpl->parent->tpl_vars['meta_title'] = clone $_smarty_tpl->tpl_vars['meta_title'];?>
@@ -312,7 +312,7 @@ $_smarty_tpl->tpl_vars['reason']->_loop = true;
                                 <?php } elseif ($_smarty_tpl->tpl_vars['type']->value->name=='scorista') {?>
                                 <div class="col-md-6">
                                     <div class="form-group ">
-                                        <label class="control-label">Проходной бал</label>
+                                        <label class="control-label">Проходной бал </label> 
                                         <input type="text" name="settings[<?php echo $_smarty_tpl->tpl_vars['type']->value->id;?>
 ][params][scorebal]" value="<?php echo $_smarty_tpl->tpl_vars['type']->value->params['scorebal'];?>
 " class="form-control" placeholder="" />
@@ -383,8 +383,165 @@ $_smarty_tpl->tpl_vars['reason']->_loop = true;
                                         </div>
                                     </div>
                                 <?php } elseif ($_smarty_tpl->tpl_vars['type']->value->name=='mbki') {?>
-                                
-                                
+
+                                <?php } elseif ($_smarty_tpl->tpl_vars['type']->value->name=='EquifaxOverdue') {?>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Количество активных и просроченных займов</label> 
+                                        <input type="text" name="settings[<?php echo $_smarty_tpl->tpl_vars['type']->value->id;?>
+][params][credit_count_active_overdue_11_12_13_sum_1000]" value="<?php echo $_smarty_tpl->tpl_vars['type']->value->params['credit_count_active_overdue_11_12_13_sum_1000'];?>
+" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <?php } elseif ($_smarty_tpl->tpl_vars['type']->value->name=='EquifaxExpired') {?>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Кол–во закрытых просрочек – от 30 до 60 дней(условия прохождения проверки)</label> 
+                                        <input type="text" name="settings[<?php echo $_smarty_tpl->tpl_vars['type']->value->id;?>
+][params][credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60]" value="<?php echo $_smarty_tpl->tpl_vars['type']->value->params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'];?>
+" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Кол–во закрытых просрочек – от 30 до 60 дней(условия добавление параметра в скоринг)</label> 
+                                        <input type="text" name="settings[<?php echo $_smarty_tpl->tpl_vars['type']->value->id;?>
+][params][credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60_param_2]" value="<?php echo $_smarty_tpl->tpl_vars['type']->value->params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60_param_2'];?>
+" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Kоличество просрочек с суммой более 1000</label> 
+                                        <input type="text" name="settings[<?php echo $_smarty_tpl->tpl_vars['type']->value->id;?>
+][params][credit_count_active_overdue_11_12_13_sum_1000]" value="<?php echo $_smarty_tpl->tpl_vars['type']->value->params['credit_count_active_overdue_11_12_13_sum_1000'];?>
+" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Число закрытых микрозаймов из взятых за последние 90 дней</label> 
+                                        <input type="text" name="settings[<?php echo $_smarty_tpl->tpl_vars['type']->value->id;?>
+][params][credit_avg_paid_for_type_19_days_90]" value="<?php echo $_smarty_tpl->tpl_vars['type']->value->params['credit_avg_paid_for_type_19_days_90'];?>
+" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Число закрытых просрочек 5 дней и менее</label> 
+                                        <input type="text" name="settings[<?php echo $_smarty_tpl->tpl_vars['type']->value->id;?>
+][params][credit_count_delay_5]" value="<?php echo $_smarty_tpl->tpl_vars['type']->value->params['credit_count_delay_5'];?>
+" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <?php } elseif ($_smarty_tpl->tpl_vars['type']->value->name=='EquifaxCompanies') {?>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Кредиты созданные за последние 7 дней</label> 
+                                        <input type="text" name="settings[<?php echo $_smarty_tpl->tpl_vars['type']->value->id;?>
+][params][creditsCreatedlast7day]" value="<?php echo $_smarty_tpl->tpl_vars['type']->value->params['creditsCreatedlast7day'];?>
+" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Количество просрочек с суммой более 1000</label> 
+                                        <input type="text" name="settings[<?php echo $_smarty_tpl->tpl_vars['type']->value->id;?>
+][params][credit_count_active_overdue_11_12_13_sum_1000]" value="<?php echo $_smarty_tpl->tpl_vars['type']->value->params['credit_count_active_overdue_11_12_13_sum_1000'];?>
+" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Кол–во закрытых просрочек – от 30 до 60 дней</label> 
+                                        <input type="text" name="settings[<?php echo $_smarty_tpl->tpl_vars['type']->value->id;?>
+][params][credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60]" value="<?php echo $_smarty_tpl->tpl_vars['type']->value->params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'];?>
+" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Cредний платеж за 90 дней</label> 
+                                        <input type="text" name="settings[<?php echo $_smarty_tpl->tpl_vars['type']->value->id;?>
+][params][credit_avg_paid_for_type_19_days_90]" value="<?php echo $_smarty_tpl->tpl_vars['type']->value->params['credit_avg_paid_for_type_19_days_90'];?>
+" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Количество активных займов (не закрытых по всем типам)</label> 
+                                        <input type="text" name="settings[<?php echo $_smarty_tpl->tpl_vars['type']->value->id;?>
+][params][bkicountactivecredit]" value="<?php echo $_smarty_tpl->tpl_vars['type']->value->params['bkicountactivecredit'];?>
+" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Количество запросов за последний месяц</label> 
+                                        <input type="text" name="settings[<?php echo $_smarty_tpl->tpl_vars['type']->value->id;?>
+][params][interestForLastMonth]" value="<?php echo $_smarty_tpl->tpl_vars['type']->value->params['interestForLastMonth'];?>
+" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <?php } elseif ($_smarty_tpl->tpl_vars['type']->value->name=='EquifaxBankrupt') {?>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Количество активных займов (не закрытых по всем типам) для новых клиентов</label> 
+                                        <input type="text" name="settings[<?php echo $_smarty_tpl->tpl_vars['type']->value->id;?>
+][params][bkicountactivecredit_new]" value="<?php echo $_smarty_tpl->tpl_vars['type']->value->params['bkicountactivecredit_new'];?>
+" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Количество активных займов (не закрытых по всем типам) для старых клиентов</label> 
+                                        <input type="text" name="settings[<?php echo $_smarty_tpl->tpl_vars['type']->value->id;?>
+][params][bkicountactivecredit_old]" value="<?php echo $_smarty_tpl->tpl_vars['type']->value->params['bkicountactivecredit_old'];?>
+" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Кредиты созданные за последние 7 дней</label> 
+                                        <input type="text" name="settings[<?php echo $_smarty_tpl->tpl_vars['type']->value->id;?>
+][params][creditsCreatedlast7day]" value="<?php echo $_smarty_tpl->tpl_vars['type']->value->params['creditsCreatedlast7day'];?>
+" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Значение кредитной оценки минимальное</label> 
+                                        <input type="text" name="settings[<?php echo $_smarty_tpl->tpl_vars['type']->value->id;?>
+][params][bkiscoring_min]" value="<?php echo $_smarty_tpl->tpl_vars['type']->value->params['bkiscoring_min'];?>
+" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Значение кредитной оценки максимальное</label> 
+                                        <input type="text" name="settings[<?php echo $_smarty_tpl->tpl_vars['type']->value->id;?>
+][params][bkiscoring_max]" value="<?php echo $_smarty_tpl->tpl_vars['type']->value->params['bkiscoring_max'];?>
+" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                 <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Максимальное количество пролонгаций за последние полгода по микрозаймам</label> 
+                                        <input type="text" name="settings[<?php echo $_smarty_tpl->tpl_vars['type']->value->id;?>
+][params][credit_prolongation_count_contracts_with_age_180_type_19]" value="<?php echo $_smarty_tpl->tpl_vars['type']->value->params['credit_prolongation_count_contracts_with_age_180_type_19'];?>
+" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="control-label">Количество запросов за последний месяц</label> 
+                                        <input type="text" name="settings[<?php echo $_smarty_tpl->tpl_vars['type']->value->id;?>
+][params][interestForLastMonth]" value="<?php echo $_smarty_tpl->tpl_vars['type']->value->params['interestForLastMonth'];?>
+" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+
+
                                 <?php }?>
                                 
                             </div>

@@ -12,7 +12,7 @@ class Onec implements ApiInterface
 
     public static function sendRequest($params)
     {
-        return self::$params['method']($params['order_id']);
+        return self::{$params['method']}($params['order_id']);
     }
 
     private static function send_loan($order_id)
@@ -41,12 +41,7 @@ class Onec implements ApiInterface
             ->where('success', 1)
             ->first();
 
-        if (empty($equiScore))
-            $pdn = 0;
-        else {
-            $equiScore = json_decode($equiScore->body, true);
-            $pdn = round(($equiScore['all_payment_active_credit_month'] / $user->income) * 100, 3);
-        }
+        $equiScore = json_decode($equiScore->body, true);
 
         $card = CardsORM::find($contract->card_id);
 
@@ -64,7 +59,7 @@ class Onec implements ApiInterface
         $item->Периодичность = 'День';
         $item->ПроцентнаяСтавка = $contract->base_percent;
         $item->ПСК = '365';
-        $item->ПДН = $pdn;
+        $item->ПДН = round(($equiScore['all_payment_active_credit_month'] / $user->income) * 100, 3);
         $item->УИДСделки = $contract->number;
         $item->ИдентификаторФормыВыдачи = 'ТекущийСчетРасчетов';
         $item->ИдентификаторФормыОплаты = 'ТретьеЛицо';
@@ -106,7 +101,6 @@ class Onec implements ApiInterface
 
         $request = new StdClass();
         $request->TextJSON = json_encode($item);
-
         $result = self::send_request('CRM_WebService', 'Loans', $request);
 
         if (isset($result->return) && $result->return == 'OK')
@@ -137,7 +131,7 @@ class Onec implements ApiInterface
 
         $insert =
             [
-                'orderId' => self::$orderId,
+                'orderId' => 0,
                 'request' => json_encode(json_decode($request->TextJSON), JSON_UNESCAPED_UNICODE),
                 'response' => $response
             ];
@@ -228,32 +222,54 @@ class Onec implements ApiInterface
         return $array;
     }
 
-    private static function sendTaxing()
+    private static function sendTaxing($orderId)
     {
-        $operations = OperationsORM::whereBetween('created', [date('Y-m-d 00:00:00'), date('Y-m-d 23:59:59')])->get();
+        $start = date('Y-m-d 00:00:00', strtotime('2022-11-08'));
+        $end = date('Y-m-d 23:59:59', strtotime('2023-02-08'));
 
-        $item = [];
+        $percents = OperationsORM::where('type', 'PERCENTS')
+            ->whereBetween('created', [$start, $end])
+            ->groupBy()
+            ->get();
 
-        foreach ($operations as $operation) {
+        $groupsOperations = [];
 
-            $contract = ContractsORM::find($operation->contract_id);
 
-            $item[] =
-                [
-                    'НомерДоговора' => $contract->number,
-                    'ВидНачисления' => 'Проценты',
-                    'ДатаПлатежа' => date('Ymd000000', strtotime($contract->return_date)),
-                    'Сумма' => $operation->amount
-                ];
+        foreach ($percents as $percent)
+        {
+            $date = date('Y-m-d', strtotime($percent->created));
+            $groupsOperations[$date][] = $percent;
         }
 
-        $request = new StdClass();
-        $request->TextJSON = json_encode($item);
-        $request->Date = date('YmdHis');
-        $request->INN = '7801323165';
+        foreach ($groupsOperations as $date => $operations) {
 
-        $result = self::send_request('CRM_WebService', 'Payments', $request);
+            $item = [];
 
-        return $result;
+            foreach ($operations as $operation) {
+                $contract = ContractsORM::find($operation->contract_id);
+
+                if(empty($contract))
+                    continue;
+
+                self::$orderId = $contract->order_id;
+
+                $item[] =
+                    [
+                        'НомерДоговора' => !empty($contract->number) ? $contract->number : date('md', $contract->create_date) . '-' . $contract->id,
+                        'ВидНачисления' => 'Проценты',
+                        'ДатаПлатежа' => date('Ymd000000', strtotime($operation->created)),
+                        'Сумма' => $operation->amount
+                    ];
+            }
+
+            $request = new StdClass();
+            $request->TextJSON = json_encode($item);
+            $request->Date = date('YmdHis', strtotime($date));
+            $request->INN = '7801323165';
+
+            self::send_request('CRM_WebService', 'InterestCalculation', $request);
+        }
+
+        return 1;
     }
 }

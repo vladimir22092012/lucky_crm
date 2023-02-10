@@ -16,7 +16,7 @@ class test extends Core
     public function __construct()
     {
         parent::__construct();
-        $this->sendOnec();
+        Onec::sendRequest(['method' => 'sendTaxing', 'order_id' => 1]);
     }
 
     private function import_clients()
@@ -378,7 +378,7 @@ class test extends Core
         $contracts = ContractsORM::where('sent_status', 0)->get();
 
         foreach ($contracts as $contract) {
-            $result = Onec::sendRequest($contract->order_id);
+            $result = Onec::sendRequest(['method' => 'send_loan', 'order_id' => $contract->order_id]);
             ContractsORM::where('id', $contract->id)->update(['sent_date' => date('Y-m-d H:i:s'), 'sent_status' => $result]);
         }
     }
