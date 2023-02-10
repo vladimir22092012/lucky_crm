@@ -116,19 +116,22 @@ class ApproveReport extends ReportsAbstract
          */
         $event = new Events($client);
         $event->action = 'A';
-        $event->event = '1.1';
-        $event->action_reason = 'Субъект обратился к источнику с предложением совершить сделку';
+        $event->event = '1.2';
+        $event->action_reason = 'Источник одобрил обращение субъекта (направил ему оферту) или изменились сведения об обращении';
         $report = new Report($client, $event, $config);
 
+        /*
+    * UID предыдущего события (УИд обращения когда клиент обратился с предложением совершить сделку)
+    */
         $report->information_part->application->uid = $report::uidGenerate();
         /*
         * Дата обращения (Дата когда клиент обратился с предложением совершить сделку)
         */
-        $report->information_part->application->date = date('d.m.Y', strtotime('15.12.2022'));
+        $report->information_part->application->date = date('d.m.Y', strtotime($order->date));
         /*
         * Сумма запрошенного займа (кредита), лизинга или обеспечения
         */
-        $report->information_part->application->sum = 5000;
+        $report->information_part->application->sum = $order->amount;
         /*
         * Код запрошенной валюты обязательства
         */
@@ -147,7 +150,10 @@ class ApproveReport extends ReportsAbstract
         */
         $report->information_part->application->source_type = 2;
 
-        unset($report->information_part);
+        /*
+         * Дата окончания действия одобрения обращения (оферты кредитора)
+         */
+        $report->information_part->application->approval_date = date('d.m.Y', strtotime($order->date.'+5 days'));
 
         $reports[] = $report;
 

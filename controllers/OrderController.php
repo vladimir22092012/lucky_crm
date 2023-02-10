@@ -954,6 +954,12 @@ class OrderController extends Controller
 //        текст: текст - полное сообщение, как в смс.
         $this->notify->email('sale@nalichnoeplus.com', 'Подтверждение выдачи', $msg);
 
+        $equiReport = EquifaxFactory::get('pending');
+        $equiReport->processing($order_id);
+
+        $equiReport = EquifaxFactory::get('approve');
+        $equiReport->processing($order_id);
+
 
         return array('success' => 1, 'status' => 2);
 
@@ -1073,6 +1079,9 @@ class OrderController extends Controller
 
         if($order->utm_source == 'guruleads')
             Guruleads::sendRequest(['orderId' => $order_id, 'method' => 'sendCancelledPostback']);
+
+        $equiReport = EquifaxFactory::get('cancelled');
+        $equiReport->processing($order_id);
 
         return array('success' => 1, 'status' => $status);
     }

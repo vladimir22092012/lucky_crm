@@ -124,11 +124,11 @@ class PendingReport extends ReportsAbstract
         /*
         * Дата обращения (Дата когда клиент обратился с предложением совершить сделку)
         */
-        $report->information_part->application->date = date('d.m.Y', strtotime('15.12.2022'));
+        $report->information_part->application->date = date('d.m.Y', strtotime($order->date));
         /*
         * Сумма запрошенного займа (кредита), лизинга или обеспечения
         */
-        $report->information_part->application->sum = 5000;
+        $report->information_part->application->sum = $order->amount;
         /*
         * Код запрошенной валюты обязательства
         */
@@ -146,8 +146,6 @@ class PendingReport extends ReportsAbstract
         * Код источника (по умолчанию 2 - Заимодавец микрофинансовая организация)
         */
         $report->information_part->application->source_type = 2;
-
-        unset($report->information_part);
 
         $reports[] = $report;
 

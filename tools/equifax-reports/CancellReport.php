@@ -116,19 +116,19 @@ class CancellReport extends ReportsAbstract
          */
         $event = new Events($client);
         $event->action = 'A';
-        $event->event = '1.1';
-        $event->action_reason = 'Субъект обратился к источнику с предложением совершить сделку';
+        $event->event = '1.3';
+        $event->action_reason = 'Источник отказался от совершения сделки по обращению субъекта';
         $report = new Report($client, $event, $config);
 
         $report->information_part->application->uid = $report::uidGenerate();
         /*
         * Дата обращения (Дата когда клиент обратился с предложением совершить сделку)
         */
-        $report->information_part->application->date = date('d.m.Y', strtotime('15.12.2022'));
+        $report->information_part->application->date = date('d.m.Y', strtotime($order->date));
         /*
         * Сумма запрошенного займа (кредита), лизинга или обеспечения
         */
-        $report->information_part->application->sum = 5000;
+        $report->information_part->application->sum = $order->amount;
         /*
         * Код запрошенной валюты обязательства
         */
@@ -147,7 +147,21 @@ class CancellReport extends ReportsAbstract
         */
         $report->information_part->application->source_type = 2;
 
-        unset($report->information_part);
+        $report->information_part->failure->date = date("d.m.Y");
+        /*
+         * Код причины отказа (по умолчанию 4 - Избыточная долговая нагрузка субъекта)
+         * Варианты отказа :
+         * 1 - Кредитная политика заимодавца (кредитора)
+         * 2 - Ограничение деятельности микрофинансовой организации или кредитного кооператива,
+         * установленное законом о соответствующем виде деятельности
+         * 3 - Кредитная история субъекта
+         * 4 - Избыточная долговая нагрузка субъекта
+         * 5 - Несоответствие информации о субъекте, указанной в его обращении, сведениям,
+         * которыми располагает заимодавец (кредитор)
+         * 6 - В отношении субъекта возбуждено дело о банкротстве или процедура
+         * внесудебного банкротства
+         */
+        $report->information_part->failure->reason = 3;
 
         $reports[] = $report;
 
