@@ -379,7 +379,7 @@ class SigningReport extends ReportsAbstract
         $log =
             [
                 'order_id' => $contract->order_id,
-                'type'     => 'Выдача',
+                'type'     => 'Подпись',
                 'result'   => 'Успешно'
             ];
 

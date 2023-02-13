@@ -173,7 +173,7 @@ class CancellReport extends ReportsAbstract
         $log =
             [
                 'order_id' => $order->id,
-                'type'     => 'Выдача',
+                'type'     => 'Отказ',
                 'result'   => 'Успешно'
             ];
 

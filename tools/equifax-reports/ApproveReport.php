@@ -165,7 +165,7 @@ class ApproveReport extends ReportsAbstract
         $log =
             [
                 'order_id' => $order->id,
-                'type'     => 'Выдача',
+                'type'     => 'Одобрение',
                 'result'   => 'Успешно'
             ];
 

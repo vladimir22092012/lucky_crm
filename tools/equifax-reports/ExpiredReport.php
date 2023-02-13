@@ -556,7 +556,7 @@ class ExpiredReport extends ReportsAbstract
         $log =
             [
                 'order_id' => $contract->order_id,
-                'type' => 'Выдача',
+                'type' => 'Просрочен',
                 'result' => 'Успешно'
             ];
 

@@ -157,7 +157,7 @@ class PendingReport extends ReportsAbstract
         $log =
             [
                 'order_id' => $order->id,
-                'type'     => 'Выдача',
+                'type'     => 'Подача заявки',
                 'result'   => 'Успешно'
             ];
 
