@@ -5,7 +5,7 @@ class ActiveSegment extends SegmentsAbstract
 
     public static function sendReminder($reminder)
     {
-        $reminders = RemindersORM::where('segmentId', 3)->get();
+        $reminders = RemindersORM::where('segmentId', 3)->where('is_on', 1)->get();
 
         foreach ($reminders as $reminder) {
 

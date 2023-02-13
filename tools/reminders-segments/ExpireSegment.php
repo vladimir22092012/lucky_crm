@@ -5,7 +5,7 @@ class ExpireSegment extends SegmentsAbstract
 
     public static function sendReminder($reminder)
     {
-        $reminders = RemindersORM::where('segmentId', 5)->get();
+        $reminders = RemindersORM::where('segmentId', 5)->where('is_on', 1)->get();
 
         foreach ($reminders as $reminder) {
             self::expiredDaysReminder($reminder);

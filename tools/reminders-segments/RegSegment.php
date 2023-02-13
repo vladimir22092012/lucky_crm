@@ -5,7 +5,7 @@ class RegSegment extends SegmentsAbstract
 
     public static function sendReminder($request)
     {
-        $reminders = RemindersORM::where('segmentId', 1)->get();
+        $reminders = RemindersORM::where('segmentId', 1)->where('is_on', 1)->get();
 
         foreach ($reminders as $reminder) {
             $startTime = date('Y-m-d H:i:s', strtotime('-' . $reminder->countTime . ' ' . $reminder->timeType));
