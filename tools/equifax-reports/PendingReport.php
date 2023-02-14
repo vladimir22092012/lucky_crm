@@ -26,6 +26,7 @@ class PendingReport extends ReportsAbstract
         list($passportSerial, $passportNumber) = explode('-', $user->passport_serial);
         
         Config::$configFile = $conf->root_dir . 'config.json';
+        $config = Config::instance();
 
         $reports = [];
 

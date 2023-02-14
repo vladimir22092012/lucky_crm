@@ -14,6 +14,7 @@ class IssuanceReport extends ReportsAbstract
         $conf = new Server();
 
         Config::$configFile = $conf->root_dir . 'config.json';
+        $config = Config::instance();
 
         $reports = [];
 
