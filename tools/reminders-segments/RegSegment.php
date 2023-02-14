@@ -3,7 +3,7 @@
 class RegSegment extends SegmentsAbstract
 {
 
-    public static function sendReminder($request)
+    public static function processing($request)
     {
         $reminders = RemindersORM::where('segmentId', 1)->where('is_on', 1)->get();
 
