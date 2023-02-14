@@ -5,7 +5,8 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 class TestController extends Controller
 {
     public function fetch(){
-        Onec::sendRequest(676);
+        $equi = EquifaxFactory::get('pending');
+        $equi->processing(4725);
         exit;
     }
 

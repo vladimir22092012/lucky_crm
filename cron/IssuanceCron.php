@@ -136,9 +136,6 @@ class IssuanceCron extends Core
                     if($order->utm_source == 'guruleads')
                         Guruleads::sendRequest(['orderId' => $contract->order_id, 'method' => 'sendApprovePostback']);
 
-                    $equifax = EquifaxFactory::get('signing');
-                    $equifax->processing($contract->id);
-
                     $equifax = EquifaxFactory::get('issuance');
                     $equifax->processing($contract->id);
 

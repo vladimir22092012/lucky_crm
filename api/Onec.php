@@ -12,7 +12,7 @@ class Onec implements ApiInterface
 
     public static function sendRequest($params)
     {
-        return self::$params['method']($params['order_id']);
+        return self::{$params['method']}($params['order_id']);
     }
 
     private static function send_loan($order_id)
