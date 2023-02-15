@@ -1,24 +1,16 @@
 <?php
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use CloudCastle\EquifaxReport\Config\Config;
+use CloudCastle\EquifaxReport\Individual\Client;
+use CloudCastle\EquifaxReport\Report;
+use CloudCastle\EquifaxReport\Report\Events;
+use Config as Server;
 
 class TestController extends Controller
 {
     public function fetch(){
-
-        $start = date('Y-m-d 00:00:00', strtotime('2022-11-08'));
-        $end = date('Y-m-d 23:59:59', strtotime('2023-02-08'));
-
-        $percents = OperationsORM::where('type', 'PERCENTS')
-            ->whereBetween('created', [$start, $end])
-            ->get();
-
-
-        foreach ($percents as $percent)
-        {
-            Onec::sendRequest(['method' => 'send_loan', 'order_id' => 4205]);
-        }
-        exit;
+        
     }
 
     public function send()

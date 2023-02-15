@@ -954,9 +954,6 @@ class OrderController extends Controller
 //        текст: текст - полное сообщение, как в смс.
         $this->notify->email('sale@nalichnoeplus.com', 'Подтверждение выдачи', $msg);
 
-        $equiReport = EquifaxFactory::get('pending');
-        $equiReport->processing($order_id);
-
         $equiReport = EquifaxFactory::get('approve');
         $equiReport->processing($order_id);
 

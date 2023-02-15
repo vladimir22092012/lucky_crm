@@ -46,7 +46,7 @@ class Fssp_scoring extends Core
                         if ($field['FieldName'] == 'Total')
                             $expSum += $field['FieldValue'];
 
-                        if ($field['FieldName'] == 'CloseReason1' && in_array($field['FieldValue'], [47]))
+                        if ($field['FieldName'] == 'CloseReason1' && in_array($field['FieldValue'], [46,47]))
                             $badArticle[] = $field['FieldValue'];
                     }
                 }

@@ -1,8 +1,8 @@
 <?php
 
-abstract class SegmentsAbstract
+abstract class SegmentsAbstract implements ToolsInterface
 {
-    abstract static function sendReminder($request);
+    abstract static function processing($data);
 
     public static function send($send)
     {

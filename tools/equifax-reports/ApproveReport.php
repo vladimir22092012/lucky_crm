@@ -27,7 +27,6 @@ class ApproveReport extends ReportsAbstract
 
         Config::$configFile = $conf->root_dir . 'config.json';
         $config = Config::instance();
-        $config->path = $conf->root_dir . 'reports-equifax';
 
         $reports = [];
 
@@ -41,7 +40,7 @@ class ApproveReport extends ReportsAbstract
          * Номер СНИЛС
          */
         if (!empty($user->snils))
-            $client->snils = $user->user->snils;
+            $client->snils = $user->snils;
 
         /**
          * Номер ИНН
@@ -159,13 +158,13 @@ class ApproveReport extends ReportsAbstract
 
         $file = Report::generate($reports, $config);
 
-        echo self::sendFile($file);
+        self::sendFile($file);
         self::deleteDir($config->path . 'reports-equifax');
 
         $log =
             [
                 'order_id' => $order->id,
-                'type'     => 'Выдача',
+                'type'     => 'Одобрение',
                 'result'   => 'Успешно'
             ];
 

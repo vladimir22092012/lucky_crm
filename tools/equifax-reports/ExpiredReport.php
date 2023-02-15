@@ -15,7 +15,6 @@ class ExpiredReport extends ReportsAbstract
 
         Config::$configFile = $conf->root_dir . 'config.json';
         $config = Config::instance();
-        $config->path = $conf->root_dir . 'reports-equifax';
 
         $reports = [];
 
@@ -550,13 +549,13 @@ class ExpiredReport extends ReportsAbstract
 
         */
 
-        echo self::sendFile($file);
+        self::sendFile($file);
         self::deleteDir($config->path . 'reports-equifax');
 
         $log =
             [
                 'order_id' => $contract->order_id,
-                'type' => 'Выдача',
+                'type' => 'Просрочен',
                 'result' => 'Успешно'
             ];
 

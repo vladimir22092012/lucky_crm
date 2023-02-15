@@ -6,10 +6,6 @@ class EquifaxFactory
     {
         switch ($triggerName)
         {
-            case 'pending':
-                return new PendingReport();
-                break;
-
             case 'approve':
                 return new ApproveReport();
                 break;
@@ -26,16 +22,8 @@ class EquifaxFactory
                 return new IssuanceReport();
                 break;
 
-            case 'pay':
-                return new PayReport();
-                break;
-
             case 'expire':
                 return new ExpiredReport();
-                break;
-
-            case 'close':
-                return new ClosePayReport();
                 break;
         }
     }

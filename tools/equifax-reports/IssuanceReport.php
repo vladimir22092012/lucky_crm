@@ -15,7 +15,6 @@ class IssuanceReport extends ReportsAbstract
 
         Config::$configFile = $conf->root_dir . 'config.json';
         $config = Config::instance();
-        $config->path = $conf->root_dir . 'reports-equifax';
 
         $reports = [];
 
@@ -28,8 +27,6 @@ class IssuanceReport extends ReportsAbstract
         if (empty($contract->user->faktaddress_id))
             return 0;
 
-        $regAddress = AdressesORM::find($contract->user->regaddress_id);
-        $faktAddress = AdressesORM::find($contract->user->faktaddress_id);
         list($passportSerial, $passportNumber) = explode('-', $contract->user->passport_serial);
 
         $client = new Client();
@@ -121,64 +118,12 @@ class IssuanceReport extends ReportsAbstract
         $event->action_reason = 'Субъекту передана сумма займа (кредита) либо субъект '
             . 'стал принципалом по гарантии или поручителем по сделке, кроме договора лизинга';
         $report = new Report($client, $event, $config);
-
-        /**
-         * Регистрация физического лица по месту жительства или пребывания
-         */
-        $report->base_part->addr_reg->reg_code = '1';
-        $report->base_part->addr_reg->index = $regAddress->zip;
-        $report->base_part->addr_reg->country = 643;
-        $report->base_part->addr_reg->country_text = 'Российская Федерация';
-        //$report->base_part->addr_reg->fias = '5bc8ef01-ab23-45ef-67bd-a8c5f78a0d2f';
-        $report->base_part->addr_reg->okato = $regAddress->okato;
-        $report->base_part->addr_reg->street = $regAddress->street;
-        $report->base_part->addr_reg->house = $regAddress->house;
-        //$report->base_part->addr_reg->domain = '15';
-        //$report->base_part->addr_reg->block = '1';
-        $report->base_part->addr_reg->build = $regAddress->building;
-        $report->base_part->addr_reg->apartment = !empty($regAddress->room) ? $regAddress->room : 1;
-        //$report->base_part->addr_reg->reg_date = '01.01.2010';
-        //$report->base_part->addr_reg->reg_place = 'УВД г.Москвы';
-        //$report->base_part->addr_reg->reg_department_code = '555-555';
-
-        /**
-         * Фактическое место жительства
-         */
-        $report->base_part->addr_fact->index = $faktAddress->zip;
-        $report->base_part->addr_fact->country = 643;
-        $report->base_part->addr_fact->country_text = 'Российская Федерация';
-        //$report->base_part->addr_fact->fias = 'abcdef01-ab23-45ef-67bd-a8c5f78a0d2e';
-        $report->base_part->addr_fact->okato = $faktAddress->okato;
-        $report->base_part->addr_fact->street = $faktAddress->street;
-        $report->base_part->addr_fact->house = $faktAddress->house;
-        //$report->base_part->addr_fact->domain = '10';
-        //$report->base_part->addr_fact->block = '14';
-        $report->base_part->addr_fact->build = $faktAddress->building;
-        $report->base_part->addr_fact->apartment = !empty($faktAddress->room) ? $faktAddress->room : 1;;
-
-        // Контактные данные
-        $report->base_part->contacts[] = [
-            /*
-             * поле обязательно
-             */
-            'phone' => preg_replace('~([^0-9()+])~ui', '', $contract->user->phone_mobile),
-            /*
-             * поле необязательно
-             * если отсутствует то необходимо указать null или вообще не указывать элемент в массиве
-             */
-            //'comment' => 'Комментарий',
-            /*
-             * поле необязательно
-             * если отсутствует то необходимо указать null или вообще не указывать элемент в массиве
-             */
-            'email' => $contract->user->email
-        ];
-
         /*
          * Должен соответствовать регулярному выражению
          * [a-fA-F0-9]{8}\-[a-fA-F0-9]{4}\-1[a-fA-F0-9]{3}\-(8|9|a|A|b|B){1}[a-fA-F0-9]{3}\-[a-fA-F0-9]{12}\-[a-fA-F0-9]{1}
          */
-        $report->base_part->contract->uid = $report::uidGenerate();
+        $uid = $report::uidGenerate();
+        $report->base_part->contract->uid = $uid;
 
         // Общие сведения о сделке
         /*
@@ -229,29 +174,20 @@ class IssuanceReport extends ReportsAbstract
          */
         $report->base_part->contract->deal->sign_renovation = 0;
         /*
-         * Код вида займа (кредита) (по умолчанию 3 - Микрозаем)
+         * Код вида займа (кредита). По справочнику 2.3 - Виды займа (кредита).
+         * По умолчанию 3 - Микрозаем
+         * Возможные значения:
+         * 1 - Заем (кредит)
+         * 2 - Заем (кредит) с ипотекой
+         * 3 - Микрозаем
+         * 4 - Кредитная линия с лимитом выдачи
+         * 5 - Кредитная линия с лимитом задолженности
+         * 6 - Комбинированная кредитная линия с лимитом выдачи и лимитом задолженности
+         * 7 - Кредит "овердрафт" (кредитование счета)
+         * 8 - Синдицированный заем (кредит)
+         * 99 - Иной заем (кредит)
          */
         $report->base_part->contract->deal->type = 3;
-
-        /*
-         * Сведения о наличии солидарных должников (по умолчанию 0)
-         * указывается число созаемщиков или поручителей
-         */
-        $report->base_part->contract->joint_debtors->count = 0;
-
-        // Полная стоимость потребительского кредита (займа)
-        /*
-         * Дата расчета полной стоимости кредита (займа)
-         */
-        $report->base_part->contract->full_cost->date = date('d.m.Y', strtotime($contract->inssuance_date));
-        /*
-         * Полная стоимость кредита (займа) в процентах годовых
-         */
-        $report->base_part->contract->full_cost->percent = $contract->base_percent * 365;
-        /*
-         * Полная стоимость кредита (займа) в денежном выражении
-         */
-        $report->base_part->contract->full_cost->sum = round($contract->amount * $contract->base_percent * $contract->period / 100, 2);
 
         // Сумма и валюта обязательства
         /*
@@ -287,7 +223,7 @@ class IssuanceReport extends ReportsAbstract
         /*
          * Код частоты платежей (по умолчанию 2 - От двух до четырех раз в месяц)
          */
-        $report->base_part->contract->payment_terms->regularity = 1;
+        $report->base_part->contract->payment_terms->regularity = 2;
         /*
          * Сумма минимального платежа по кредитной карте (свойство не обязательное)
          * Указывается в том случае если по данному договору выдана кредитная карта
@@ -316,45 +252,246 @@ class IssuanceReport extends ReportsAbstract
          */
         $report->base_part->contract->payment_terms->percent_end_date = date('d.m.Y', strtotime($contract->return_date));
 
+        // Полная стоимость потребительского кредита (займа)
+        /*
+         * Дата расчета полной стоимости кредита (займа)
+         */
+        $report->base_part->contract->full_cost->date = date('d.m.Y', strtotime($contract->create_date));
+        /*
+         * Полная стоимость кредита (займа) в процентах годовых
+         */
+        $report->base_part->contract->full_cost->percent = $contract->base_percent * 365;
+        /*
+         * Полная стоимость кредита (займа) в денежном выражении
+         */
+        $report->base_part->contract->full_cost->sum = round($contract->amount * $contract->base_percent * $contract->period / 100, 2);
 
-        // Сведения об обращении субъекта к источнику с предложением совершить сделку
-        // Опционально при наличии информации об обращении
-        // Есди обращение отсутствует, то необходимо удалить данный объект unset($report->information_part);
+        // Сведения о передаче финансирования субъекту или возникновения обеспечения исполнения обязательства
         /*
-         * UID предыдущего события (УИд обращения когда клиент обратился с предложением совершить сделку)
+         * Дата передачи финансирования субъекту или возникновения обеспечения исполнения обязательства
          */
-        $report->information_part->application->uid = '102c4fd0-98b7-11ed-8f11-3dadacbb2a66-e';
-        /*
-         * Дата обращения (Дата когда клиент обратился с предложением совершить сделку)
-         */
-        $report->information_part->application->date = date('d.m.Y', strtotime('15.12.2022'));
-        /*
-         * Сумма запрошенного займа (кредита), лизинга или обеспечения
-         */
-        $report->information_part->application->sum = 5000;
-        /*
-         * Код запрошенной валюты обязательства
-         */
-        $report->information_part->application->currency = 'RUB';
-        /*
-         * Код вида участия в сделке (по умолчанию 1 - Заемщик)
-         */
-        $report->information_part->application->ratio = 1;
-        /*
-         * Код способа обращения
-         * (по умолчанию 2 - Дистанционный - оформление с использованием средств телекоммуникаций)
-         */
-        $report->information_part->application->way = 2;
-        /*
-         * Код источника (по умолчанию 2 - Заимодавец - микрофинансовая организация)
-         */
-        $report->information_part->application->source_type = 2;
-        /*
-         * Дата окончания действия одобрения обращения (оферты кредитора)
-         */
-        $report->information_part->application->approval_date = date('d.m.Y', strtotime('+5 days'));
+        $report->base_part->contract->cred_start_debt->date = date('d.m.Y', strtotime($contract->inssuance_date));
 
-        unset($report->information_part);
+        //
+        /*
+         * Сумма задолженности по основному долгу
+         */
+        $report->base_part->contract->debt->op_sum = $contract->loan_body_summ;
+        /*
+         * Сумма задолженности по иным требованиям
+         */
+        $report->base_part->contract->debt->other_sum = $contract->loan_peni_summ;
+        /*
+         * Сумма задолженности по иным требованиям
+         */
+        $report->base_part->contract->debt->percent_sum = $contract->loan_percents_summ;
+        /*
+         * Признак неподтвержденного льготного периода
+         * По умолчанию 1 - Льготный период не установлен
+         * Возможные значения:
+         * 1 - Льготный период не установлен
+         * 0 - Льготный период установлен
+         */
+        $report->base_part->contract->debt->sign_unaccepted_grace_period = 1;
+        /*
+         * Сумма задолженности на дату передачи финансирования
+         * субъекту или возникновения обеспечения исполнения обязательства
+         */
+        $report->base_part->contract->debt->first_sum = $contract->amount;
+        /*
+         * Дата расчета
+         */
+        $report->base_part->contract->debt->calc_date = date('d.m.Y', strtotime($contract->inssuance_date));
+        /*
+         * Признак расчета по последнему платежу
+         * По умолчанию 1 - субъект внес платеж, либо наступил срок для внесения платежа по срочному долгу
+         * Возможные значения:
+         * 1 - субъект внес платеж, либо наступил срок для внесения платежа по срочному долгу
+         * 0 - прошло 30 календарных дней с даты последнего расчета суммы задолженности
+         * по показателю 25.8 "Дата расчета" (debt.calc_date)
+         */
+        $report->base_part->contract->debt->sign_calc_last_payout = 1;
+
+        // Сведения о срочной задолженности
+        /*
+         * Сумма срочной задолженности по процентам
+         */
+        $report->base_part->contract->debt_current->percent_sum = $contract->loan_percents_summ;
+        /*
+         * Сумма срочной задолженности по иным требованиям
+         */
+        $report->base_part->contract->debt_current->other_sum = $contract->loan_peni_summ;
+        /*
+         * Сумма срочной задолженности по основному долгу
+         */
+        $report->base_part->contract->debt_current->op_sum = $contract->loan_body_summ;
+        /*
+         * Дата возникновения срочной задолженности
+         */
+        $report->base_part->contract->debt_current->date = date('d.m.Y', strtotime($contract->return_date));
+
+        // Сведения о просроченной задолженности (Заполняется при наличии просроченной задолженности)
+        /*
+         * Дата возникновения просроченной задолженности
+         */
+        //$report->base_part->contract->debt_overdue->date = date('d.m.Y');
+        /*
+         * Сумма просроченной задолженности по основному долгу
+         */
+        //$report->base_part->contract->debt_overdue->op_sum = 0;
+        /*
+         * Сумма просроченной задолженности по иным требованиям
+         */
+        //$report->base_part->contract->debt_overdue->other_sum = 0;
+        /*
+         * Сумма просроченной задолженности по иным требованиям
+         */
+        //$report->base_part->contract->debt_overdue->percent_sum = 0;
+        /*
+         * Дата последнего пропущенного платежа по процентам
+         */
+        //$report->base_part->contract->debt_overdue->percent_miss_payout_date = date('d.m.Y');
+        /*
+         * Дата последнего пропущенного платежа по основному долгу
+         */
+        //$report->base_part->contract->debt_overdue->op_miss_payout_date = date('d.m.Y');
+
+        // Сведения о внесении платежей
+        /*
+         * Продолжительность просрочки в днях
+         * По умолчанию 0 дней
+         */
+        $report->base_part->contract->payments->overdue_day = 0;
+        /*
+         * Код соблюдения размера платежей
+         * По умолчанию 1 - Платеж внесен в полном размере
+         * Возможные значения:
+         * 1 - Платеж внесен в полном размере
+         * 2 - Платеж внесен не в полном размере
+         * 3 - Платеж не внесен
+         */
+        $report->base_part->contract->payments->size_payments_type = 1;
+        /*
+         * Сумма внесенных платежей по процентам
+         */
+        $report->base_part->contract->payments->paid_percent_sum = 0;
+        /*
+         * Сумма внесенных платежей по иным требованиям
+         */
+        $report->base_part->contract->payments->paid_other_sum = 0;
+        /*
+         * Сумма внесенных платежей по основному долгу
+         */
+        $report->base_part->contract->payments->paid_op_sum = 0;
+        /*
+         * Сумма последнего внесенного платежа по иным требованиям
+         */
+        $report->base_part->contract->payments->last_payout_other_sum = 0;
+        /*
+         * Сумма последнего внесенного платежа по процентам
+         */
+        $report->base_part->contract->payments->last_payout_percent_sum = 0;
+        /*
+         * Сумма последнего внесенного платежа по основному долгу
+         */
+        $report->base_part->contract->payments->last_payout_op_sum = 0;
+        /*
+         * Дата последнего внесенного платежа
+         */
+        $report->base_part->contract->payments->last_payout_date = date('d.m.Y');
+        /*
+         * Код соблюдения срока внесения платежей
+         * По умолчанию 1 - Срок внесения платежа не наступил (новый договор)
+         * Возможные значения:
+         * 1 - Срок внесения платежа не наступил (новый договор)
+         * 2 - Платежи вносятся своевременно
+         * 3 - Платежи вносятся несвоевременно
+         */
+        $report->base_part->contract->payments->payments_deadline_type = 2;
+
+        // Величина среднемесячного платежа по договору займа (кредита) и дата ее расчета
+        /*
+         * Дата расчета величины среднемесячного платежа
+         */
+        $report->base_part->contract->average_payment->date = date('d.m.Y');
+        /*
+         * Величина среднемесячного платежа
+         */
+        $report->base_part->contract->average_payment->sum = 0;
+
+        // Сведения о неденежном обязательстве источника
+        // (заполняется в том случае если был заключен договор на товарный кредит, лизинг, ипотека и т.п.)
+        /*
+         * Код предоставляемого имущества
+         * По справочнику 4.1. Виды предметов залога и неденежных предоставлений по сделке
+         */
+        //$report->base_part->contract->material_guarantee_source->item_type = 1;
+        /*
+         * Предмет обязательства (то что покупает)
+         */
+        //$report->base_part->contract->material_guarantee_source->material_item = 'Квартира';
+        /*
+         * Объект предоставления (то что закладывает)
+         */
+        //$report->base_part->contract->material_guarantee_source->material_object = 'Гараж';
+        /*
+         * Дата передачи имущества субъекту
+         */
+        //$report->base_part->contract->material_guarantee_source->material_object_date = date('d.m.Y');
+
+        // Сведения об участии в обязательстве, по которому формируется кредитная история
+        /*
+         * Дата передачи финансирования субъекту или возникновения обеспечения исполнения обязательства
+         */
+        $report->information_part->credit->date = date('d.m.Y', strtotime($contract->inssuance_date));
+        /*
+         * Код вида займа (кредита). По справочнику 2.3 - Виды займа (кредита).
+         * По умолчанию 3 - Микрозаем
+         * Возможные значения:
+         * 1 - Заем (кредит)
+         * 2 - Заем (кредит) с ипотекой
+         * 3 - Микрозаем
+         * 4 - Кредитная линия с лимитом выдачи
+         * 5 - Кредитная линия с лимитом задолженности
+         * 6 - Комбинированная кредитная линия с лимитом выдачи и лимитом задолженности
+         * 7 - Кредит "овердрафт" (кредитование счета)
+         * 8 - Синдицированный заем (кредит)
+         * 99 - Иной заем (кредит)
+         */
+        $report->information_part->credit->type = 3;
+        /*
+         * УИд сделки
+         */
+        $report->information_part->credit->uid = $uid;
+        /*
+         * Код вида участия в сделке. По справочнику 2.1 - Виды участия в сделке.
+         * По умолчанию 1 - Заемщик
+         * Возможные значения:
+         * 1 - Заемщик
+         * 2 - Поручитель
+         * 3 - Принципал по гарантии
+         * 4 - Лизингополучатель
+         * 5 - Лицо, получающее финансирование или предоставляющее обеспечение по договору
+         * с элементами займа, поручительства, гарантии или лизинга (смешанный договор)
+         * 99 - Иной вид участия
+         */
+        $report->information_part->credit->ratio = 1;
+        /*
+         * Признак просрочки должника более 90 дней. По справочнику 3.102 - Признак просрочки должника более 90 дней.
+         * По умолчанию - 0
+         * Возможные значения:
+         * 1 - должник нарушил срок платежа по займу или лизингу более чем на 90 календарных дней
+         * 0 - Во всех других случаях
+         */
+        $report->information_part->credit->sign_90plus = 0;
+        /*
+         * Признак прекращения обязательства. По справочнику 3.103 - Признак прекращения обязательства
+         * По умолчанию - 0
+         * Возможные значения:
+         * 1 - взаимные обязательства субъекта и источника прекращены (независимо от основания)
+         * 0 - Во всех других случаях
+         */
+        $report->information_part->credit->sign_stop_load = 0;
 
         $reports[] = $report;
 
@@ -374,7 +511,7 @@ class IssuanceReport extends ReportsAbstract
 
         */
 
-        echo self::sendFile($file);
+        self::sendFile($file);
         self::deleteDir($config->path . 'reports-equifax');
 
         $log =

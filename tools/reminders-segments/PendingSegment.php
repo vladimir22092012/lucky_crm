@@ -3,9 +3,9 @@
 class PendingSegment extends SegmentsAbstract
 {
 
-    public static function sendReminder($reminder)
+    public static function processing($reminder)
     {
-        $reminders = RemindersORM::where('segmentId', 3)->get();
+        $reminders = RemindersORM::where('segmentId', 3)->where('is_on', 1)->get();
 
         foreach ($reminders as $reminder) {
 

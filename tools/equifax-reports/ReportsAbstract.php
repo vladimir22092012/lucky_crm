@@ -23,7 +23,7 @@ abstract class ReportsAbstract implements ToolsInterface
         $response = curl_exec($curl);
 
         curl_close($curl);
-        echo $response;
+        return $response;
     }
 
     protected static function deleteDir($path)
@@ -48,5 +48,31 @@ abstract class ReportsAbstract implements ToolsInterface
         EquifaxReports::insert($log);
 
         return 'success';
+    }
+
+    public static function checkUploads($date = '')
+    {
+        $curl = curl_init();
+
+        $period = !empty($date) ? '?day=' . date('d.m.Y', strtotime($date)) : '';
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'http://51.250.97.26/report/result' . $period,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+        ));
+
+        $response = curl_exec($curl);
+        $response = json_decode($response, true);
+
+        curl_close($curl);
+
+        echo '<pre>';
+        print_r($response);
     }
 }

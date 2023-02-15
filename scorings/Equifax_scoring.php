@@ -73,6 +73,12 @@ class Equifax_scoring extends Core
             if ($response['bkiscoring'] < 450)
                 $reason = 'bkiscoring';
 
+            $user = UsersORM::find($order->user_id);
+
+            $pdn = round(($response['all_payment_active_credit_month'] / $user->income) * 100, 3);
+
+            UsersORM::where('id', $user->id)->update(['pdn' => $pdn]);
+
             if(empty($reason))
             {
                 if (in_array($order->client_status, ['nk', 'rep'])) {
