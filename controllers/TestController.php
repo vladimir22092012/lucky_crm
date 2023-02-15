@@ -1,12 +1,23 @@
 <?php
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use CloudCastle\EquifaxReport\Config\Config;
+use CloudCastle\EquifaxReport\Individual\Client;
+use CloudCastle\EquifaxReport\Report;
+use CloudCastle\EquifaxReport\Report\Events;
+use Config as Server;
 
 class TestController extends Controller
 {
     public function fetch(){
-        $equi = EquifaxFactory::get('pending');
-        $equi->processing(4725);
+
+        $conf = new Server();
+
+        Config::$configFile = $conf->root_dir . 'config.json';
+        $config = Config::instance();
+        $config->path = $conf->root_dir . 'reports-equifax';
+
+        var_dump($config->path);
         exit;
     }
 
