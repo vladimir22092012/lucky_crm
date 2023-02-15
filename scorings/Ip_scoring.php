@@ -10,12 +10,11 @@ class Ip_scoring extends Core
     {
         $scoring = $this->scorings->get_scoring($scoring_id);
         $user = UsersORM::find($scoring->user_id);
-        $order = OrdersORM::find($scoring->order_id);
 
         $dadata = new \Dadata\DadataClient($this->token, $this->secret);
         $result = $dadata->iplocate($user->last_ip);
 
-        if (empty($order->last_ip)) {
+        if (empty($user->last_ip)) {
             $update = array(
                 'status' => 'error',
                 'string_result' => 'в заявке не сохранен ip'
@@ -29,7 +28,7 @@ class Ip_scoring extends Core
 
             $update = array(
                 'status' => 'completed',
-                'body' => serialize(array('ip' => $order->ip)),
+                'body' => serialize(array('ip' => $user->last_ip)),
                 'success' => $score
             );
             if ($score)
