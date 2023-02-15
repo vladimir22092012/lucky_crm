@@ -23,7 +23,7 @@ abstract class ReportsAbstract implements ToolsInterface
         $response = curl_exec($curl);
 
         curl_close($curl);
-        echo $response;
+        return $response;
     }
 
     protected static function deleteDir($path)

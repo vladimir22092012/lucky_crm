@@ -511,7 +511,7 @@ class IssuanceReport extends ReportsAbstract
 
         */
 
-        echo self::sendFile($file);
+        self::sendFile($file);
         self::deleteDir($config->path . 'reports-equifax');
 
         $log =

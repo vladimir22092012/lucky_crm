@@ -166,7 +166,7 @@ class CancellReport extends ReportsAbstract
 
         $file = Report::generate($reports, $config);
 
-        echo self::sendFile($file);
+        self::sendFile($file);
         self::deleteDir($config->path . 'reports-equifax');
 
         $log =
