@@ -70,7 +70,10 @@ class Equifax_scoring extends Core
 
         } else {
 
-            if ($response['bkiscoring'] < 450)
+            $scoreType = ScoringTypesORM::where('name', 'equifax')->first();
+            $scoreBall = unserialize($scoreType->params);
+
+            if ($response['bkiscoring'] < $scoreBall['min_bkiscoring'])
                 $reason = 'bkiscoring';
 
             $user = UsersORM::find($order->user_id);
