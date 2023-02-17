@@ -78,6 +78,8 @@ class Equifax_scoring extends Core
 
             $user = UsersORM::find($order->user_id);
 
+            $order->income = str_replace(' ', '', $order->income);
+
             $pdn = round(($response['all_payment_active_credit_month'] / $user->income) * 100, 3);
 
             UsersORM::where('id', $user->id)->update(['pdn' => $pdn]);
