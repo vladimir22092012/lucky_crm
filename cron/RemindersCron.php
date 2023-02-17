@@ -15,10 +15,10 @@ class RemindersCron extends Core
 
     private function run()
     {
-        RegSegment::sendReminder(1);
-        ActiveSegment::sendReminder(1);
-        PendingSegment::sendReminder(1);
-        RepSegment::sendReminder(1);
+        RegSegment::processing(1);
+        ActiveSegment::processing(1);
+        PendingSegment::processing(1);
+        RepSegment::processing(1);
     }
 }
 
