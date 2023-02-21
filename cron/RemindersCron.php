@@ -19,6 +19,7 @@ class RemindersCron extends Core
         ActiveSegment::processing(1);
         PendingSegment::processing(1);
         RepSegment::processing(1);
+        ExpireSegment::processing(1);
     }
 }
 
