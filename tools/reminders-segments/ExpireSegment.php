@@ -28,6 +28,13 @@ class ExpireSegment extends SegmentsAbstract
         $contracts = ContractsORM::where('status', 4)->where('return_date', '>=', date('Y-m-d 00:00:00', strtotime('2023-02-19')))->get();
 
         foreach ($contracts as $contract) {
+
+            $now = new DateTime();
+            $returnDate = new DateTime(date('Y-m-d', strtotime($contract->return_date)));
+
+            if(date_diff($now, $returnDate) != $reminder->countTime)
+                continue;
+
             $limitDays = 0;
             $limitWeek = 0;
             $limitMonth = 0;
