@@ -36,7 +36,7 @@ class ActiveSegment extends SegmentsAbstract
 
                 $user = UsersORM::where('id', $contract->user_id)->first();
 
-                $isSent = RemindersCronORM::where('userId', $user->id)->where('reminderId', $reminder->id)->first();
+                $isSent = RemindersCronORM::where('userId', $user->id)->whereBetween('created', [$startTime, $endTime])->first();
 
                 if (!empty($isSent))
                     continue;
