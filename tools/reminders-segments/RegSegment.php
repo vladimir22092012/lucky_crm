@@ -8,8 +8,13 @@ class RegSegment extends SegmentsAbstract
         $reminders = RemindersORM::where('segmentId', 1)->where('is_on', 1)->get();
 
         foreach ($reminders as $reminder) {
-            $startTime = date('Y-m-d H:i:s', strtotime('-' . $reminder->countTime . ' ' . $reminder->timeType));
-            $users = UsersORM::where('lastUpdate', '<=', $startTime)->where('stage_card', 0)->get();
+            $time = date('Y-m-d H:i:00', strtotime('-' . $reminder->countTime . ' ' . $reminder->timeType));
+
+
+            $startTime = date('Y-m-d H:i:s', strtotime($time.'-5 minutes'));
+            $endTime   = date('Y-m-d H:i:s', strtotime($time.'+5 minutes'));
+
+            $users = UsersORM::whereBetween('created', [$startTime, $endTime])->where('stage_card', 0)->get();
 
             if (!empty($users)) {
                 foreach ($users as $user) {

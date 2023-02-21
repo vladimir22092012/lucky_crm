@@ -24,7 +24,7 @@ class ExpireSegment extends SegmentsAbstract
         $thisMonthTo = date('Y-m-t 23:59:59', strtotime('monday this week'));
 
         $settings = new Settings();
-        $limitCommunications = $settings->limit_communications;
+        $limitCommunications = unserialize($settings->limit_communications);
         $contracts = ContractsORM::where('status', 4)->get();
 
         foreach ($contracts as $contract) {
