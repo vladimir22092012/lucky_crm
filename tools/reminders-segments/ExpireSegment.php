@@ -8,7 +8,7 @@ class ExpireSegment extends SegmentsAbstract
         $reminders = RemindersORM::where('segmentId', 5)->where('is_on', 1)->get();
 
         foreach ($reminders as $reminder) {
-            return self::expiredDaysReminder($reminder);
+            self::expiredDaysReminder($reminder);
         }
     }
 
@@ -25,6 +25,7 @@ class ExpireSegment extends SegmentsAbstract
 
         $settings = new Settings();
         $limitCommunications = $settings->sms_limit_communications;
+
         $contracts = ContractsORM::where('status', 4)->where('return_date', '>=', date('Y-m-d 00:00:00', strtotime('2023-02-19')))->get();
 
         foreach ($contracts as $contract) {
@@ -108,7 +109,8 @@ class ExpireSegment extends SegmentsAbstract
                         'reminderId' => $reminder->id,
                         'userId' => $user->id,
                         'message' => $reminder->msgSms,
-                        'phone' => $user->phone_mobile
+                        'phone' => $user->phone_mobile,
+                        'orderId' => $contract->order_id
                     ];
 
                 RemindersCronORM::insert($reminderLog);
@@ -121,8 +123,6 @@ class ExpireSegment extends SegmentsAbstract
 
                 self::send($send);
             }
-
-
         }
     }
 }
