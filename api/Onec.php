@@ -273,12 +273,12 @@ class Onec implements ApiInterface
         return 1;
     }
 
-    public function send_payment($payment)
+    private static function send_payment($payment)
     {
         $item = new StdClass();
-        $item->ID = $payment->id;
-        $item->Дата = date('YmdHis');
-        $item->ЗаймID = $payment->order_id;
+        $item->ID = (string)$payment->id;
+        $item->Дата = date('YmdHis', strtotime($payment->created));
+        $item->ЗаймID = (string)$payment->order_id;
         $item->Пролонгация = !empty($payment->prolongation) ? 1 : 0;
 
         if($payment->prolongation == 1)
@@ -299,7 +299,7 @@ class Onec implements ApiInterface
         $request = new StdClass();
         $request->TextJSON = json_encode($item, JSON_UNESCAPED_UNICODE);
 
-        $result = $this->send_request('CRM_WebService', 'Payments', $request);
+        $result = self::send_request('CRM_WebService', 'Payments', $request);
 
         if (isset($result['return']) && $result['return'] == 'OK')
             return 1;

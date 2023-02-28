@@ -6,6 +6,8 @@ abstract class ReportsAbstract implements ToolsInterface
 
     protected static function sendFile($file)
     {
+        return 1;
+
         $curl = curl_init();
 
         curl_setopt_array($curl, array(

@@ -32,7 +32,7 @@ class ExpireSegment extends SegmentsAbstract
             $now = new DateTime();
             $returnDate = new DateTime(date('Y-m-d', strtotime($contract->return_date)));
 
-            if(date_diff($now, $returnDate) != $reminder->countTime)
+            if(date_diff($now, $returnDate)->days != $reminder->countTime)
                 continue;
 
             $limitDays = 0;
@@ -83,10 +83,8 @@ class ExpireSegment extends SegmentsAbstract
                 $canSend = 0;
             }
 
-            var_dump($communications);
-            exit;
-
             $user = UsersORM::where('id', $contract->user_id)->first();
+
 
             if (empty($user->time_zone))
                 continue;
@@ -102,7 +100,6 @@ class ExpireSegment extends SegmentsAbstract
             if (empty($isHoliday) && date('G', strtotime($clientTime)) < $settings->workday_worktime['from'] && date('G', strtotime($clientTime)) > $settings->workday_worktime['to'])
                 $canSend = 0;
 
-            /*
 
 
             if ($canSend == 1) {
@@ -125,7 +122,7 @@ class ExpireSegment extends SegmentsAbstract
                 self::send($send);
             }
 
-            */
+
         }
     }
 }
