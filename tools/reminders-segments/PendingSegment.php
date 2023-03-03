@@ -25,7 +25,7 @@ class PendingSegment extends SegmentsAbstract
         $contracts = ContractsORM::where('status', 0)->whereBetween('create_date', [$acceptDateFrom, $acceptDateTo])->get();
 
         foreach ($contracts as $contract) {
-            $user = UsersORM::where('id', $contract->user_id)->fisrt();
+            $user = UsersORM::where('id', $contract->user_id)->first();
 
             $isSent = RemindersCronORM::where('userId', $user->id)->where('reminderId', $reminder->id)->first();
 

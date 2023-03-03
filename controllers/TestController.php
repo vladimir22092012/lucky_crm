@@ -11,31 +11,8 @@ class TestController extends Controller
 {
     public function fetch()
     {
-        $payments = OperationsORM::where('type', 'PAY')->get();
-
-        foreach ($payments as $payment) {
-            if (empty($payment->order_id))
-                continue;
-
-            if (empty($payment->transaction_id))
-                continue;
-
-            $transaction = TransactionsORM::find($payment->transaction_id);
-
-            $operation =
-                [
-                    'id' => $payment->id,
-                    'order_id' => $payment->contract_id,
-                    'prolongation' => $transaction->prolongation,
-                    'closed' => 0,
-                    'od' => $transaction->loan_body_summ,
-                    'prc' => $transaction->loan_percents_summ,
-                    'peni' => $transaction->loan_peni_summ,
-                    'created' => $payment->created
-                ];
-
-            Onec::sendRequest(['method' => 'send_payment', 'order_id' => (object)$operation]);
-        }
+        Onec::sendRequest(['method' => 'sendTaxing', 'order_id' => 1]);
+        exit;
     }
 
     public function send()

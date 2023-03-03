@@ -438,6 +438,7 @@ class StatisticsController extends Controller
                 $active_sheet->getColumnDimension('S')->setWidth(20);
                 $active_sheet->getColumnDimension('T')->setWidth(20);
                 $active_sheet->getColumnDimension('U')->setWidth(20);
+                $active_sheet->getColumnDimension('V')->setWidth(20);
 
                 $active_sheet->setCellValue('A1', 'Дата');
                 $active_sheet->setCellValue('B1', 'Договор');
@@ -460,6 +461,7 @@ class StatisticsController extends Controller
                 $active_sheet->setCellValue('S1', 'Контакты 3-х лиц');
                 $active_sheet->setCellValue('T1', 'Адрес проживания');
                 $active_sheet->setCellValue('U1', 'Рабочий телефон');
+                $active_sheet->setCellValue('V1', 'Просрочка');
 
                 $i = 2;
                 foreach ($contracts as $contract) {
@@ -513,6 +515,7 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('S' . $i, $contacts);
                     $active_sheet->setCellValue('T' . $i, $contract->FaktRegion);
                     $active_sheet->setCellValue('U' . $i, $contract->workphone);
+                    $active_sheet->setCellValue('V' . $i, $contract->expiration);
 
                     $i++;
                 }
