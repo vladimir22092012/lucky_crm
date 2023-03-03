@@ -64,25 +64,28 @@ class TaxingCron extends Core
                     $stop_taxing = 1;
                 }
 
-                $this->operations->add_operation(array(
-                    'contract_id' => $contract->id,
-                    'user_id' => $contract->user_id,
-                    'order_id' => $contract->order_id,
-                    'type' => 'PERCENTS',
-                    'amount' => $percents_summ,
-                    'created' => date('Y-m-d H:i:s'),
-                    'loan_body_summ' => $contract->loan_body_summ,
-                    'loan_percents_summ' => $contract->loan_percents_summ + $percents_summ,
-                    'loan_charge_summ' => $contract->loan_charge_summ,
-                    'loan_peni_summ' => $contract->loan_peni_summ,
-                ));
-
                 $this->contracts->update_contract($contract->id, array(
-                    'loan_percents_summ' => $contract->loan_percents_summ + $percents_summ,
                     'stop_profit' => $stop_taxing
                 ));
 
-                //Передаем в 1с
+                if ($stop_taxing == 0) {
+                    $this->operations->add_operation(array(
+                        'contract_id' => $contract->id,
+                        'user_id' => $contract->user_id,
+                        'order_id' => $contract->order_id,
+                        'type' => 'PERCENTS',
+                        'amount' => $percents_summ,
+                        'created' => date('Y-m-d H:i:s'),
+                        'loan_body_summ' => $contract->loan_body_summ,
+                        'loan_percents_summ' => $contract->loan_percents_summ + $percents_summ,
+                        'loan_charge_summ' => $contract->loan_charge_summ,
+                        'loan_peni_summ' => $contract->loan_peni_summ,
+                    ));
+
+                    $this->contracts->update_contract($contract->id, array(
+                        'loan_percents_summ' => $contract->loan_percents_summ + $percents_summ,
+                    ));
+                }
             }
         }
     }
