@@ -19,21 +19,23 @@ class EquifaxOverdue_scoring extends Core
 
         $equifax = $this->db->result();
 
-        $params = json_decode($equifax->body, true);
+        if (!empty($equifax)) {
+            $params = json_decode($equifax->body, true);
 
-        if ($params['credit_count_active_overdue_11_12_13_sum_1000'] > $scoring_type->params['credit_count_active_overdue_11_12_13_sum_1000']) {
-            $reason = 'credit_count_active_overdue_11_12_13_sum_1000';
+            if ($params['credit_count_active_overdue_11_12_13_sum_1000'] > $scoring_type->params['credit_count_active_overdue_11_12_13_sum_1000']) {
+                $reason = 'credit_count_active_overdue_11_12_13_sum_1000';
+            }
+
+            $update = [
+                'status' => 'completed',
+                'body' => json_encode($params),
+                'string_result' => (isset($reason)) ? 'Отказ по переменной ' . $reason : 'Проверка пройдена',
+                'success' => (isset($reason)) ? 0 : 1
+            ];
+
+            $this->scorings->update_scoring($scoring_id, $update);
+
+            return $update;
         }
-
-        $update = [
-            'status' => 'completed',
-            'body' => json_encode($params),
-            'string_result' => (isset($reason)) ? 'Отказ по переменной ' . $reason: 'Проверка пройдена',
-            'success' => (isset($reason)) ? 0 : 1
-        ];
-
-        $this->scorings->update_scoring($scoring_id, $update);
-
-        return $update;
     }
 }

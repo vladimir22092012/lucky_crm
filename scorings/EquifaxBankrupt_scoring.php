@@ -21,33 +21,36 @@ class EquifaxBankrupt_scoring extends Core
 
         $equifax = $this->db->result();
 
-        $params = json_decode($equifax->body, true);
+        if (!empty($equifax)) {
 
-        if (in_array($order->client_status, ['nk', 'rep']) && $params['bkicountactivecredit'] > $scoring_type->params['bkicountactivecredit_new'] || in_array($order->client_status, ['pk', 'crm']) && $params['bkicountactivecredit'] > $scoring_type->params['bkicountactivecredit_old']) {
+            $params = json_decode($equifax->body, true);
 
-            if ($params['creditsCreatedlast7day'] == $scoring_type->params['creditsCreatedlast7day']) {
-                $reason = 'creditsCreatedlast7day';
+            if (in_array($order->client_status, ['nk', 'rep']) && $params['bkicountactivecredit'] > $scoring_type->params['bkicountactivecredit_new'] || in_array($order->client_status, ['pk', 'crm']) && $params['bkicountactivecredit'] > $scoring_type->params['bkicountactivecredit_old']) {
+
+                if ($params['creditsCreatedlast7day'] == $scoring_type->params['creditsCreatedlast7day']) {
+                    $reason = 'creditsCreatedlast7day';
+                }
+                if ($params['bkiscoring'] < $scoring_type->params['bkiscoring_min'] || $params['bkiscoring'] > $scoring_type->params['bkiscoring_max']) {
+                    $reason = 'bkiscoring';
+                }
+                if ($params['interestForLastMonth'] > $scoring_type->params['interestForLastMonth']) {
+                    $reason = 'interestForLastMonth';
+                }
+                if ($params['credit_prolongation_count_contracts_with_age_180_type_19'] < $scoring_type->params['credit_prolongation_count_contracts_with_age_180_type_19']) {
+                    $reason = 'credit_prolongation_count_contracts_with_age_180_type_19';
+                }
             }
-            if ($params['bkiscoring'] < $scoring_type->params['bkiscoring_min'] || $params['bkiscoring'] > $scoring_type->params['bkiscoring_max']) {
-                $reason = 'bkiscoring';
-            }
-            if ($params['interestForLastMonth'] > $scoring_type->params['interestForLastMonth']) {
-                $reason = 'interestForLastMonth';
-            }
-            if ($params['credit_prolongation_count_contracts_with_age_180_type_19'] < $scoring_type->params['credit_prolongation_count_contracts_with_age_180_type_19']) {
-                $reason = 'credit_prolongation_count_contracts_with_age_180_type_19';
-            }
+
+            $update = [
+                'status' => 'completed',
+                'body' => json_encode($params),
+                'string_result' => (isset($reason)) ? 'Отказ по переменной ' . $reason : 'Проверка пройдена',
+                'success' => (isset($reason)) ? 0 : 1
+            ];
+
+            $this->scorings->update_scoring($scoring_id, $update);
+
+            return $update;
         }
-
-        $update = [
-            'status' => 'completed',
-            'body' => json_encode($params),
-            'string_result' => (isset($reason)) ? 'Отказ по переменной ' . $reason: 'Проверка пройдена',
-            'success' => (isset($reason)) ? 0 : 1
-        ];
-
-        $this->scorings->update_scoring($scoring_id, $update);
-
-        return $update;
     }
 }
