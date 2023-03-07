@@ -87,6 +87,7 @@ class RunScoringsApp extends Core
                         case 'equifaxexpired':
                         case 'equifaxcompanies':
                         case 'equifaxbankrupt':
+                        case 'equifaxavgPaid':
 
                             $add_scoring = array(
                                 'user_id' => $order->user_id,
