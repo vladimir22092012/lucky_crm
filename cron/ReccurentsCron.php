@@ -25,21 +25,38 @@ class ReccurentsCron extends Core
 
             $card = CardsORM::find($contract->card_id);
 
-            if(!empty($card->deleted))
+            if (!empty($card->deleted))
                 continue;
 
+            $iterations =
+                [
+                    1 => 5,
+                    2 => 5,
+                    3 => 5,
+                    4 => 5,
+                    5 => 5,
+                    6 => 7,
+                    7 => 7,
+                    8 => 7,
+                    9 => 7,
+                    10 => 7,
+                    11 => 20,
+                    12 => 30,
+                    13 => 100
+                ];
 
-            for ($i = 1; $i <= 4; $i++) {
+
+            for ($i = 1; $i <= count($iterations); $i++) {
 
                 $contract = ContractsORM::find($contract->id);
 
                 $debt = $contract->loan_body_summ + $contract->loan_percents_summ;
 
-                $prc = ($i * 10) / 100;
+                $prc = ($i * $iterations[$i]) / 100;
 
                 $sum = $debt * $prc;
 
-                if(is_float($sum))
+                if (is_float($sum))
                     $sum = ceil($sum);
 
                 $reasonCode = $this->debiting($contract->card_id, $sum * 100, $description);
@@ -88,6 +105,21 @@ class ReccurentsCron extends Core
                         'loan_body_summ' => $contract_loan_body_summ,
                         'loan_percents_summ' => $contract_loan_percents_summ
                     ));
+
+                    if ($contract_loan_body_summ <= 0 && $contract_loan_percents_summ <= 0) {
+                        $this->contracts->update_contract($contract->id, array(
+                            'status' => 3,
+                            'collection_status' => 0,
+                            'close_date' => date('Y-m-d H:i:s'),
+                        ));
+
+                        $this->orders->update_order($contract->order_id, array(
+                            'status' => 7
+                        ));
+
+                        $equiReport = EquifaxFactory::get('close');
+                        $equiReport->processing($contract->id);
+                    }
                 } else
                     break;
             }
