@@ -2,6 +2,7 @@
 
 error_reporting(-1);
 ini_set('display_errors', 'Off');
+
 class OrderController extends Controller
 {
     private $ordertimer_delay = 480;
@@ -101,7 +102,7 @@ class OrderController extends Controller
                 case 'add_comment':
                     $this->action_add_comment();
                     break;
-                
+
                 case 'add_problem_loan':
                     $this->add_problem_loan();
                     break;
@@ -169,6 +170,10 @@ class OrderController extends Controller
 
                 case 'editLoanProfit':
                     return $this->action_editLoanProfit();
+                    break;
+
+                case 'addPay':
+                    return $this->actionAddPay();
                     break;
 
 
@@ -299,7 +304,7 @@ class OrderController extends Controller
                         $this->design->assign('contract', $contract);
 
                         $code = $this->helpers->c2o_encode($contract->id);
-                        $short_link = $this->config->main_domain.'/p/'.$code;
+                        $short_link = $this->config->main_domain . '/p/' . $code;
                         $this->design->assign('short_link', $short_link);
                     }
 
@@ -318,16 +323,14 @@ class OrderController extends Controller
                             if (in_array($scoring->type, ['juicescore', 'efrsb', 'whatsapp', 'contact']))
                                 $scoring->body = unserialize($scoring->body);
 
-                            if($scoring->type == 'juicescore')
-                            {
-                                if(!empty($scoring->body['Predictors']))
+                            if ($scoring->type == 'juicescore') {
+                                if (!empty($scoring->body['Predictors']))
                                     $scoring->body['Predictors'] = (array)$scoring->body['Predictors'];
 
                                 $juiceScore = $scoring;
                             }
 
-                            if($scoring->type == 'equifax')
-                            {
+                            if ($scoring->type == 'equifax') {
                                 $scoring->body = json_decode($scoring->body, true);
                                 $equifaxScore = $scoring->body;
 
@@ -370,7 +373,7 @@ class OrderController extends Controller
                                     ];
                             }
                             //echo '<pre>';print_r($equifaxScore);echo'</pre>';
-                    
+
                             if ($scoring->type == 'scorista') {
                                 $scoring->body = json_decode($scoring->body);
                                 if (!empty($scoring->body->equifaxCH))
@@ -392,7 +395,7 @@ class OrderController extends Controller
                                     }
                                 }
                             }
-                            if ($scoring->type == 'nbki' ) {
+                            if ($scoring->type == 'nbki') {
                                 $scoring->body = unserialize($scoring->body);
                             }
 
@@ -535,8 +538,7 @@ class OrderController extends Controller
         }
 
         $scoring_types = array();
-        foreach ($this->scorings->get_types(array('active' => true)) as $type)
-        {
+        foreach ($this->scorings->get_types(array('active' => true)) as $type) {
             if ($type->off_pk == 1 && in_array($order->client_status, ['pk', 'crm']))
                 continue;
             else
@@ -895,7 +897,7 @@ class OrderController extends Controller
             return array('error' => 'Сумма займа должна быть не более 15000 руб!');
 
         if ($order->period > $this->settings->loan_max_period)
-            return array('error' => 'Срок займа должен быть не более '.$this->settings->loan_max_period.' дней!');
+            return array('error' => 'Срок займа должен быть не более ' . $this->settings->loan_max_period . ' дней!');
 
         if ($order->status != 1)
             return array('error' => 'Неверный статус заявки, возможно Заявка уже одобрена или получен отказ');
@@ -978,7 +980,7 @@ class OrderController extends Controller
             return array('error' => 'Сумма займа должна быть не более 15000 руб!');
 
         if ($order->period > $this->settings->loan_max_period)
-            return array('error' => 'Срок займа должен быть не более '.$this->settings->loan_max_period.' дней!');
+            return array('error' => 'Срок займа должен быть не более ' . $this->settings->loan_max_period . ' дней!');
 
         $update = array(
             'status' => 2,
@@ -1076,7 +1078,7 @@ class OrderController extends Controller
             'user_id' => $order->user_id,
         ));
 
-        if($order->utm_source == 'guruleads')
+        if ($order->utm_source == 'guruleads')
             Guruleads::sendRequest(['orderId' => $order_id, 'method' => 'sendCancelledPostback']);
 
         $equiReport = EquifaxFactory::get('cancelled');
@@ -2798,7 +2800,8 @@ class OrderController extends Controller
         exit;
     }
 
-        private function add_problem_loan() {
+    private function add_problem_loan()
+    {
         $user_id = $this->request->post('user_id', 'integer');
         $order_id = $this->request->post('order_id', 'integer');
         $problem_loan_name = $this->request->post('problem_loan_name', 'string');
@@ -2866,7 +2869,7 @@ class OrderController extends Controller
 
         // // echo'<pre>';print_r($contract->user_id);echo'</pre>';
 
-        $document = array(            
+        $document = array(
             'user_id' => $user_id,
             'order_id' => $order_id,
             'contract_id' => $contract->id,
@@ -2876,7 +2879,7 @@ class OrderController extends Controller
 
         // $this->json_output(array('error' => 'Не удалось добавить!'));
         // $this->json_output(array('error' => json_encode($contract)));
-        if ($document_id = $this->documents->create_document($document)){
+        if ($document_id = $this->documents->create_document($document)) {
             $this->json_output(array(
                 'success' => 1,
                 'created' => date('d.m.Y H:i:s'),
@@ -2885,9 +2888,83 @@ class OrderController extends Controller
                 // 'official' => $official,
                 // 'manager_name' => $this->manager->name,
             ));
-        }    
-        else {
+        } else {
             $this->json_output(array('error' => 'Не удалось добавить!'));
         }
+    }
+
+    private function actionAddPay()
+    {
+        $paySum = $this->request->post('paySum');
+        $payDate = $this->request->post('payDate');
+        $amountPay = $paySum;
+        $contractId = $this->request->post('contractId');
+
+        $paySum = str_replace(',', '.', $paySum);
+        $paySum = trim($paySum);
+
+        $contract = ContractsORM::find($contractId);
+
+        // списываем основной долг
+        $contract_loan_body_summ = (float)$contract->loan_body_summ;
+        if ($contract->loan_body_summ > 0) {
+            if ($paySum >= $contract->loan_body_summ) {
+                $contract_loan_body_summ = 0;
+                $paySum = $paySum - $contract->loan_body_summ;
+            } else {
+                $contract_loan_body_summ = $contract->loan_body_summ - $paySum;
+                $paySum = 0;
+            }
+        }
+
+        // списываем проценты
+        $contract_loan_percents_summ = (float)$contract->loan_percents_summ;
+        if ($contract->loan_percents_summ > 0) {
+            if ($paySum >= $contract->loan_percents_summ) {
+                $contract_loan_percents_summ = 0;
+                $paySum = $paySum - $contract->loan_percents_summ;
+            } else {
+                $contract_loan_percents_summ = $contract->loan_percents_summ - $paySum;
+                $paySum = 0;
+            }
+        }
+
+        if ($contract_loan_percents_summ == 0 && $contract_loan_body_summ == 0)
+            $this->closeContract($contract->id, $contract->order_id);
+
+        $this->operations->add_operation(array(
+            'contract_id' => $contract->id,
+            'user_id' => $contract->user_id,
+            'order_id' => $contract->order_id,
+            'type' => 'PAY',
+            'amount' => $amountPay,
+            'created' => date('Y-m-d H:i:s', strtotime($payDate)),
+            'transaction_id' => 0,
+            'loan_body_summ' => 0,
+            'loan_percents_summ' => 0,
+            'loan_peni_summ' => 0,
+            'loan_charge_summ' => 0
+        ));
+
+        $this->contracts->update_contract($contract->id, array(
+            'loan_percents_summ' => $contract_loan_percents_summ,
+            'loan_peni_summ' => isset($contract_loan_peni_summ) ? $contract_loan_peni_summ : $contract->loan_peni_summ,
+            'loan_body_summ' => $contract_loan_body_summ,
+        ));
+
+        exit;
+    }
+
+    private function closeContract($contractId, $orderId)
+    {
+        $this->contracts->update_contract($contractId, array(
+            'status' => 3,
+            'collection_status' => 0,
+            'close_date' => date('Y-m-d H:i:s'),
+        ));
+
+        $this->orders->update_order($orderId, array(
+            'status' => 7
+        ));
     }
 }

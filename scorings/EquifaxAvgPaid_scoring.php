@@ -1,11 +1,11 @@
 <?php
 
-class EquifaxOverdue_scoring extends Core
+class EquifaxAvgPaid_scoring extends Core
 {
     public function run_scoring($scoring_id)
     {
         $scoring = $this->scorings->get_scoring($scoring_id);
-        $scoring_type = $this->scorings->get_type('EquifaxOverdue');
+        $scoring_type = $this->scorings->get_type('EquifaxExpired');
 
         $this->db->query("
         SELECT *
@@ -20,10 +20,11 @@ class EquifaxOverdue_scoring extends Core
         $equifax = $this->db->result();
 
         if (!empty($equifax)) {
+
             $params = json_decode($equifax->body, true);
 
-            if ($params['credit_count_active_overdue_11_12_13_sum_1000'] > $scoring_type->params['credit_count_active_overdue_11_12_13_sum_1000']) {
-                $reason = 'credit_count_active_overdue_11_12_13_sum_1000';
+            if ($params['credit_avg_paid_for_type_19_days_90'] > $scoring_type->params['credit_avg_paid_for_type_19_days_90']) {
+                $reason = 'credit_avg_paid_for_type_19_days_90';
             }
 
             $update = [
