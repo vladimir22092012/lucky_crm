@@ -55,7 +55,7 @@ class Fssp_scoring extends Core
             $maxExp = $this->scorings->get_type(3);
             $maxExp = $maxExp->params;
 
-            if(in_array($order->status, ['nk', 'rep']))
+            if(in_array($order->client_status, ['nk', 'rep']))
                 $maxExp = $maxExp['amount_nk'];
             else
                 $maxExp = $maxExp['amount'];

@@ -225,7 +225,7 @@ class Onec implements ApiInterface
     private static function sendTaxing($orderId)
     {
         $start = date('Y-m-d 00:00:00', strtotime('2022-11-08'));
-        $end = date('Y-m-d 23:59:59', strtotime('2023-03-01'));
+        $end = date('Y-m-d 23:59:59', strtotime('2023-03-10'));
 
         $percents = OperationsORM::where('type', 'PERCENTS')
             ->whereBetween('created', [$start, $end])
@@ -248,14 +248,14 @@ class Onec implements ApiInterface
             foreach ($operations as $operation) {
                 $contract = ContractsORM::find($operation->contract_id);
 
-                if(empty($contract))
+                if(empty($contract) || empty($contract->number))
                     continue;
 
                 self::$orderId = $contract->order_id;
 
                 $item[] =
                     [
-                        'НомерДоговора' => !empty($contract->number) ? $contract->number : date('md', $contract->create_date) . '-' . $contract->id,
+                        'НомерДоговора' => $contract->number,
                         'ВидНачисления' => 'Проценты',
                         'ДатаПлатежа' => date('Ymd000000', strtotime($contract->return_date)),
                         'Сумма' => $operation->amount
