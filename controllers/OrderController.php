@@ -293,6 +293,7 @@ class OrderController extends Controller
                     $d = date_diff(date_create(date('Y-m-d', strtotime($order->birth))), date_create(date('Y-m-d')));
                     $order->age = $d->format('%y');
 
+
                     if (!empty($order->contract_id)) {
                         if ($contract_operations = $this->operations->get_operations(array('contract_id' => $order->contract_id)))
                             foreach ($contract_operations as $contract_operation)
