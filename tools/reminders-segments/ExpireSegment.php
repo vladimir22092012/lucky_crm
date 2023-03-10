@@ -86,23 +86,6 @@ class ExpireSegment extends SegmentsAbstract
 
             $user = UsersORM::where('id', $contract->user_id)->first();
 
-
-            if (empty($user->time_zone))
-                continue;
-
-            $clientTime = gmdate('Y-m-d H:i:s', strtotime($user->time_zone));
-
-            $isHoliday = WeekendCalendarORM::where('date', date('Y-m-d'))->first();
-            $settings = new Settings();
-
-            if (!empty($isHoliday) && date('G', strtotime($clientTime)) < $settings->holiday_worktime['from'] && date('G', strtotime($clientTime)) > $settings->holiday_worktime['to'])
-                $canSend = 0;
-
-            if (empty($isHoliday) && date('G', strtotime($clientTime)) < $settings->workday_worktime['from'] && date('G', strtotime($clientTime)) > $settings->workday_worktime['to'])
-                $canSend = 0;
-
-
-
             if ($canSend == 1) {
                 $reminderLog =
                     [
