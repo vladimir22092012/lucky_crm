@@ -5,7 +5,7 @@ class EquifaxAvgPaid_scoring extends Core
     public function run_scoring($scoring_id)
     {
         $scoring = $this->scorings->get_scoring($scoring_id);
-        $scoring_type = $this->scorings->get_type('EquifaxExpired');
+        $scoring_type = $this->scorings->get_type('EquifaxAvgPaid');
 
         $this->db->query("
         SELECT *
@@ -23,7 +23,7 @@ class EquifaxAvgPaid_scoring extends Core
 
             $params = json_decode($equifax->body, true);
 
-            if ($params['credit_avg_paid_for_type_19_days_90'] > $scoring_type->params['credit_avg_paid_for_type_19_days_90']) {
+            if ($params['credit_avg_paid_for_type_19_days_90'] < $scoring_type->params['credit_avg_paid_for_type_19_days_90']) {
                 $reason = 'credit_avg_paid_for_type_19_days_90';
             }
 
