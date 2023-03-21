@@ -59,6 +59,11 @@ class Passport_scoring extends Core
             ];
         }
 
-        $this->scorings->update_scoring($scoring_id, $update);
+        if (!empty($update)){
+            $this->scorings->update_scoring($scoring_id, $update);
+            return $update;
+        }
+        
+        return null;
     }
 }
