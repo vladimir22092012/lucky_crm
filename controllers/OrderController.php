@@ -355,7 +355,7 @@ class OrderController extends Controller
                                         'credit_count_with_sum_more_300000' => $equifaxScore['credit_count_with_sum_more_300000'],
                                         'credit_avg_paid_for_type_19_days_90' => $equifaxScore['credit_avg_paid_for_type_19_days_90'],
                                         'credit_count_for_type_19_days_90' => $equifaxScore['credit_count_for_type_19_days_90'],
-                                        'credit_summ_for_type_19_days_90' => $equifaxScore['credit_summ_for_type_19_days_90'],
+                                        // 'credit_summ_for_type_19_days_90' => $equifaxScore['credit_summ_for_type_19_days_90'],
                                         'credit_avg_paid_for_type_19_days_180' => $equifaxScore['credit_avg_paid_for_type_19_days_180'],
                                         'credit_count_for_type_19_days_180' => $equifaxScore['credit_count_for_type_19_days_180'],
                                         'credit_summ_for_type_19_days_180' => $equifaxScore['credit_summ_for_type_19_days_180'],
@@ -372,8 +372,18 @@ class OrderController extends Controller
                                         'credit_count_with_active_not_0_3_20_deliqfrom_5_deliqto_30' => $equifaxScore['credit_count_with_active_not_0_3_20_deliqfrom_5_deliqto_30'],
                                         'credit_count_with_active_not_0_3_20_deliqfrom_60_deliqto_90' => $equifaxScore['credit_count_with_active_not_0_3_20_deliqfrom_60_deliqto_90']
                                     ];
+                                    if(array_key_exists('credit_count_for_type_19_days_90', $equifaxScore)){
+                                        $equifaxScore['credit_summ_for_type_19_days_90'] = $equifaxScore['credit_count_with_active_not_0_3_20_deliqfrom_60_deliqto_90'];
+                                    }
                             }
                             //echo '<pre>';print_r($equifaxScore);echo'</pre>';
+                            if ($scoring->type == 'EquifaxAvgPaid') {
+                                $scoring->body = json_decode($scoring->body);
+
+                                if(property_exists($scoring->body, 'credit_summ_for_type_19_days_90')){
+                                    $equifaxScore['credit_summ_for_type_19_days_90'] = $scoring->body->credit_summ_for_type_19_days_90;
+                                }
+                            }
 
                             if ($scoring->type == 'scorista') {
                                 $scoring->body = json_decode($scoring->body);
