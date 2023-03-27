@@ -28,18 +28,20 @@ class Contact_scoring extends Core
 
         if (isset($request['Source']) && $request['Source']['ResultsCount'] > 0) {
             foreach ($request['Source'] as $source) {
-                foreach ($source['Field'] as $field) {
-                    if ($field['FieldName'] == 'Name')
-                        $name = 'Имя: ' . $field['FieldValue'];
+                if(is_array($source) && array_key_exists('Field', $source)){
+                    foreach ($source['Field'] as $field) {
+                        if ($field['FieldName'] == 'Name')
+                            $name = 'Имя: ' . $field['FieldValue'];
 
-                    if ($field['FieldName'] == 'TagsCount')
-                    {
-                        $tags = 'Количество тегов: ' . $field['FieldValue'];
+                        if ($field['FieldName'] == 'TagsCount')
+                        {
+                            $tags = 'Количество тегов: ' . $field['FieldValue'];
 
-                        if($field['FieldValue'] < 2)
-                            $update['success'] = 0;
-                        else
-                            $update['success'] = 1;
+                            if($field['FieldValue'] < 2)
+                                $update['success'] = 0;
+                            else
+                                $update['success'] = 1;
+                        }
                     }
                 }
             }

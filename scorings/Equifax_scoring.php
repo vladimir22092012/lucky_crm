@@ -148,6 +148,7 @@ class Equifax_scoring extends Core
         }
 
         $this->scorings->update_scoring($scoring_id, $update);
+        return $update;
         exit;
     }
 
