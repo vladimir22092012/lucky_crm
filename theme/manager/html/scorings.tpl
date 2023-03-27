@@ -435,11 +435,11 @@
                                                             </div>
                                                         </div>
 
-                                                    {elseif $type->name == 'interestForLastMonth'}
+                                                    {elseif $type->name == 'EquifaxInterestForLastMonth'}
                                                         <div class="col-md-6">
                                                             <div class="form-group ">
                                                                 <label class="control-label">Отказать при: </label>
-                                                                <input type="text" name="settings[{$type->id}][params][credit_avg_paid_for_type_19_days_90]" value="{$type->params['credit_avg_paid_for_type_19_days_90']}" class="form-control" placeholder="" />
+                                                                <input type="text" name="settings[{$type->id}][params][interestForLastMonth]" value="{$type->params['interestForLastMonth']}" class="form-control" placeholder="" />
                                                                 </div>
                                                         </div>
                                                     {/if}
