@@ -76,68 +76,68 @@ class Equifax_scoring extends Core
             if ($response['bkiscoring'] < $scoreBall['min_bkiscoring'])
                 $reason = 'bkiscoring';
 
-            $user = UsersORM::find($order->user_id);
+            // $user = UsersORM::find($order->user_id);
 
-            $order->income = str_replace(' ', '', $order->income);
+            // $order->income = str_replace(' ', '', $order->income);
 
-            $pdn = round(($response['all_payment_active_credit_month'] / $user->income) * 100, 3);
+            // $pdn = round(($response['all_payment_active_credit_month'] / $user->income) * 100, 3);
 
-            UsersORM::where('id', $user->id)->update(['pdn' => $pdn]);
+            // UsersORM::where('id', $user->id)->update(['pdn' => $pdn]);
 
-            if(empty($reason))
-            {
-                if (in_array($order->client_status, ['nk', 'rep'])) {
-                    if ($response['bkicountactivecredit'] >= 1 && $response['bkicountactivecredit'] <= 5)
-                        $limit = 11000;
-                    elseif ($response['bkicountactivecredit'] >= 6 && $response['bkicountactivecredit'] <= 10)
-                        $limit = 9000;
-                    elseif ($response['bkicountactivecredit'] >= 11 && $response['bkicountactivecredit'] <= 29)
-                        $limit = 6000;
-                    elseif ($response['bkicountactivecredit'] >= 30)
-                        $reason = 'Отказ в лимите';
-                    else
-                        $reason = 'Отказ в лимите';
-                } else {
-                    $this->db->query("
-                SELECT count(*) as `count`
-                from s_contracts
-                where user_id = ?
-                and `status` = 3
-                ", $order->user_id);
+            // if(empty($reason))
+            // {
+            //     if (in_array($order->client_status, ['nk', 'rep'])) {
+            //         if ($response['bkicountactivecredit'] >= 1 && $response['bkicountactivecredit'] <= 5)
+            //             $limit = 11000;
+            //         elseif ($response['bkicountactivecredit'] >= 6 && $response['bkicountactivecredit'] <= 10)
+            //             $limit = 9000;
+            //         elseif ($response['bkicountactivecredit'] >= 11 && $response['bkicountactivecredit'] <= 29)
+            //             $limit = 6000;
+            //         elseif ($response['bkicountactivecredit'] >= 30)
+            //             $reason = 'Отказ в лимите';
+            //         else
+            //             $reason = 'Отказ в лимите';
+            //     } else {
+            //         $this->db->query("
+            //     SELECT count(*) as `count`
+            //     from s_contracts
+            //     where user_id = ?
+            //     and `status` = 3
+            //     ", $order->user_id);
 
-                    $countContracts = $this->db->result('count');
+            //         $countContracts = $this->db->result('count');
 
-                    $this->db->query("
-                SELECT *
-                from s_contracts
-                where user_id = ?
-                and `status` = 3
-                order by id desc
-                limit 1
-                ", $order->user_id);
+            //         $this->db->query("
+            //     SELECT *
+            //     from s_contracts
+            //     where user_id = ?
+            //     and `status` = 3
+            //     order by id desc
+            //     limit 1
+            //     ", $order->user_id);
 
-                    $lastContract = $this->db->result();
+            //         $lastContract = $this->db->result();
 
-                    $issuanceDate = new DateTime(date('Y-m-d', strtotime($lastContract->inssuance_date)));
-                    $returnDate = new DateTime(date('Y-m-d', strtotime($lastContract->return_date)));
+            //         $issuanceDate = new DateTime(date('Y-m-d', strtotime($lastContract->inssuance_date)));
+            //         $returnDate = new DateTime(date('Y-m-d', strtotime($lastContract->return_date)));
 
-                    if ($countContracts >= 2) {
-                        if (date_diff($issuanceDate, $returnDate)->days >= 35)
-                            $limit = $lastContract->amount + 3000;
-                        elseif (date_diff($issuanceDate, $returnDate)->days >= 15 && date_diff($issuanceDate, $returnDate)->days < 35)
-                            $limit = $lastContract->amount + 1000;
-                        elseif (date_diff($issuanceDate, $returnDate)->days >= 10 && date_diff($issuanceDate, $returnDate)->days < 15)
-                            $limit = $lastContract->amount;
-                        else
-                            $reason = 'Отказ в лимите';
-                    } else {
-                        if (date_diff($issuanceDate, $returnDate)->days > 10)
-                            $limit = $lastContract->amount;
-                        else
-                            $reason = 'Отказ в лимите';
-                    }
-                }
-            }
+            //         if ($countContracts >= 2) {
+            //             if (date_diff($issuanceDate, $returnDate)->days >= 35)
+            //                 $limit = $lastContract->amount + 3000;
+            //             elseif (date_diff($issuanceDate, $returnDate)->days >= 15 && date_diff($issuanceDate, $returnDate)->days < 35)
+            //                 $limit = $lastContract->amount + 1000;
+            //             elseif (date_diff($issuanceDate, $returnDate)->days >= 10 && date_diff($issuanceDate, $returnDate)->days < 15)
+            //                 $limit = $lastContract->amount;
+            //             else
+            //                 $reason = 'Отказ в лимите';
+            //         } else {
+            //             if (date_diff($issuanceDate, $returnDate)->days > 10)
+            //                 $limit = $lastContract->amount;
+            //             else
+            //                 $reason = 'Отказ в лимите';
+            //         }
+            //     }
+            // }
 
             $update = [
                 'status' => 'completed',
