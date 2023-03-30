@@ -407,13 +407,13 @@
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="form-group ">
-                                                                <label class="control-label">Максимальное количество пролонгаций за последние полгода по микрозаймам</label>
+                                                                <label class="control-label">Максимальное количество запросов за последний месяц</label>
                                                                 <input type="text" name="settings[{$type->id}][params][credit_prolongation_count_contracts_with_age_180_type_19]" value="{$type->params['credit_prolongation_count_contracts_with_age_180_type_19']}" class="form-control" placeholder="" />
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="form-group ">
-                                                                <label class="control-label">Количество запросов за последний месяц</label>
+                                                                <label class="control-label">Количество пролонгаций за последний месяц</label>
                                                                 <input type="text" name="settings[{$type->id}][params][interestForLastMonth]" value="{$type->params['interestForLastMonth']}" class="form-control" placeholder="" />
                                                             </div>
                                                         </div>
