@@ -375,7 +375,6 @@
                                                             </div>
                                                         </div>
                                                     {elseif $type->name == 'EquifaxBankrupt'}
-                                                    {*}
                                                         <div class="col-md-6">
                                                             <div class="form-group ">
                                                                 <label class="control-label">Количество активных займов (не закрытых по всем типам) для новых клиентов</label>
@@ -408,24 +407,16 @@
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="form-group ">
-                                                                <label class="control-label">Максимальное количество запросов за последний месяц</label>
-                                                                <input type="text" name="settings[{$type->id}][params][credit_prolongation_count_contracts_with_age_180_type_19]" value="{$type->params['credit_prolongation_count_contracts_with_age_180_type_19']}" class="form-control" placeholder="" />
+                                                                <label class="control-label">Количество запросов за последний месяц</label>
+                                                                <input type="text" name="settings[{$type->id}][params][interestForLastMonth]" value="{$type->params['interestForLastMonth']}" class="form-control" placeholder="" />
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="form-group ">
-                                                                <label class="control-label">Количество пролонгаций за последний месяц</label>
-                                                                <input type="text" name="settings[{$type->id}][params][interestForLastMonth]" value="{$type->params['interestForLastMonth']}" class="form-control" placeholder="" />
+                                                                <label class="control-label">Максимальное количество пролонгаций за последние полгода по микрозаймам</label>
+                                                                <input type="text" name="settings[{$type->id}][params][credit_prolongation_count_contracts_with_age_180_type_19]" value="{$type->params['credit_prolongation_count_contracts_with_age_180_type_19']}" class="form-control" placeholder="" />
                                                             </div>
                                                         </div>
-                                                    {*}
-
-                                                    <div class="col-md-6">
-                                                        <div class="form-group ">
-                                                            <label class="control-label">Количество активных займов (не закрытых по всем типам)</label>
-                                                            <input type="text" name="settings[{$type->id}][params][bkicountactivecredit_old]" value="{$type->params['bkicountactivecredit_old']}" class="form-control" placeholder="" />
-                                                        </div>
-                                                    </div>
 
                                                     {elseif $type->name == 'EquifaxAvgPaid'}
                                                         <div class="col-md-6">
@@ -433,14 +424,6 @@
                                                                 <label class="control-label">Отказать при: </label>
                                                                 <input type="text" name="settings[{$type->id}][params][credit_avg_paid_for_type_19_days_90]" value="{$type->params['credit_avg_paid_for_type_19_days_90']}" class="form-control" placeholder="" />
                                                             </div>
-                                                        </div>
-
-                                                    {elseif $type->name == 'EquifaxInterestForLastMonth'}
-                                                        <div class="col-md-6">
-                                                            <div class="form-group ">
-                                                                <label class="control-label">Отказать при: </label>
-                                                                <input type="text" name="settings[{$type->id}][params][interestForLastMonth]" value="{$type->params['interestForLastMonth']}" class="form-control" placeholder="" />
-                                                                </div>
                                                         </div>
                                                     {/if}
 
