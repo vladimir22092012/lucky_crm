@@ -5,6 +5,7 @@ class Contact_scoring extends Core
     public function run_scoring($scoring_id)
     {
         $scoring = $this->scorings->get_scoring($scoring_id);
+        $scoring_type = $this->scorings->get_type('contact');
         $order = $this->orders->get_order($scoring->order_id);
         $phone = preg_replace('/[^0-9]/', '', $order->phone_mobile);
 
@@ -33,11 +34,11 @@ class Contact_scoring extends Core
                         if ($field['FieldName'] == 'Name')
                             $name = 'Имя: ' . $field['FieldValue'];
 
-                        if ($field['FieldName'] == 'TagsCount')
+                        if ($field['FieldName'] == 'TagsCount') 
                         {
                             $tags = 'Количество тегов: ' . $field['FieldValue'];
 
-                            if($field['FieldValue'] < 2)
+                            if($field['FieldValue'] < $scoring_type->params['tegs_count'])
                                 $update['success'] = 0;
                             else
                                 $update['success'] = 1;

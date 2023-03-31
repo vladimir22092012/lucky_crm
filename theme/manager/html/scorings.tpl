@@ -425,6 +425,14 @@
                                                                 <input type="text" name="settings[{$type->id}][params][credit_avg_paid_for_type_19_days_90]" value="{$type->params['credit_avg_paid_for_type_19_days_90']}" class="form-control" placeholder="" />
                                                             </div>
                                                         </div>
+
+                                                    {elseif $type->name == 'contact'}
+                                                        <div class="col-md-6">
+                                                            <div class="form-group ">
+                                                                <label class="control-label">Отказать при rоличестве тегов меньше: </label>
+                                                                <input type="text" name="settings[{$type->id}][params][tegs_count]" value="{$type->params['tegs_count']}" class="form-control" placeholder="" />
+                                                            </div>
+                                                        </div>
                                                     {/if}
 
                                                 </div>
