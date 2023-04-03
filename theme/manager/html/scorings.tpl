@@ -433,6 +433,15 @@
                                                                 <input type="text" name="settings[{$type->id}][params][tegs_count]" value="{$type->params['tegs_count']}" class="form-control" placeholder="" />
                                                             </div>
                                                         </div>
+                                                        
+                                                    {elseif $type->name == 'loan'}
+                                                        <div class="col-md-6">
+                                                            <div class="form-group ">
+                                                                <label class="control-label">Отказать если предыдущий займ был выдан менее дней назад: </label>
+                                                                <input type="text" name="settings[{$type->id}][params][prew_loan]" value="{$type->params['prew_loan']}" class="form-control" placeholder="" />
+                                                            </div>
+                                                        </div>
+
                                                     {/if}
 
                                                 </div>
