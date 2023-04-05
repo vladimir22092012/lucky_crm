@@ -45,26 +45,24 @@ class IssuanceCron extends Core
 
 
                     // Снимаем страховку если есть
-                    if (!empty($contract->service_insurance)) 
-                    {
+                    if (!empty($contract->service_insurance)) {
                         $insurance_cost = $contract->amount * 0.25;
 
-                        if ($insurance_cost > 0)
-                        {
+                        if ($insurance_cost > 0) {
                             $insurance_amount = $insurance_cost * 100;
-    
+
                             $description = 'Страховой полис';
-    
+
                             $xml = $this->best2pay->purchase_by_token($contract->card_id, $insurance_amount, $description);
                             $status = (string)$xml->state;
-    
+
                             if ($status == 'APPROVED') {
                                 $transaction = $this->transactions->get_register_id_transaction($xml->order_id);
-    
+
                                 $contract = $this->contracts->get_contract($contract->id);
-    
+
                                 $payment_amount = $insurance_cost;
-    
+
                                 $operation_id = $this->operations->add_operation(array(
                                     'contract_id' => $contract->id,
                                     'user_id' => $contract->user_id,
@@ -74,12 +72,12 @@ class IssuanceCron extends Core
                                     'created' => date('Y-m-d H:i:s'),
                                     'transaction_id' => $transaction->id,
                                 ));
-    
+
                                 $dt = new DateTime();
                                 $dt->add(new DateInterval('P6M'));
                                 $end_date = $dt->format('Y-m-d 23:59:59');
 
-                                try{
+                                try {
                                     $contract->insurance = new InsurancesORM();
                                     $contract->insurance->amount = $insurance_cost;
                                     $contract->insurance->user_id = $contract->user_id;
@@ -92,16 +90,15 @@ class IssuanceCron extends Core
                                     $contract->insurance->number = InsurancesORM::create_number($contract->insurance->id);
 
                                     InsurancesORM::where('id', $contract->insurance->id)->update(['number' => $contract->insurance->number]);
-                                }catch (Exception $e)
-                                {
+                                } catch (Exception $e) {
 
                                 }
-    
+
                                 $this->contracts->update_contract($contract->id, array(
                                     'insurance_id' => $contract->insurance->id
                                 ));
-    
-    
+
+
                                 $contract->insurance_id = $contract->insurance->id;
                                 //TODO: Страховой полиc
                                 $this->create_document('POLIS_STRAHOVANIYA', $contract);
@@ -132,8 +129,10 @@ class IssuanceCron extends Core
 
                     Onec::sendRequest(['method' => 'send_loan', 'order_id' => $contract->order_id]);
 
-                    $equifax = EquifaxFactory::get('issuance');
-                    $equifax->processing($contract->id);
+                    $order = OrdersORM::find($contract->order_id);
+
+                    if ($order->utm_source == 'adspire_test')
+                        Adspire::sendRequest($order);
 
                 } elseif ($res == false) {
 
