@@ -971,6 +971,7 @@ class OrderController extends Controller
         $equiReport = EquifaxFactory::get('approve');
         $equiReport->processing($order_id);
 
+        $this->Leadfinances->send_lead($order_id);
 
         return array('success' => 1, 'status' => 2);
 
@@ -1090,6 +1091,8 @@ class OrderController extends Controller
 
         $equiReport = EquifaxFactory::get('cancelled');
         $equiReport->processing($order_id);
+
+        $this->Leadfinances->send_lead($order_id);
 
         return array('success' => 1, 'status' => $status);
     }
