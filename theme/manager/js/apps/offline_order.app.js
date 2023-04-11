@@ -855,11 +855,11 @@ console.log(resp);
     var _check_amount = function(){
         var amount = parseInt($('[name=amount]').val())
         
-        if (amount > 15000)
+        /*if (amount > 15000)
         {
             $('.js-check-amount').append('<div class="check-amount-info"><small class="text-danger">Максимальная сумма 15000 руб!</small></div>')
             return false;
-        }
+        }*/
         
         $('.js-check-amount .check-amount-info').remove();
         return true;

@@ -904,8 +904,8 @@ class OrderController extends Controller
         if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer')))
             return array('error' => 'Не хватает прав для выполнения операции');
 
-        if ($order->amount > 15000)
-            return array('error' => 'Сумма займа должна быть не более 15000 руб!');
+        /*if ($order->amount > 15000)
+            return array('error' => 'Сумма займа должна быть не более 15000 руб!');*/
 
         if ($order->period > $this->settings->loan_max_period)
             return array('error' => 'Срок займа должен быть не более ' . $this->settings->loan_max_period . ' дней!');
@@ -987,8 +987,8 @@ class OrderController extends Controller
         if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer')))
             return array('error' => 'Не хватает прав для выполнения операции');
 
-        if ($order->amount > 15000)
-            return array('error' => 'Сумма займа должна быть не более 15000 руб!');
+        /*if ($order->amount > 15000)
+            return array('error' => 'Сумма займа должна быть не более 15000 руб!');*/
 
         if ($order->period > $this->settings->loan_max_period)
             return array('error' => 'Срок займа должен быть не более ' . $this->settings->loan_max_period . ' дней!');
