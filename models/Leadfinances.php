@@ -45,7 +45,7 @@ class Leadfinances extends Core
 
         $this->send_lead_to_leadfinance($order);
         //$this->add_lead_to_teamwin($order);
-        $this->guruleads($order);
+        // $this->guruleads($order);
         //$this->leadgid($order);
         //$this->leadea($order);
         //$this->reject_ru($order); //из-за делея в 7 дней отправляется отдельным методом
