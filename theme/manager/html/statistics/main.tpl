@@ -142,6 +142,14 @@
                         </a>
                     </div>
                 </div>
+                <div class="col-md-6 col-lg-3 col-xlg-3">
+                    <div class="card card-info card-danger">
+                        <a href="statistics/divisions" class="box text-center">
+                            <h1 class="font-light text-white">Подразделения</h1>
+                            <h6 class="text-white">Отчет по Подразделениям</h6>
+                        </a>
+                    </div>
+                </div>
             {/if}
             {if in_array('penalty_statistics', $manager->permissions)}
                 <div class="col-md-6 col-lg-3 col-xlg-3">

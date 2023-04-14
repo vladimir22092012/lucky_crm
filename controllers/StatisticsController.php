@@ -80,6 +80,10 @@ class StatisticsController extends Controller
                     return $this->action_reminders();
                     break;
 
+                case 'divisions':
+                    return $this->action_divisions();
+                    break;
+
                 default:
                     return false;
 
@@ -2192,6 +2196,280 @@ class StatisticsController extends Controller
         }
 
         return $this->design->fetch('statistics/reminders.tpl');
+    }
+
+    private function action_divisions()
+    {
+        if ($daterange = $this->request->get('daterange')) {
+            list($from, $to) = explode('-', $daterange);
+
+            $date_from = date('Y-m-d', strtotime($from));
+            $date_to = date('Y-m-d', strtotime($to));
+
+            $this->design->assign('date_from', $date_from);
+            $this->design->assign('date_to', $date_to);
+            $this->design->assign('from', $from);
+            $this->design->assign('to', $to);
+
+            $date_to_plus = date("Y-m-d", strtotime("+1 days", strtotime($date_to)));
+            
+            // $date_from = '0000-00-00';
+
+
+            $query = $this->db->placehold("
+            SELECT date, status
+            FROM __orders
+            WHERE  DATE(date) >= ? AND DATE(date) <= ? 
+            ", $date_from, $date_to);
+            $this->db->query($query);
+
+            $orders = $this->db->results();
+
+            $orders_array = [];
+            $orders_array['count_all'] = 0;
+            $orders_array['count_issued'] = 0;
+            $orders_array['count_rejected'] = 0;
+            $orders_array['count_waiting'] = 0;
+
+            foreach ($orders as $order) {
+                $orders_array['count_all'] += 1;
+                if ($order->status == 5 || $order->status == 7)
+                    $orders_array['count_issued'] += 1;
+                elseif ($order->status == 0 || $order->status == 1 || $order->status == 2 || $order->status == 4)
+                    $orders_array['count_waiting'] += 1;
+                else
+                    $orders_array['count_rejected'] += 1;
+            }
+
+            $query = $this->db->placehold("
+                SELECT accept_date, close_date, status 
+                FROM __contracts 
+                WHERE  DATE(accept_date) >= ? AND DATE(accept_date) <= ? 
+                AND (status=2 OR status=3 OR status=4)
+                    ", $date_from, $date_to);
+            $this->db->query($query);
+            $new_clients = $this->db->results();
+
+            $query = $this->db->placehold("
+                SELECT user_id, count(*) as cou 
+                FROM __contracts 
+                GROUP BY user_id 
+                    ");
+            $this->db->query($query);
+
+            $all_clients = $this->db->results();
+
+            $all_clients_array = [];
+            $all_clients_array['all'] = 0;
+            $all_clients_array['active'] = 0;
+            $all_clients_array['passive'] = 0;
+            $all_clients_array['delay'] = 0;
+
+            foreach ($all_clients as $all_client) {
+                $contracts = $this->contracts->get_contracts(array('user_id' => $all_client->user_id));
+                $contract = end($contracts);
+
+                $all_clients_array['all'] += 1;
+                if(is_null($contract->close_date) || $contract->close_date > $date_to_plus)
+                    $all_clients_array['active'] += 1;
+                else
+                    $all_clients_array['passive'] += 1;
+
+                if(is_null($contract->close_date) && $contract->return_date < $date_to_plus)
+                    $all_clients_array['delay'] += 1;
+
+                if(is_null($contract->close_date) && $contract->return_date < $date_to_plus)
+                    $all_clients_array['delay'] += 1;
+                
+                // if($contract->prolongation && $contract->return_date < $date_to_plus)
+                //     $all_clients_array['prolongation'] += 1;
+            }
+
+            $query = $this->db->placehold("
+            SELECT count(contract_id) as cou 
+            FROM __prolongations 
+            WHERE  DATE(created) >= ? AND DATE(created) <= ? 
+            ", $date_from, $date_to);
+
+            $this->db->query($query);
+
+            $all_clients_array['prolongation'] = $this->db->results()[0]->cou;
+
+            $query = $this->db->placehold("
+                SELECT amount 
+                FROM __operations
+                WHERE type='PAY' AND
+                DATE(created) >= ? AND DATE(created) <= ? 
+            ", $date_from, $date_to);
+            $this->db->query($query);
+
+            $payments = $this->db->results();
+
+            $payments_array = [];
+            $payments_array['count'] = 0;
+            $payments_array['sum'] = 0;
+            $payments_array['average'] = 0;
+
+            foreach ($payments as $payment) {
+                $payments_array['count'] += 1;
+                $payments_array['sum'] += $payment->amount;
+            }
+            $payments_array['average'] = round($payments_array['sum'] / $payments_array['count'], 2);
+
+
+            $query = $this->db->placehold("
+            SELECT
+                c.status,
+                o.amount,
+                o.type
+            FROM __contracts AS c
+            LEFT JOIN __operations AS o
+            ON o.contract_id = c.id
+            WHERE (o.type = 'P2P') AND (c.status = 2  OR c.status = 4)
+            ");
+            $this->db->query($query);
+
+            $sum_contracts = $this->db->results();
+
+            $sum_contracts_array = [];
+            $sum_contracts_array['risk'] = 0;
+            $sum_contracts_array['active_sum'] = 0;
+
+            foreach ($sum_contracts as $sum_contract) {
+                if($sum_contract->status == 4){
+                    $sum_contracts_array['risk'] += $sum_contract->amount;
+                }
+                if($sum_contract->status == 2 || $sum_contract->status == 4){
+                    $sum_contracts_array['active_sum'] += $sum_contract->amount;
+                }
+            }
+
+
+            $query = $this->db->placehold("
+            SELECT id, status
+            FROM __contracts 
+            WHERE status = 2  OR status = 4
+            ORDER BY id
+            ");
+            $this->db->query($query);
+
+            $pay_debts = $this->db->results();
+
+            $pay_debts_array = [];
+            $pay_debts_array ['count'] = 0;
+            $pay_debts_array ['body'] = 0;
+            $pay_debts_array ['percents'] = 0;
+
+            foreach ($pay_debts as $pay_debt) {
+                $contract_operations = $this->operations->operations->get_operations(array('contract_id'=>$pay_debt->id));
+
+                $getting_percents = false;
+                $loan_body_summ = 0;
+                $loan_percents_summ = 0;
+                $loan_peni_summ = 0;
+
+                foreach ($contract_operations as $contract_operation) {
+                    if($contract_operation->type == 'PERCENTS'){
+                        if($contract_operation->loan_body_summ > $loan_body_summ)
+                            $loan_body_summ = $contract_operation->loan_body_summ;
+                        if($contract_operation->loan_percents_summ > $loan_percents_summ)
+                            $loan_percents_summ = $contract_operation->loan_percents_summ;
+                        if($contract_operation->loan_peni_summ > $loan_peni_summ)
+                            $loan_peni_summ = $contract_operation->loan_peni_summ;
+                    }
+                    else{
+                        if(!$getting_percents){
+                            $loan_body_summ = $contract_operation->amount;
+                        }
+                    }
+                }
+                $pay_debts_array ['count'] += 1;
+                $pay_debts_array ['body'] += $loan_body_summ;
+                $pay_debts_array ['percents'] += $loan_percents_summ;
+            }
+
+
+            $query = $this->db->placehold("
+            SELECT id, status
+            FROM __contracts 
+            WHERE status = 3 
+            AND DATE(close_date) >= ? AND DATE(close_date) <= ?
+            ORDER BY id
+            ", $date_from, $date_to);
+            $this->db->query($query);
+
+            $payd_debts = $this->db->results();
+
+            $payd_debts_array = [];
+            $payd_debts_array ['count'] = 0;
+            $payd_debts_array ['body'] = 0;
+            $payd_debts_array ['percents'] = 0;
+            $payd_debts_array ['peni'] = 0;
+            $payd_debts_array ['all'] = 0;
+
+            foreach ($payd_debts as $payd_debt) {
+                $contract_operations = $this->operations->operations->get_operations(array('contract_id'=>$payd_debt->id));
+
+                $getting_percents = false;
+                $loan_body_summ = 0;
+                $loan_percents_summ = 0;
+                $loan_peni_summ = 0;
+
+                foreach ($contract_operations as $contract_operation) {
+                    if($contract_operation->type == 'PERCENTS'){
+                        if($contract_operation->loan_body_summ > $loan_body_summ)
+                            $loan_body_summ = $contract_operation->loan_body_summ;
+                        if($contract_operation->loan_percents_summ > $loan_percents_summ)
+                            $loan_percents_summ = $contract_operation->loan_percents_summ;
+                        if($contract_operation->loan_peni_summ > $loan_peni_summ)
+                            $loan_peni_summ = $contract_operation->loan_peni_summ;
+                    }
+                    else{
+                        if(!$getting_percents){
+                            $loan_body_summ = $contract_operation->amount;
+                        }
+                    }
+                }
+                $payd_debts_array['count'] += 1;
+                $payd_debts_array['body'] += $loan_body_summ;
+                $payd_debts_array['percents'] += $loan_percents_summ;
+                $payd_debts_array['peni'] += $loan_peni_summ;
+                $payd_debts_array['all'] += $loan_peni_summ + $loan_percents_summ + $loan_body_summ;
+            }
+
+
+            $query = $this->db->placehold("
+                SELECT amount 
+                FROM __operations
+                WHERE (type = 'INSURANCE' OR type = 'BUD_V_KURSE' OR type = 'REJECT_REASON')
+                AND DATE(created) >= ? AND DATE(created) <= ? 
+            ", $date_from, $date_to);
+            $this->db->query($query);
+
+            $services = $this->db->results();
+
+            $services_array = [];
+            $services_array['count'] = 0;
+            $services_array['amount'] = 0;
+
+            foreach ($services as $service) {
+                $services_array['count'] += 1;
+                $services_array['amount'] += $service->amount;
+            }
+
+            
+            $this->design->assign('orders_array', $orders_array);
+            $this->design->assign('new_clients', $new_clients);
+            $this->design->assign('all_clients_array', $all_clients_array);
+            $this->design->assign('payments_array', $payments_array);
+            $this->design->assign('sum_contracts_array', $sum_contracts_array);
+            $this->design->assign('pay_debts_array', $pay_debts_array);
+            $this->design->assign('payd_debts_array', $payd_debts_array);
+            $this->design->assign('services_array', $services_array);
+            
+        }
+
+        return $this->design->fetch('statistics/divisions.tpl');
     }
 
 }
