@@ -23,7 +23,7 @@ class EquifaxExpired_scoring extends Core
 
             $params = json_decode($equifax->body, true);
 
-            if ($params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] > $scoring_type->params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60']) {
+            if ($params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60'] >= $scoring_type->params['credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60']) {
 
                 if ($params['credit_count_active_overdue_11_12_13_sum_1000'] > $scoring_type->params['credit_count_active_overdue_11_12_13_sum_1000']) {
                     $reason = 'credit_count_with_active_not_0_3_20_deliqfrom_30_deliqto_60';
