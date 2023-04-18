@@ -621,9 +621,10 @@ class StatisticsController extends Controller
                     o.transaction_id,
                     o.type,
                     o.amount,
-                    t.created,
+                    o.created,
                     o.sent_date,
                     c.number AS contract_number,
+                    u.id AS uder_id,
                     u.lastname,
                     u.firstname,
                     u.patronymic,
@@ -648,18 +649,24 @@ class StatisticsController extends Controller
                 ON i.id = t.insurance_id
                 WHERE o.type != 'INSURANCE'
                 $search_filter
-                AND DATE(t.created) >= ?
-                AND DATE(t.created) <= ?
-                AND t.reason_code = 1
-                ORDER BY t.created
+                AND DATE(o.created) >= ?
+                AND DATE(o.created) <= ?
+                AND (t.reason_code = 1 OR o.type = 'PAY-REC')
+                ORDER BY o.created
             ", $date_from, $date_to);
             $this->db->query($query);
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($query);echo '</pre><hr />';
             $operations = array();
             foreach ($this->db->results() as $op) {
-                if ($xml = simplexml_load_string($op->callback_response)) {
-                    $op->pan = (string)$xml->pan;
-                }
+                // if ($xml = simplexml_load_string($op->callback_response)) {
+                //     $op->pan = (string)$xml->pan;
+                // }
+                $op->pan = $this->cards->get_cards(array('user_id' => $op->user_id))[0]->pan;
+
+
+                if($op->type == 'PAY-REC')
+                    $op->description = 'Реккурентное списание по договору ' . $op->contract_number;
+
                 $operations[$op->id] = $op;
             }
 
