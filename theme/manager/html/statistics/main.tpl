@@ -150,6 +150,14 @@
                         </a>
                     </div>
                 </div>
+                <div class="col-md-6 col-lg-3 col-xlg-3">
+                    <div class="card card-primary card-danger">
+                        <a href="statistics/active" class="box text-center">
+                            <h1 class="font-light text-white">Активные</h1>
+                            <h6 class="text-white">Отчет по активным займам</h6>
+                        </a>
+                    </div>
+                </div>
             {/if}
             {if in_array('penalty_statistics', $manager->permissions)}
                 <div class="col-md-6 col-lg-3 col-xlg-3">
