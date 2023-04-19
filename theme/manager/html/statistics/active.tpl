@@ -79,7 +79,7 @@
                         <table class="table table-hover">
 
                             <tr>
-                                <th>№</th>
+                                <th>№11</th>
                                 <th>№ по гр.</th>
                                 <th>Регион</th>
                                 <th>Филиал</th>
@@ -126,7 +126,7 @@
                                         </a>
                                     </td>
                                     <td>{$contract->contract_id}</td>
-                                    <td>{$contract->inssuance_date}</td>
+                                    <td>{date('Y-m-d', strtotime($contract->date))}</td>
                                     <td>{if $contract->last_pay}
                                             {date('Y-m-d', strtotime($contract->last_pay))}
                                         {/if}</td>
