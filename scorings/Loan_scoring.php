@@ -21,9 +21,9 @@ class Loan_scoring extends Core
             echo $dateDiff = date_diff(new DateTime($now), new DateTime($contract->accept_date))->days;
             if($dateDiff < $scoring_type->params['prew_loan']){
                 $update = array(
-                    'status' => 'error',
-                    'string_result' => 'Предыдущий займ был менее 10 дней назад',
-                    'success' => 1
+                    'status' => 'completed',
+                    'string_result' => 'Предыдущий займ был менее ' . $scoring_type->params['prew_loan'] . ' дней назад',
+                    'success' => 0
                 );
             }
             else{
