@@ -2329,7 +2329,8 @@ class StatisticsController extends Controller
                 $payments_array['count'] += 1;
                 $payments_array['sum'] += $payment->amount;
             }
-            $payments_array['average'] = round($payments_array['sum'] / $payments_array['count'], 2);
+            if($payments_array['count'] > 0 )
+                $payments_array['average'] = round($payments_array['sum'] / $payments_array['count'], 2);
 
 
             $query = $this->db->placehold("
