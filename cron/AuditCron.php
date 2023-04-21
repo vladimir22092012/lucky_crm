@@ -273,7 +273,7 @@ class AuditCron extends Core
                     ));
 
                     if(strpos(__DIR__, 'lucky-crm-prod'))
-                        $this->Leadfinances->send_lead($order_id);
+                        $this->Leadfinances->send_lead($order->order_id);
 
                 }
 
