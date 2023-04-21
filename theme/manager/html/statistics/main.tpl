@@ -142,6 +142,7 @@
                         </a>
                     </div>
                 </div>
+                {*}
                 <div class="col-md-6 col-lg-3 col-xlg-3">
                     <div class="card card-info card-danger">
                         <a href="statistics/divisions" class="box text-center">
@@ -166,6 +167,7 @@
                         </a>
                     </div>
                 </div>
+                {*}
             {/if}
             {if in_array('penalty_statistics', $manager->permissions)}
                 <div class="col-md-6 col-lg-3 col-xlg-3">
