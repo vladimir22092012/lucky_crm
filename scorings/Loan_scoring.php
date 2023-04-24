@@ -18,26 +18,30 @@ class Loan_scoring extends Core
         $now = date('Y-m-d H:i:s');
 
         foreach ($contracts as $contract) {
-            echo $dateDiff = date_diff(new DateTime($now), new DateTime($contract->accept_date))->days;
-            if($dateDiff < $scoring_type->params['prew_loan']){
-                $update = array(
-                    'status' => 'completed',
-                    'string_result' => 'Предыдущий займ был менее ' . $scoring_type->params['prew_loan'] . ' дней назад',
-                    'success' => 0
-                );
+            $dateDiff = 3000;
+            if (isset($contract->accept_date)) {
+                $dateDiff = date_diff(new DateTime($now), new DateTime($contract->accept_date))->days;
+                    
+                if($dateDiff < $scoring_type->params['prew_loan']){
+                    $update = array(
+                        'status' => 'completed',
+                        'string_result' => 'Предыдущий займ был менее ' . $scoring_type->params['prew_loan'] . ' дней назад',
+                        'success' => 0
+                    );
+                }
+                else{
+                    $update = array(
+                        'status' => 'completed',
+                        'success' => 1
+                    );
+                }
+                
+                if (!empty($update))
+                    $this->scorings->update_scoring($scoring_id, $update);
             }
-            else{
-                $update = array(
-                    'status' => 'completed',
-                    'success' => 1
-                );
-            }
-
-            if (!empty($update))
-                $this->scorings->update_scoring($scoring_id, $update);
-
-            return $update;
+            
         }        
+        return $update;
 
        return null;
     }
