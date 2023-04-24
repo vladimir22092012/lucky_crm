@@ -64,7 +64,7 @@
                 <!-- Column -->
                 <div class="card">
                     <div class="card-body" style="overflow-x: auto;">
-                        <h4 class="card-title">Просроченные займы </h4>
+                        <h4 class="card-title">Просроченные займы</h4>
                         <form>
                             <div class="row" style="margin-top: 10px; margin-bottom: 10px;">
                                 <div class="col-12 col-md-12 text-right">
@@ -137,19 +137,13 @@
                                     <td>{$contract->delay}</td>
                                     <td>{date('Y-m-d', strtotime($contract->return_date))}</td>
                                     <td>
-                                        {if $contract->balance}
-                                            {$contract->balance->loan_body_summ}
-                                        {/if}
+                                        {$contract->loan_body_summ}
                                     </td>
                                     <td>
-                                        {if $contract->balance}
-                                            {$contract->balance->loan_percents_summ}
-                                        {/if}
+                                        {$contract->loan_percents_summ}
                                     </td>
                                     <td>
-                                        {if $contract->balance}
-                                            {$contract->balance->loan_peni_summ}
-                                        {/if}
+                                        {$contract->loan_peni_summ}
                                     </td>
                                     <td>
                                         {if $contract->balance}

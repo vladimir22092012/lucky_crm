@@ -172,12 +172,12 @@
                                     <td>{$payments_array['sum']}</td>
                                 </tr>
                                 <tr>
-                                    <td>ПОРТФЕЛЬ В РИСКЕ (ЗА ВСЕ ВРЕМЯ)</td>
+                                    <td>ПОРТФЕЛЬ В РИСКЕ (на текущее время)</td>
                                     <td>{$sum_contracts_array['risk']}</td>
                                     <td>{$sum_contracts_array['risk']}</td>
                                 </tr>
                                 <tr>
-                                    <td>АКТИВНАЯ СУММА ОС (ЗА ВСЕ ВРЕМЯ)</td>
+                                    <td>АКТИВНАЯ СУММА ОС (на текущее время)</td>
                                     <td>{$sum_contracts_array['active_sum']}</td>
                                     <td>{$sum_contracts_array['active_sum']}</td>
                                 </tr>

@@ -2335,13 +2335,12 @@ class StatisticsController extends Controller
 
             $query = $this->db->placehold("
             SELECT
-                c.status,
-                o.amount,
-                o.type
+                c.loan_body_summ,
+                c.loan_percents_summ,
+                c.loan_peni_summ,
+                c.status
             FROM __contracts AS c
-            LEFT JOIN __operations AS o
-            ON o.contract_id = c.id
-            WHERE (o.type = 'P2P') AND (c.status = 2  OR c.status = 4)
+            WHERE c.status = 4
             ");
             $this->db->query($query);
 
@@ -2353,10 +2352,10 @@ class StatisticsController extends Controller
 
             foreach ($sum_contracts as $sum_contract) {
                 if($sum_contract->status == 4){
-                    $sum_contracts_array['risk'] += $sum_contract->amount;
+                    $sum_contracts_array['risk'] += $sum_contract->loan_body_summ + $sum_contract->loan_percents_summ + $sum_contract->loan_peni_summ;
                 }
                 if($sum_contract->status == 2 || $sum_contract->status == 4){
-                    $sum_contracts_array['active_sum'] += $sum_contract->amount;
+                    $sum_contracts_array['active_sum'] += $sum_contract->loan_body_summ;
                 }
             }
 
@@ -2812,6 +2811,9 @@ class StatisticsController extends Controller
                 c.number,
                 c.amount,
                 c.return_date,
+                c.loan_body_summ,
+                c.loan_percents_summ,
+                c.loan_peni_summ,
                 u.regaddress_id,
                 u.faktaddress_id
             FROM __contracts AS c
@@ -2841,25 +2843,7 @@ class StatisticsController extends Controller
             $today = date_create(date('Y-m-d 00:00:00'));
             $inssuance_date = date_create(date('Y-m-d 00:00:00', strtotime($c->date)));
             $contracts[$c->contract_id]->delay = date_diff($today, $inssuance_date)->days;
-
-            $query = $this->db->placehold("
-                SELECT loan_body_summ, loan_percents_summ, loan_peni_summ, created
-                FROM __operations WHERE
-                created IN (
-                    SELECT max(created) 
-                    FROM __operations 
-                    WHERE contract_id=" . $c->contract_id . " AND (type='PERCENTS' OR type='PENI')) 
-                AND contract_id=" . $c->contract_id
-            );
-            $this->db->query($query);
-
-            $balance = $this->db->results();
-            if(count($balance) > 0)
-                $contracts[$c->contract_id]->balance = $balance[0];
-            else
-                $contracts[$c->contract_id]->balance = '';
             
-
             $contracts[$c->contract_id]->regaddress = '';
             if(null != $this->Addresses->get_address($c->regaddress_id))
                 $contracts[$c->contract_id]->regaddress = $this->Addresses->get_address($c->regaddress_id)->adressfull ;
@@ -2980,24 +2964,9 @@ class StatisticsController extends Controller
                 $active_sheet->setCellValue('U' . $i, date('Y-m-d', strtotime($contract->return_date)));
                 $active_sheet->setCellValue('V' . $i, $contract->delay);
                 $active_sheet->setCellValue('W' . $i, date('Y-m-d', strtotime($contract->return_date)));
-
-                $loan_body_summ = 0;
-                if ($contract->balance)
-                    $loan_body_summ = $contract->balance->loan_body_summ;
-
-                $active_sheet->setCellValue('X' . $i, $loan_body_summ);
-
-                $loan_percents_summ = 0;
-                if ($contract->balance)
-                    $loan_percents_summ = $contract->balance->loan_percents_summ;
-
-                $active_sheet->setCellValue('Y' . $i, $loan_percents_summ);
-
-                $loan_peni_summ = 0;
-                if ($contract->balance)
-                    $loan_peni_summ = $contract->balance->loan_peni_summ;
-
-                $active_sheet->setCellValue('Z' . $i, $stop_peni);
+                $active_sheet->setCellValue('X' . $i, $contract->loan_body_summ);
+                $active_sheet->setCellValue('Y' . $i, $contract->loan_percents_summ);
+                $active_sheet->setCellValue('Z' . $i, $contract->loan_peni_summ);
 
                 $full_summ = 0;
                 if ($contract->balance)
