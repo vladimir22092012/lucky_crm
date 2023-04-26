@@ -2335,13 +2335,12 @@ class StatisticsController extends Controller
 
             $query = $this->db->placehold("
             SELECT
-                c.status,
-                o.amount,
-                o.type
+                c.loan_body_summ,
+                c.loan_percents_summ,
+                c.loan_peni_summ,
+                c.status
             FROM __contracts AS c
-            LEFT JOIN __operations AS o
-            ON o.contract_id = c.id
-            WHERE (o.type = 'P2P') AND (c.status = 2  OR c.status = 4)
+            WHERE c.status = 4
             ");
             $this->db->query($query);
 
@@ -2353,10 +2352,10 @@ class StatisticsController extends Controller
 
             foreach ($sum_contracts as $sum_contract) {
                 if($sum_contract->status == 4){
-                    $sum_contracts_array['risk'] += $sum_contract->amount;
+                    $sum_contracts_array['risk'] += $sum_contract->loan_body_summ + $sum_contract->loan_percents_summ + $sum_contract->loan_peni_summ;
                 }
                 if($sum_contract->status == 2 || $sum_contract->status == 4){
-                    $sum_contracts_array['active_sum'] += $sum_contract->amount;
+                    $sum_contracts_array['active_sum'] += $sum_contract->loan_body_summ;
                 }
             }
 
@@ -2490,293 +2489,299 @@ class StatisticsController extends Controller
 
     private function action_active()
     {
-
-        $query = $this->db->placehold("
-            SELECT
-                u.lastname,
-                u.firstname,
-                u.patronymic,
-                c.id AS contract_id,
-                c.inssuance_date AS date,
-                c.base_percent,
-                c.amount,
-                c.status,
-                c.return_date,
-                c.stop_profit,             
-                c.prolongation,             
-                c.period             
-            FROM __contracts AS c
-            LEFT JOIN __users AS u
-            ON u.id = c.user_id
-            WHERE c.status IN (2, 4)
-            ORDER BY contract_id
-        ");
-        $this->db->query($query);
-
-        $contracts = array();
-        $cou = 0;
-        foreach ($this->db->results() as $c) {
-
-            $contracts[$c->contract_id] = $c;
-
+        if ($date = $this->request->get('date')) {
+            $this->design->assign('date', $date);
             $query = $this->db->placehold("
-                SELECT created
-                FROM __operations WHERE
-                created IN (
-                    SELECT max(created) 
+                SELECT
+                    u.id as user_id,
+                    u.lastname,
+                    u.firstname,
+                    u.patronymic,
+                    c.id AS contract_id,
+                    c.number,
+                    c.inssuance_date AS date,
+                    c.base_percent,
+                    c.amount,
+                    c.status,
+                    c.return_date,
+                    c.stop_profit,             
+                    c.prolongation,             
+                    c.period             
+                    FROM __contracts AS c
+                    LEFT JOIN __users AS u
+                    ON u.id = c.user_id
+                    WHERE DATE(c.inssuance_date) <= ?
+                    AND (DATE(c.return_date) <= ? 
+                    OR c.return_date IS null)
+                    ORDER BY contract_id
+            ", $date, $date);   
+
+            $this->db->query($query);
+
+            $contracts = array();
+            $cou = 0;
+            foreach ($this->db->results() as $c) {
+
+                $contracts[$c->contract_id] = $c;
+
+                $query = $this->db->placehold("
+                    SELECT created
+                    FROM __operations WHERE
+                    created IN (
+                        SELECT max(created) 
+                        FROM __operations 
+                        WHERE contract_id=" . $c->contract_id . " AND type='PAY') 
+                    AND contract_id=" . $c->contract_id
+                );
+                $this->db->query($query);
+
+                $last_pay = $this->db->results();
+                if (count($last_pay))
+                    $contracts[$c->contract_id]->last_pay = $last_pay[0]->created;
+                else
+                    $contracts[$c->contract_id]->last_pay = '';
+
+
+
+                $query = $this->db->placehold("
+                    SELECT count(*) as cou
                     FROM __operations 
-                    WHERE contract_id=" . $c->contract_id . " AND type='PAY') 
-                AND contract_id=" . $c->contract_id
-            );
-            $this->db->query($query);
-
-            $last_pay = $this->db->results();
-            if (count($last_pay))
-                $contracts[$c->contract_id]->last_pay = $last_pay[0]->created;
-            else
-                $contracts[$c->contract_id]->last_pay = '';
-
-
-
-            $query = $this->db->placehold("
-                SELECT count(*) as cou
-                FROM __operations 
-                WHERE contract_id=" . $c->contract_id . " AND type='PAY'"
-            );
-            $this->db->query($query);
-            
-            $payments_count = $this->db->results();
-            if(count($payments_count))
-                $contracts[$c->contract_id]->payments_count = $payments_count[0]->cou;
-            else
-                $contracts[$c->contract_id]->payments_count = '';   
-
-            if (count($last_pay) > 0)
-                $contracts[$c->contract_id]->last_pay = $last_pay[0]->created;
-            else
-                $contracts[$c->contract_id]->last_pay = '';
-
-
-
-            $query = $this->db->placehold("
-                SELECT loan_body_summ, loan_percents_summ, loan_peni_summ, created
-                FROM __operations WHERE
-                created IN (
-                    SELECT max(created) 
-                    FROM __operations 
-                    WHERE contract_id=" . $c->contract_id . " AND (type='PERCENTS' OR type='PENI')) 
-                AND contract_id=" . $c->contract_id
-            );
-            $this->db->query($query);
-
-            $balance = $this->db->results();
-            if(count($balance) > 0)
-                $contracts[$c->contract_id]->balance = $balance[0];
-            else
-                $contracts[$c->contract_id]->balance = '';
-
-            
-
-            $today = date_create(date('Y-m-d 00:00:00'));
-            $inssuance_date = date_create(date('Y-m-d 00:00:00', strtotime($c->date)));
-            $delay = date_diff($today, $inssuance_date)->days - $c->period;
-            $contracts[$c->contract_id]->delay_fakt = $delay;
-            
-            $return_date = date_create(date('Y-m-d 00:00:00', strtotime($c->return_date)));
-            $delay = date_diff($today, $return_date)->days;
-            $contracts[$c->contract_id]->delay_status = $delay;
-        }
-
-        if ($this->request->get('download') == 'excel') {
-
-            $filename = 'files/reports/active.xls';
-            require $this->config->root_dir . 'PHPExcel/Classes/PHPExcel.php';
-
-            $excel = new PHPExcel();
-
-            $excel->setActiveSheetIndex(0);
-            $active_sheet = $excel->getActiveSheet();
-
-            $active_sheet->setTitle("Активные займы");
-
-            $excel->getDefaultStyle()->getFont()->setName('Calibri')->setSize(12);
-            $excel->getDefaultStyle()->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-
-            $active_sheet->getColumnDimension('A')->setWidth(15);
-            $active_sheet->getColumnDimension('B')->setWidth(15);
-            $active_sheet->getColumnDimension('C')->setWidth(15);
-            $active_sheet->getColumnDimension('D')->setWidth(20);
-            $active_sheet->getColumnDimension('E')->setWidth(20);
-            $active_sheet->getColumnDimension('F')->setWidth(20);
-            $active_sheet->getColumnDimension('G')->setWidth(20);
-            $active_sheet->getColumnDimension('H')->setWidth(20);
-            $active_sheet->getColumnDimension('I')->setWidth(20);
-            $active_sheet->getColumnDimension('J')->setWidth(20);
-            $active_sheet->getColumnDimension('K')->setWidth(20);
-            $active_sheet->getColumnDimension('L')->setWidth(20);
-            $active_sheet->getColumnDimension('M')->setWidth(20);
-            $active_sheet->getColumnDimension('N')->setWidth(20);
-            $active_sheet->getColumnDimension('O')->setWidth(20);
-            $active_sheet->getColumnDimension('P')->setWidth(20);
-            $active_sheet->getColumnDimension('Q')->setWidth(20);
-            $active_sheet->getColumnDimension('R')->setWidth(20);
-            $active_sheet->getColumnDimension('S')->setWidth(20);
-            $active_sheet->getColumnDimension('T')->setWidth(20);
-            $active_sheet->getColumnDimension('U')->setWidth(20);
-            $active_sheet->getColumnDimension('V')->setWidth(20);
-            $active_sheet->getColumnDimension('W')->setWidth(20);
-            $active_sheet->getColumnDimension('X')->setWidth(20);
-            $active_sheet->getColumnDimension('Y')->setWidth(20);
-            $active_sheet->getColumnDimension('Z')->setWidth(20);
-            $active_sheet->getColumnDimension('AA')->setWidth(15);
-            $active_sheet->getColumnDimension('AB')->setWidth(15);
-            $active_sheet->getColumnDimension('AС')->setWidth(15);           
-
-            $active_sheet->setCellValue('A1', '№');
-            $active_sheet->setCellValue('B1', '№ по гр.');
-            $active_sheet->setCellValue('C1', 'Регион');
-            $active_sheet->setCellValue('D1', 'Филиал');
-            $active_sheet->setCellValue('E1', 'Подразделение');
-            $active_sheet->setCellValue('F1', 'Источник финансирования');
-            $active_sheet->setCellValue('G1', 'Клиент');
-            $active_sheet->setCellValue('H1', 'Контракт');
-            $active_sheet->setCellValue('I1', 'Дата выдачи');
-            $active_sheet->setCellValue('J1', 'Дата последнего погашения');
-            $active_sheet->setCellValue('K1', 'Дата последнего начисления');
-            $active_sheet->setCellValue('L1', 'Процентная ставка');
-            $active_sheet->setCellValue('M1', 'Кол-во траншей');
-            $active_sheet->setCellValue('N1', 'Кол-во льготных периодов');
-            $active_sheet->setCellValue('O1', 'Сумма займа');
-            $active_sheet->setCellValue('P1', 'Баланс по ОД');
-            $active_sheet->setCellValue('Q1', 'Баланс по %');
-            $active_sheet->setCellValue('R1', 'Баланс по штрафам');
-            $active_sheet->setCellValue('S1', 'Тип займа');
-            $active_sheet->setCellValue('T1', 'Статус контракта');
-            $active_sheet->setCellValue('U1', 'Количество дней просрочки по статусу');
-            $active_sheet->setCellValue('V1', 'Количество дней просрочки фактическое');
-            $active_sheet->setCellValue('W1', 'Остановка начисления процентов');
-            $active_sheet->setCellValue('X1', 'Дата остановки начисления процентов');
-            $active_sheet->setCellValue('Y1', 'Остановка начисления штрафов');
-            $active_sheet->setCellValue('Z1', 'Дата остановки начисления штрафов');
-            $active_sheet->setCellValue('AA1', 'Судебник');
-            $active_sheet->setCellValue('AB1', 'Дата признака Судебник');
-            $active_sheet->setCellValue('AC1', 'Пользовательский статус контракта');
-
-            $i = 2;
-            foreach ($contracts as $contract) {
+                    WHERE contract_id=" . $c->contract_id . " AND type='PAY'"
+                );
+                $this->db->query($query);
                 
-                $active_sheet->setCellValue('A' . $i, $i - 1);
-                $active_sheet->setCellValue('B' . $i, $i - 1);
-                $active_sheet->setCellValue('C' . $i, 'Россия');
-                $active_sheet->setCellValue('D' . $i, 'Головной');
-                $active_sheet->setCellValue('E' . $i, 'Основное');
-                $active_sheet->setCellValue('F' . $i, 'Собственные средства');
-                $active_sheet->setCellValue('G' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic);
-                $active_sheet->setCellValue('H' . $i, $contract->contract_id);
-                $active_sheet->setCellValue('I' . $i, $contract->inssuance_date);
-
-                $last_pay = '';
-                if ($contract->last_pay)
-                    $last_pay = date('Y-m-d', strtotime($contract->last_pay));
-
-                $active_sheet->setCellValue('J' . $i, $last_pay);
-
-                $balance = '';
-                if ($contract->balance)
-                    $balance = date('Y-m-d', strtotime($contract->balance->created));
-
-                $active_sheet->setCellValue('K' . $i, $balance);
-                $active_sheet->setCellValue('L' . $i, $contract->base_percent);
-                $active_sheet->setCellValue('M' . $i, $contract->payments_count);
-                $active_sheet->setCellValue('N' . $i, '');
-                $active_sheet->setCellValue('O' . $i, $contract->amount);
-
-                $loan_body_summ = 0;
-                if ($contract->balance)
-                    $loan_body_summ = $contract->balance->loan_body_summ;
-
-                $active_sheet->setCellValue('P' . $i, $loan_body_summ);
-
-                $loan_percents_summ = 0;
-                if ($contract->balance)
-                    $loan_percents_summ = $contract->balance->loan_percents_summ;
-
-                $active_sheet->setCellValue('Q' . $i, $loan_percents_summ);
-
-                $loan_peni_summ = 0;
-                if ($contract->balance)
-                    $loan_peni_summ = $contract->balance->loan_peni_summ;
-                   
-
-                $active_sheet->setCellValue('R' . $i, $loan_peni_summ);
-                $active_sheet->setCellValue('S' . $i, 'Краткосрочный');
-
-                if ($contract->status == 2)
-                    $status = 'Выданный';
-                elseif ($contract->status == 4)
-                    $status = 'Просроченный'; 
+                $payments_count = $this->db->results();
+                if(count($payments_count))
+                    $contracts[$c->contract_id]->payments_count = $payments_count[0]->cou;
                 else
-                    $status = '---'; 
+                    $contracts[$c->contract_id]->payments_count = '';   
 
-                $active_sheet->setCellValue('T' . $i, $status);
-                $active_sheet->setCellValue('U' . $i, $contract->delay_status);
-                $active_sheet->setCellValue('V' . $i, $contract->delay_fakt);
-
-                if ($contract->stop_profit)
-                    $stop_profit = 'Да';
+                if (count($last_pay) > 0)
+                    $contracts[$c->contract_id]->last_pay = $last_pay[0]->created;
                 else
-                    $stop_profit = 'Нет';
+                    $contracts[$c->contract_id]->last_pay = '';
 
-                $active_sheet->setCellValue('W' . $i, $stop_profit);
 
-                $stop_percents = '';
-                if ($contract->stop_profit){
-                    if ($contract->balance)
-                        $stop_percents =$contract->balance->created;
-                }
 
-                $active_sheet->setCellValue('X' . $i, $stop_percents);
+                $query = $this->db->placehold("
+                    SELECT loan_body_summ, loan_percents_summ, loan_peni_summ, created
+                    FROM __operations WHERE
+                    created IN (
+                        SELECT max(created) 
+                        FROM __operations 
+                        WHERE contract_id=" . $c->contract_id . " AND (type='PERCENTS' OR type='PENI')) 
+                    AND contract_id=" . $c->contract_id
+                );
+                $this->db->query($query);
 
-                if ($contract->stop_profit)
-                    $stop_profit = 'Да';
+                $balance = $this->db->results();
+                if(count($balance) > 0)
+                    $contracts[$c->contract_id]->balance = $balance[0];
                 else
-                    $stop_profit = 'Нет';
+                    $contracts[$c->contract_id]->balance = '';
 
-                $active_sheet->setCellValue('Y' . $i, $stop_profit);
+                
 
-                $stop_peni = '';
-                if ($contract->stop_profit){
-                    if ($contract->balance)
-                        $stop_peni = $contract->balance->created;
-                }
-
-                $active_sheet->setCellValue('Z' . $i, $stop_peni);
-                $active_sheet->setCellValue('AA' . $i, '');
-                $active_sheet->setCellValue('AB' . $i, '');
-
-
-                if ($contract->status == 2)
-                    $user_status = 'Выдан';
-                elseif ($contract->status == 4)
-                    $user_status = 'Просрочен'; 
-                else
-                    $user_status = '---'; 
-
-                $active_sheet->setCellValue('AC' . $i, $user_status);
-
-                $i++;
+                $today = date_create(date('Y-m-d 00:00:00'));
+                $inssuance_date = date_create(date('Y-m-d 00:00:00', strtotime($c->date)));
+                $delay = date_diff($today, $inssuance_date)->days - $c->period;
+                $contracts[$c->contract_id]->delay_fakt = $delay;
+                
+                $return_date = date_create(date('Y-m-d 00:00:00', strtotime($c->return_date)));
+                $delay = date_diff($today, $return_date)->days;
+                $contracts[$c->contract_id]->delay_status = $delay;
             }
 
-            $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
+            if ($this->request->get('download') == 'excel') {
 
-            $objWriter->save($this->config->root_dir . $filename);
+                $filename = 'files/reports/active.xls';
+                require $this->config->root_dir . 'PHPExcel/Classes/PHPExcel.php';
 
-            header('Location:' . $this->config->root_url . '/' . $filename);
-            exit;
+                $excel = new PHPExcel();
+
+                $excel->setActiveSheetIndex(0);
+                $active_sheet = $excel->getActiveSheet();
+
+                $active_sheet->setTitle("Активные займы");
+
+                $excel->getDefaultStyle()->getFont()->setName('Calibri')->setSize(12);
+                $excel->getDefaultStyle()->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+
+                $active_sheet->getColumnDimension('A')->setWidth(15);
+                $active_sheet->getColumnDimension('B')->setWidth(15);
+                $active_sheet->getColumnDimension('C')->setWidth(15);
+                $active_sheet->getColumnDimension('D')->setWidth(20);
+                $active_sheet->getColumnDimension('E')->setWidth(20);
+                $active_sheet->getColumnDimension('F')->setWidth(20);
+                $active_sheet->getColumnDimension('G')->setWidth(20);
+                $active_sheet->getColumnDimension('H')->setWidth(20);
+                $active_sheet->getColumnDimension('I')->setWidth(20);
+                $active_sheet->getColumnDimension('J')->setWidth(20);
+                $active_sheet->getColumnDimension('K')->setWidth(20);
+                $active_sheet->getColumnDimension('L')->setWidth(20);
+                $active_sheet->getColumnDimension('M')->setWidth(20);
+                $active_sheet->getColumnDimension('N')->setWidth(20);
+                $active_sheet->getColumnDimension('O')->setWidth(20);
+                $active_sheet->getColumnDimension('P')->setWidth(20);
+                $active_sheet->getColumnDimension('Q')->setWidth(20);
+                $active_sheet->getColumnDimension('R')->setWidth(20);
+                $active_sheet->getColumnDimension('S')->setWidth(20);
+                $active_sheet->getColumnDimension('T')->setWidth(20);
+                $active_sheet->getColumnDimension('U')->setWidth(20);
+                $active_sheet->getColumnDimension('V')->setWidth(20);
+                $active_sheet->getColumnDimension('W')->setWidth(20);
+                $active_sheet->getColumnDimension('X')->setWidth(20);
+                $active_sheet->getColumnDimension('Y')->setWidth(20);
+                $active_sheet->getColumnDimension('Z')->setWidth(20);
+                $active_sheet->getColumnDimension('AA')->setWidth(15);
+                $active_sheet->getColumnDimension('AB')->setWidth(15);
+                $active_sheet->getColumnDimension('AС')->setWidth(15);           
+
+                $active_sheet->setCellValue('A1', '№');
+                $active_sheet->setCellValue('B1', '№ по гр.');
+                $active_sheet->setCellValue('C1', 'Регион');
+                $active_sheet->setCellValue('D1', 'Филиал');
+                $active_sheet->setCellValue('E1', 'Подразделение');
+                $active_sheet->setCellValue('F1', 'Источник финансирования');
+                $active_sheet->setCellValue('G1', 'Клиент');
+                $active_sheet->setCellValue('H1', 'Контракт');
+                $active_sheet->setCellValue('I1', 'Дата выдачи');
+                $active_sheet->setCellValue('J1', 'Дата последнего погашения');
+                $active_sheet->setCellValue('K1', 'Дата последнего начисления');
+                $active_sheet->setCellValue('L1', 'Процентная ставка');
+                $active_sheet->setCellValue('M1', 'Кол-во траншей');
+                $active_sheet->setCellValue('N1', 'Кол-во льготных периодов');
+                $active_sheet->setCellValue('O1', 'Сумма займа');
+                $active_sheet->setCellValue('P1', 'Баланс по ОД');
+                $active_sheet->setCellValue('Q1', 'Баланс по %');
+                $active_sheet->setCellValue('R1', 'Баланс по штрафам');
+                $active_sheet->setCellValue('S1', 'Тип займа');
+                $active_sheet->setCellValue('T1', 'Статус контракта');
+                $active_sheet->setCellValue('U1', 'Количество дней просрочки по статусу');
+                $active_sheet->setCellValue('V1', 'Количество дней просрочки фактическое');
+                $active_sheet->setCellValue('W1', 'Остановка начисления процентов');
+                $active_sheet->setCellValue('X1', 'Дата остановки начисления процентов');
+                $active_sheet->setCellValue('Y1', 'Остановка начисления штрафов');
+                $active_sheet->setCellValue('Z1', 'Дата остановки начисления штрафов');
+                $active_sheet->setCellValue('AA1', 'Судебник');
+                $active_sheet->setCellValue('AB1', 'Дата признака Судебник');
+                $active_sheet->setCellValue('AC1', 'Пользовательский статус контракта');
+
+                $i = 2;
+                foreach ($contracts as $contract) {
+                    
+                    $active_sheet->setCellValue('A' . $i, $i - 1);
+                    $active_sheet->setCellValue('B' . $i, $i - 1);
+                    $active_sheet->setCellValue('C' . $i, 'Россия');
+                    $active_sheet->setCellValue('D' . $i, 'Головной');
+                    $active_sheet->setCellValue('E' . $i, 'Основное');
+                    $active_sheet->setCellValue('F' . $i, 'Собственные средства');
+                    $active_sheet->setCellValue('G' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic);
+                    $active_sheet->setCellValue('H' . $i, $contract->contract_id);
+                    $active_sheet->setCellValue('I' . $i, $contract->inssuance_date);
+
+                    $last_pay = '';
+                    if ($contract->last_pay)
+                        $last_pay = date('Y-m-d', strtotime($contract->last_pay));
+
+                    $active_sheet->setCellValue('J' . $i, $last_pay);
+
+                    $balance = '';
+                    if ($contract->balance)
+                        $balance = date('Y-m-d', strtotime($contract->balance->created));
+
+                    $active_sheet->setCellValue('K' . $i, $balance);
+                    $active_sheet->setCellValue('L' . $i, $contract->base_percent);
+                    $active_sheet->setCellValue('M' . $i, $contract->payments_count);
+                    $active_sheet->setCellValue('N' . $i, '');
+                    $active_sheet->setCellValue('O' . $i, $contract->amount);
+
+                    $loan_body_summ = 0;
+                    if ($contract->balance)
+                        $loan_body_summ = $contract->balance->loan_body_summ;
+
+                    $active_sheet->setCellValue('P' . $i, $loan_body_summ);
+
+                    $loan_percents_summ = 0;
+                    if ($contract->balance)
+                        $loan_percents_summ = $contract->balance->loan_percents_summ;
+
+                    $active_sheet->setCellValue('Q' . $i, $loan_percents_summ);
+
+                    $loan_peni_summ = 0;
+                    if ($contract->balance)
+                        $loan_peni_summ = $contract->balance->loan_peni_summ;
+                    
+
+                    $active_sheet->setCellValue('R' . $i, $loan_peni_summ);
+                    $active_sheet->setCellValue('S' . $i, 'Краткосрочный');
+
+                    if ($contract->status == 2)
+                        $status = 'Выданный';
+                    elseif ($contract->status == 4)
+                        $status = 'Просроченный'; 
+                    else
+                        $status = '---'; 
+
+                    $active_sheet->setCellValue('T' . $i, $status);
+                    $active_sheet->setCellValue('U' . $i, $contract->delay_status);
+                    $active_sheet->setCellValue('V' . $i, $contract->delay_fakt);
+
+                    if ($contract->stop_profit)
+                        $stop_profit = 'Да';
+                    else
+                        $stop_profit = 'Нет';
+
+                    $active_sheet->setCellValue('W' . $i, $stop_profit);
+
+                    $stop_percents = '';
+                    if ($contract->stop_profit){
+                        if ($contract->balance)
+                            $stop_percents =$contract->balance->created;
+                    }
+
+                    $active_sheet->setCellValue('X' . $i, $stop_percents);
+
+                    if ($contract->stop_profit)
+                        $stop_profit = 'Да';
+                    else
+                        $stop_profit = 'Нет';
+
+                    $active_sheet->setCellValue('Y' . $i, $stop_profit);
+
+                    $stop_peni = '';
+                    if ($contract->stop_profit){
+                        if ($contract->balance)
+                            $stop_peni = $contract->balance->created;
+                    }
+
+                    $active_sheet->setCellValue('Z' . $i, $stop_peni);
+                    $active_sheet->setCellValue('AA' . $i, '');
+                    $active_sheet->setCellValue('AB' . $i, '');
+
+
+                    if ($contract->status == 2)
+                        $user_status = 'Выдан';
+                    elseif ($contract->status == 4)
+                        $user_status = 'Просрочен'; 
+                    else
+                        $user_status = '---'; 
+
+                    $active_sheet->setCellValue('AC' . $i, $user_status);
+
+                    $i++;
+                }
+
+                $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
+
+                $objWriter->save($this->config->root_dir . $filename);
+
+                header('Location:' . $this->config->root_url . '/' . $filename);
+                exit;
+            }
+
+            $this->design->assign('contracts', $contracts);
         }
-
-        $this->design->assign('contracts', $contracts);
-
         return $this->design->fetch('statistics/active.tpl');
     }
 
@@ -2806,6 +2811,9 @@ class StatisticsController extends Controller
                 c.number,
                 c.amount,
                 c.return_date,
+                c.loan_body_summ,
+                c.loan_percents_summ,
+                c.loan_peni_summ,
                 u.regaddress_id,
                 u.faktaddress_id
             FROM __contracts AS c
@@ -2835,25 +2843,7 @@ class StatisticsController extends Controller
             $today = date_create(date('Y-m-d 00:00:00'));
             $inssuance_date = date_create(date('Y-m-d 00:00:00', strtotime($c->date)));
             $contracts[$c->contract_id]->delay = date_diff($today, $inssuance_date)->days;
-
-            $query = $this->db->placehold("
-                SELECT loan_body_summ, loan_percents_summ, loan_peni_summ, created
-                FROM __operations WHERE
-                created IN (
-                    SELECT max(created) 
-                    FROM __operations 
-                    WHERE contract_id=" . $c->contract_id . " AND (type='PERCENTS' OR type='PENI')) 
-                AND contract_id=" . $c->contract_id
-            );
-            $this->db->query($query);
-
-            $balance = $this->db->results();
-            if(count($balance) > 0)
-                $contracts[$c->contract_id]->balance = $balance[0];
-            else
-                $contracts[$c->contract_id]->balance = '';
             
-
             $contracts[$c->contract_id]->regaddress = '';
             if(null != $this->Addresses->get_address($c->regaddress_id))
                 $contracts[$c->contract_id]->regaddress = $this->Addresses->get_address($c->regaddress_id)->adressfull ;
@@ -2974,24 +2964,9 @@ class StatisticsController extends Controller
                 $active_sheet->setCellValue('U' . $i, date('Y-m-d', strtotime($contract->return_date)));
                 $active_sheet->setCellValue('V' . $i, $contract->delay);
                 $active_sheet->setCellValue('W' . $i, date('Y-m-d', strtotime($contract->return_date)));
-
-                $loan_body_summ = 0;
-                if ($contract->balance)
-                    $loan_body_summ = $contract->balance->loan_body_summ;
-
-                $active_sheet->setCellValue('X' . $i, $loan_body_summ);
-
-                $loan_percents_summ = 0;
-                if ($contract->balance)
-                    $loan_percents_summ = $contract->balance->loan_percents_summ;
-
-                $active_sheet->setCellValue('Y' . $i, $loan_percents_summ);
-
-                $loan_peni_summ = 0;
-                if ($contract->balance)
-                    $loan_peni_summ = $contract->balance->loan_peni_summ;
-
-                $active_sheet->setCellValue('Z' . $i, $stop_peni);
+                $active_sheet->setCellValue('X' . $i, $contract->loan_body_summ);
+                $active_sheet->setCellValue('Y' . $i, $contract->loan_percents_summ);
+                $active_sheet->setCellValue('Z' . $i, $contract->loan_peni_summ);
 
                 $full_summ = 0;
                 if ($contract->balance)
