@@ -84,7 +84,7 @@
                             <table class="table table-hover">
 
                                 <tr>
-                                    <th>№11</th>
+                                    <th>№</th>
                                     <th>№ по гр.</th>
                                     <th>Регион</th>
                                     <th>Филиал</th>

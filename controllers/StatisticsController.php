@@ -2513,6 +2513,7 @@ class StatisticsController extends Controller
                     WHERE DATE(c.inssuance_date) <= ?
                     AND (DATE(c.return_date) <= ? 
                     OR c.return_date IS null)
+                    AND (c.status = 2 OR c.status = 4)
                     ORDER BY contract_id
             ", $date, $date);   
 
@@ -2678,7 +2679,7 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('F' . $i, 'Собственные средства');
                     $active_sheet->setCellValue('G' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic);
                     $active_sheet->setCellValue('H' . $i, $contract->contract_id);
-                    $active_sheet->setCellValue('I' . $i, $contract->inssuance_date);
+                    $active_sheet->setCellValue('I' . $i, $contract->date);
 
                     $last_pay = '';
                     if ($contract->last_pay)
