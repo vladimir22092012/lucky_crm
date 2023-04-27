@@ -2511,12 +2511,12 @@ class StatisticsController extends Controller
                     LEFT JOIN __users AS u
                     ON u.id = c.user_id
                     WHERE DATE(c.inssuance_date) <= ?
-                    AND (DATE(c.return_date) <= ? 
-                    OR c.return_date IS null)
-                    AND (c.status = 2 OR c.status = 4)
+                    AND (DATE(c.close_date) >= ? 
+                    OR c.close_date IS null)
+                    AND c.status <> 3
                     ORDER BY contract_id
-            ", $date, $date);   
-
+                ", $date, $date, $date);
+                    
             $this->db->query($query);
 
             $contracts = array();
