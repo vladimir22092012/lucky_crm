@@ -7,6 +7,7 @@ class RfmController extends Controller
 
     public function fetch()
     {
+        ini_set('memory_limit', '1024M');
         $this->design->assign('import_files_dir', $this->import_files_dir);
 
         if (!is_writable($this->import_files_dir))
@@ -31,17 +32,28 @@ class RfmController extends Controller
 
                 $success = true;
 
-                foreach ($xml['TERRORISTS'] as $value) {
-
-                    $string = str_replace(['<![CDATA[', ']]', '*', '>'], '', (string) $value['TERRORISTS_NAME']);
-
-                    $prepare_item['fio'] = mb_strtolower($string);
-
+                foreach ($xml['АктуальныйПеречень']['Субъект'] as $value) {
+                    if(!array_key_exists('ФЛ', $value)){
+                        continue;
+                    }
+                    $prepare_item['fio'] = $value['ФЛ']['ФИО'];
                     $result = $this->Rfmlist->add_person($prepare_item);
 
                     if(!$result)
                         $success = false;
                 }
+
+                // foreach ($xml['TERRORISTS'] as $value) {
+
+                //     $string = str_replace(['<![CDATA[', ']]', '*', '>'], '', (string) $value['TERRORISTS_NAME']);
+
+                //     $prepare_item['fio'] = mb_strtolower($string);
+
+                //     $result = $this->Rfmlist->add_person($prepare_item);
+
+                //     if(!$result)
+                //         $success = false;
+                // }
 
                 $this->design->assign('success', $success);
 
