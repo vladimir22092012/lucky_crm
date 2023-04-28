@@ -627,6 +627,10 @@ class StatisticsController extends Controller
                     o.amount,
                     o.created,
                     o.sent_date,
+                    o.loan_body_summ,
+                    o.loan_percents_summ,
+                    o.loan_peni_summ,
+                    c.id AS contract_id,
                     c.number AS contract_number,
                     u.id AS uder_id,
                     u.lastname,
@@ -656,20 +660,45 @@ class StatisticsController extends Controller
                 AND DATE(o.created) >= ?
                 AND DATE(o.created) <= ?
                 AND (t.reason_code = 1 OR o.type = 'PAY-REC')
-                ORDER BY o.created
+                ORDER BY o.id
             ", $date_from, $date_to);
             $this->db->query($query);
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($query);echo '</pre><hr />';
             $operations = array();
+            // var_dump($this->db->results());
+            // die;
             foreach ($this->db->results() as $op) {
                 // if ($xml = simplexml_load_string($op->callback_response)) {
                 //     $op->pan = (string)$xml->pan;
                 // }
-                $op->pan = $this->cards->get_cards(array('user_id' => $op->user_id))[0]->pan;
-
+                $cards_array = $this->cards->get_cards(array('user_id' => $op->user_id));
+                if(array_key_exists('0', $cards_array))
+                    $op->pan = $cards_array[0]->pan;
 
                 if($op->type == 'PAY-REC')
                     $op->description = 'Реккурентное списание по договору ' . $op->contract_number;
+
+                $contract_operations = $this->operations->get_operations(array('contract_id'=>$op->contract_id));
+
+                $prepayment_body = 0;
+                $prepayment_percents = 0;
+                foreach ($contract_operations as $key => $value) {
+                    
+                    // if($value->type == 'PAY'){
+                    if($op->id == $value->id){
+                        
+                        if ($key > 0) {
+                            $prepayment_body += $contract_operations[$key-1]->loan_body_summ - $value->loan_body_summ;
+                            $prepayment_percents += $contract_operations[$key-1]->loan_percents_summ - $value->loan_percents_summ;
+                            $prepayment_percents += $contract_operations[$key-1]->loan_peni_summ - $value->loan_peni_summ;
+                        }
+                        else{
+                            $prepayment_body = $value->amount;
+                        }
+                    }
+                }
+                $op->prepayment_body = $prepayment_body;
+                $op->prepayment_percents = $prepayment_percents;
 
                 $operations[$op->id] = $op;
             }
