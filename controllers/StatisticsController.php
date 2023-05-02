@@ -1231,7 +1231,7 @@ class StatisticsController extends Controller
                     $fio_birth = "$ad_service->lastname $ad_service->firstname $ad_service->patronymic $ad_service->birth";
 
 
-                    $active_sheet->setCellValue('A' . $i, date('Y-m-d', strtotime($ad_service->created)));
+                    $active_sheet->setCellValue('A' . $i, date('d.m.Y', strtotime($ad_service->created)));
                     $active_sheet->setCellValue('B' . $i, $ad_service->contract_id);
                     $active_sheet->setCellValue('C' . $i, $ad_service->user_id);
                     $active_sheet->setCellValue('D' . $i, $ad_service->number);
@@ -1245,7 +1245,7 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('L' . $i, $address);
 
                     if ($ad_service->start_date) {
-                        $active_sheet->setCellValue('M' . $i, date('Y-m-d', strtotime($ad_service->start_date)) . '/' . date('Y-m-d', strtotime($ad_service->end_date)));
+                        $active_sheet->setCellValue('M' . $i, date('d.m.Y', strtotime($ad_service->start_date)) . '/' . date('Y-m-d', strtotime($ad_service->end_date)));
                     } else {
                         $active_sheet->setCellValue('M' . $i, '-');
                     }
@@ -2185,7 +2185,7 @@ class StatisticsController extends Controller
                     $i = 2;
                     foreach ($orders as $key => $order) {
 
-                        $active_sheet->setCellValue('A' . $i, date('Y-m-d', strtotime($order->date)));
+                        $active_sheet->setCellValue('A' . $i, date('d.m.Y', strtotime($order->date)));
 
                         $ch = 0;
                         foreach ($order as $k => $value) {
@@ -2708,17 +2708,17 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('F' . $i, 'Собственные средства');
                     $active_sheet->setCellValue('G' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic);
                     $active_sheet->setCellValue('H' . $i, $contract->contract_id);
-                    $active_sheet->setCellValue('I' . $i, date('Y-m-d', strtotime($contract->date)));
+                    $active_sheet->setCellValue('I' . $i, date('d.m.Y', strtotime($contract->date)));
 
                     $last_pay = '';
                     if ($contract->last_pay)
-                        $last_pay = date('Y-m-d', strtotime($contract->last_pay));
+                        $last_pay = date('d.m.Y', strtotime($contract->last_pay));
 
-                    $active_sheet->setCellValue('J' . $i, date('Y-m-d', strtotime($last_pay)));
+                    $active_sheet->setCellValue('J' . $i, date('d.m.Y', strtotime($last_pay)));
 
                     $balance = '';
                     if ($contract->balance)
-                        $balance = date('Y-m-d', strtotime($contract->balance->created));
+                        $balance = date('d.m.Y', strtotime($contract->balance->created));
 
                     $active_sheet->setCellValue('K' . $i, $balance);
                     $active_sheet->setCellValue('L' . $i, $contract->base_percent);
@@ -2767,7 +2767,7 @@ class StatisticsController extends Controller
                     $stop_percents = '';
                     if ($contract->stop_profit){
                         if ($contract->balance)
-                            $stop_percents =$contract->balance->created;
+                            $stop_percents =date('d.m.Y', strtotime($contract->balance->created));
                     }
 
                     $active_sheet->setCellValue('X' . $i, $stop_percents);
@@ -2785,7 +2785,7 @@ class StatisticsController extends Controller
                             $stop_peni = $contract->balance->created;
                     }
 
-                    $active_sheet->setCellValue('Z' . $i, $stop_peni);
+                    $active_sheet->setCellValue('Z' . $i, date('d.m.Y', strtotime($stop_peni)));
                     $active_sheet->setCellValue('AA' . $i, '');
                     $active_sheet->setCellValue('AB' . $i, '');
 
