@@ -3010,7 +3010,7 @@ class StatisticsController extends Controller
 
                 $active_sheet->setCellValue('U' . $i, date('d.m.Y', strtotime($contract->return_date)));
                 $active_sheet->setCellValue('V' . $i, $contract->delay);
-                $active_sheet->setCellValue('W' . $i, date('d.m.Y', strtotime($contract->return_date)));
+                $active_sheet->setCellValue('W' . $i, date('d.m.Y'));
                 $active_sheet->setCellValue('X' . $i, $contract->loan_body_summ);
                 $active_sheet->setCellValue('Y' . $i, $contract->loan_percents_summ);
                 $active_sheet->setCellValue('Z' . $i, $contract->loan_peni_summ);
