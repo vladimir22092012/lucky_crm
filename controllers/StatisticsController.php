@@ -2840,6 +2840,7 @@ class StatisticsController extends Controller
                 c.inssuance_date AS date,
                 c.number,
                 c.amount,
+                c.close_date,
                 c.return_date,
                 c.loan_body_summ,
                 c.loan_percents_summ,
@@ -2873,6 +2874,22 @@ class StatisticsController extends Controller
             $today = date_create(date('Y-m-d 00:00:00'));
             $inssuance_date = date_create(date('Y-m-d 00:00:00', strtotime($c->date)));
             $contracts[$c->contract_id]->delay = date_diff($today, $inssuance_date)->days;
+
+            if ($c->status == 3) {
+                if (strtotime($c->close_date) > strtotime($c->return_date)) {
+                    $datetime1 = date_create(date('Y-m-d 00:00:00', strtotime($c->close_date)));
+                    $datetime2 = date_create(date('Y-m-d 00:00:00', strtotime($c->return_date)));
+                    $interval = date_diff($datetime1, $datetime2);
+                    $contracts[$c->contract_id]->delay = $interval->days;
+                }
+            } else {
+                if (strtotime(date('Y-m-d H:i:s')) > strtotime($c->return_date)) {
+                    $datetime1 = date_create(date('Y-m-d 00:00:00'));
+                    $datetime2 = date_create(date('Y-m-d 00:00:00', strtotime($c->return_date)));
+                    $interval = date_diff($datetime1, $datetime2);
+                    $contracts[$c->contract_id]->delay = $interval->days;
+                }
+            }
             
             $contracts[$c->contract_id]->regaddress = '';
             if(null != $this->Addresses->get_address($c->regaddress_id))
