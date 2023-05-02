@@ -136,7 +136,7 @@
                                     <td>Рубли</td>
                                     <td>{date('d.m.Y', strtotime($contract->return_date))}</td>
                                     <td>{$contract->delay}</td>
-                                    <td>{date('d.m.Y', strtotime($contract->return_date))}</td>
+                                    <td>{date('d.m.Y')}</td>
                                     <td>
                                         {$contract->loan_body_summ}
                                     </td>
