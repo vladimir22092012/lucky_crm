@@ -3016,8 +3016,9 @@ class StatisticsController extends Controller
                 $active_sheet->setCellValue('Z' . $i, $contract->loan_peni_summ);
 
                 $full_summ = 0;
-                if ($contract->balance)
-                    $full_summ = $contract->balance->loan_body_summ + $contract->balance->loan_percents_summ + $contract->balance->loan_peni_summ;
+                // if ($contract->balance)
+                //     $full_summ = $contract->balance->loan_body_summ + $contract->balance->loan_percents_summ + $contract->balance->loan_peni_summ;
+                $full_summ = $contract->loan_body_summ + $contract->loan_percents_summ + $contract->loan_peni_summ;
 
                 $active_sheet->setCellValue('AA' . $i, $full_summ);
                 $active_sheet->setCellValue('AB' . $i, $contract->faktaddress);

@@ -146,11 +146,9 @@
                                         {$contract->loan_peni_summ}
                                     </td>
                                     <td>
-                                        {if $contract->balance}
-                                            {$contract->balance->loan_body_summ +
-                                            $contract->balance->loan_percents_summ +
-                                            $contract->balance->loan_peni_summ}
-                                        {/if}
+                                        {$contract->loan_body_summ +
+                                        $contract->loan_percents_summ +
+                                        $contract->loan_peni_summ}
                                     </td>
                                     <td>{$contract->faktaddress}</td>
                                     <td>{$contract->regaddress}</td>
