@@ -117,25 +117,26 @@
                                     <td>{$contract->lastname}</td>
                                     <td>{$contract->firstname}</td>
                                     <td>{$contract->patronymic}</td>
-                                    <td>{$contract->birth}</td>
+                                    <td>
+                                    {date('d.m.Y', strtotime($contract->birth))}</td>
                                     <td>{$contract->birth_place}</td>
                                     <td>{$contract->passport_ser}</td>
                                     <td>{$contract->passport_num}</td>
                                     <td>{$contract->passport_issued}</td>
-                                    <td>{date('Y-m-d', strtotime($contract->passport_date))}</td>
+                                    <td>{date('d.m.Y', strtotime($contract->passport_date))}</td>
                                     <td>{$contract->phone_mobile}</td>
                                     <td>{$contract->contact_person_phone}, {$contract->contact_person_name}</td>
                                     <td>{$contract->contact_person2_phone}, {$contract->contact_person2_name}</td>
                                     <td>{$contract->workphone}</td>
                                     <td></td>
-                                    <td>{date('Y-m-d', strtotime($contract->date))}</td>
+                                    <td>{date('d.m.Y', strtotime($contract->date))}</td>
                                     <td>{$contract->number}</td>
                                     <td>{$contract->pan}</td>
                                     <td>{$contract->amount}</td>
                                     <td>Рубли</td>
-                                    <td>{date('Y-m-d', strtotime($contract->return_date))}</td>
+                                    <td>{date('d.m.Y', strtotime($contract->return_date))}</td>
                                     <td>{$contract->delay}</td>
-                                    <td>{date('Y-m-d', strtotime($contract->return_date))}</td>
+                                    <td>{date('d.m.Y', strtotime($contract->return_date))}</td>
                                     <td>
                                         {$contract->loan_body_summ}
                                     </td>
