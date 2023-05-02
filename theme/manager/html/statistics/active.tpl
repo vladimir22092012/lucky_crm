@@ -131,13 +131,13 @@
                                             </a>
                                         </td>
                                         <td>{$contract->number}</td>
-                                        <td>{date('Y-m-d', strtotime($contract->date))}</td>
+                                        <td>{date('d.m.Y', strtotime($contract->date))}</td>
                                         <td>{if $contract->last_pay}
-                                                {date('Y-m-d', strtotime($contract->last_pay))}
+                                                {date('d.m.Y', strtotime($contract->last_pay))}
                                             {/if}</td>
                                         <td>
                                             {if $contract->balance}
-                                                {date('Y-m-d', strtotime($contract->balance->created))}
+                                                {date('d.m.Y', strtotime($contract->balance->created))}
                                             {/if}
                                         </td>
                                         <td>{$contract->base_percent}</td>
@@ -181,7 +181,7 @@
                                         <td>
                                             {if $contract->stop_profit}
                                                 {if $contract->balance}
-                                                    {$contract->balance->created}
+                                                    {$contract->balance->created|date:'d.m.Y'}
                                                 {/if}
                                             {/if}
                                         </td>
@@ -195,7 +195,7 @@
                                         <td>
                                             {if $contract->stop_profit}
                                                 {if $contract->balance}
-                                                    {$contract->balance->created}
+                                                    {$contract->balance->created|date:'d.m.Y'}
                                                 {/if}
                                             {/if}
                                         </td>

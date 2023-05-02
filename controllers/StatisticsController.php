@@ -1231,7 +1231,7 @@ class StatisticsController extends Controller
                     $fio_birth = "$ad_service->lastname $ad_service->firstname $ad_service->patronymic $ad_service->birth";
 
 
-                    $active_sheet->setCellValue('A' . $i, $ad_service->created);
+                    $active_sheet->setCellValue('A' . $i, date('Y-m-d', strtotime($ad_service->created)));
                     $active_sheet->setCellValue('B' . $i, $ad_service->contract_id);
                     $active_sheet->setCellValue('C' . $i, $ad_service->user_id);
                     $active_sheet->setCellValue('D' . $i, $ad_service->number);
@@ -1245,7 +1245,7 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('L' . $i, $address);
 
                     if ($ad_service->start_date) {
-                        $active_sheet->setCellValue('M' . $i, $ad_service->start_date . '/' . $ad_service->end_date);
+                        $active_sheet->setCellValue('M' . $i, date('Y-m-d', strtotime($ad_service->start_date)) . '/' . date('Y-m-d', strtotime($ad_service->end_date)));
                     } else {
                         $active_sheet->setCellValue('M' . $i, '-');
                     }
@@ -2185,7 +2185,7 @@ class StatisticsController extends Controller
                     $i = 2;
                     foreach ($orders as $key => $order) {
 
-                        $active_sheet->setCellValue('A' . $i, $order->date);
+                        $active_sheet->setCellValue('A' . $i, date('Y-m-d', strtotime($order->date)));
 
                         $ch = 0;
                         foreach ($order as $k => $value) {
@@ -2708,13 +2708,13 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('F' . $i, 'Собственные средства');
                     $active_sheet->setCellValue('G' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic);
                     $active_sheet->setCellValue('H' . $i, $contract->contract_id);
-                    $active_sheet->setCellValue('I' . $i, $contract->date);
+                    $active_sheet->setCellValue('I' . $i, date('Y-m-d', strtotime($contract->date)));
 
                     $last_pay = '';
                     if ($contract->last_pay)
                         $last_pay = date('Y-m-d', strtotime($contract->last_pay));
 
-                    $active_sheet->setCellValue('J' . $i, $last_pay);
+                    $active_sheet->setCellValue('J' . $i, date('Y-m-d', strtotime($last_pay)));
 
                     $balance = '';
                     if ($contract->balance)
@@ -2989,12 +2989,12 @@ class StatisticsController extends Controller
                 $active_sheet->setCellValue('B' . $i, $contract->lastname);
                 $active_sheet->setCellValue('C' . $i, $contract->firstname);
                 $active_sheet->setCellValue('D' . $i, $contract->patronymic);
-                $active_sheet->setCellValue('E' . $i, $contract->birth);
+                $active_sheet->setCellValue('E' . $i, date('d.m.Y', strtotime($contract->birth)));
                 $active_sheet->setCellValue('F' . $i, $contract->birth_place);
                 $active_sheet->setCellValue('G' . $i, $contract->passport_ser);
                 $active_sheet->setCellValue('H' . $i, $contract->passport_num);
                 $active_sheet->setCellValue('I' . $i, $contract->passport_issued);
-                $active_sheet->setCellValue('J' . $i, date('Y-m-d', strtotime($contract->passport_date)));
+                $active_sheet->setCellValue('J' . $i, date('d.m.Y', strtotime($contract->passport_date)));
 
                 $active_sheet->setCellValue('K' . $i, $contract->phone_mobile);
                 $active_sheet->setCellValue('L' . $i, $contract->contact_person_phone . ", ". $contract->contact_person_name);
@@ -3002,15 +3002,15 @@ class StatisticsController extends Controller
                 $active_sheet->setCellValue('N' . $i, $contract->workphone);
                 $active_sheet->setCellValue('O' . $i, '');
 
-                $active_sheet->setCellValue('P' . $i, date('Y-m-d', strtotime($contract->date)));
+                $active_sheet->setCellValue('P' . $i, date('d.m.Y', strtotime($contract->date)));
                 $active_sheet->setCellValue('Q' . $i, $contract->number);
                 $active_sheet->setCellValue('R' . $i, $pcontract->an);
                 $active_sheet->setCellValue('S' . $i, $contract->amount);
                 $active_sheet->setCellValue('T' . $i, 'Рубли');
 
-                $active_sheet->setCellValue('U' . $i, date('Y-m-d', strtotime($contract->return_date)));
+                $active_sheet->setCellValue('U' . $i, date('d.m.Y', strtotime($contract->return_date)));
                 $active_sheet->setCellValue('V' . $i, $contract->delay);
-                $active_sheet->setCellValue('W' . $i, date('Y-m-d', strtotime($contract->return_date)));
+                $active_sheet->setCellValue('W' . $i, date('d.m.Y', strtotime($contract->return_date)));
                 $active_sheet->setCellValue('X' . $i, $contract->loan_body_summ);
                 $active_sheet->setCellValue('Y' . $i, $contract->loan_percents_summ);
                 $active_sheet->setCellValue('Z' . $i, $contract->loan_peni_summ);

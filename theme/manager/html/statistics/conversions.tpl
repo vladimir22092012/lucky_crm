@@ -306,6 +306,8 @@
                                                     <td>{$status}</td>
                                                 {/if}
                                             {/foreach}
+                                        {elseif $key == 'date'}
+                                            <td>{$val|date:'d.m.Y'}</td>
                                         {else}
                                             <td>{$val}</td>
                                         {/if}
