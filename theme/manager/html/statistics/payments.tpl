@@ -320,7 +320,6 @@ console.log(_table)
                                 {/foreach}
                             </tbody>
                             {*}
-                            {}
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -368,9 +367,9 @@ console.log(_table)
                                     <td>{$operation->loan_peni_summ}</td>
                                     <td>{$operation->prepayment_body + $operation->prepayment_percents}</td>
                                     <td>0</td>
-                                    <td>{$operation->prepayment_body}</td>
-                                    <td>{$operation->prepayment_percents}</td>
-                                    <td>{$operation->loan_body_summ + $operation->loan_percents_summ + $operation->loan_peni_summ}</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>{$operation->prepayment_body + $operation->prepayment_percents}</td>
                                     <td>Личный кабинет</td>
                                     <td></td>
                                     <td>---</td>
@@ -380,7 +379,6 @@ console.log(_table)
                                 </tr>
                                 {/foreach}
                             </tbody>
-                            {}
                         </table>
                         {else}
                             <div class="alert alert-info">

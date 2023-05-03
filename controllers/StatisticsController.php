@@ -2707,7 +2707,7 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('E' . $i, 'Основное');
                     $active_sheet->setCellValue('F' . $i, 'Собственные средства');
                     $active_sheet->setCellValue('G' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic);
-                    $active_sheet->setCellValue('H' . $i, $contract->contract_id);
+                    $active_sheet->setCellValue('H' . $i, $contract->number);
                     $active_sheet->setCellValue('I' . $i, date('d.m.Y', strtotime($contract->date)));
 
                     $last_pay = '';
