@@ -679,24 +679,34 @@ class StatisticsController extends Controller
                     $op->description = 'Реккурентное списание по договору ' . $op->contract_number;
 
                 $contract_operations = $this->operations->get_operations(array('contract_id'=>$op->contract_id));
+                $contract = $this->contracts->get_contract($op->contract_id);
 
                 $prepayment_body = 0;
                 $prepayment_percents = 0;
-                foreach ($contract_operations as $key => $value) {
+                // foreach ($contract_operations as $key => $value) {
                     
-                    // if($value->type == 'PAY'){
-                    if($op->id == $value->id){
+                //     // if($value->type == 'PAY'){
+                //     if($op->id == $value->id){
                         
-                        if ($key > 0) {
-                            $prepayment_body += $contract_operations[$key-1]->loan_body_summ - $value->loan_body_summ;
-                            $prepayment_percents += $contract_operations[$key-1]->loan_percents_summ - $value->loan_percents_summ;
-                            $prepayment_percents += $contract_operations[$key-1]->loan_peni_summ - $value->loan_peni_summ;
-                        }
-                        else{
-                            $prepayment_body = $value->amount;
-                        }
-                    }
+                //         if ($key > 0) {
+                //             $prepayment_body += $contract_operations[$key-1]->loan_body_summ - $value->loan_body_summ;
+                //             $prepayment_percents += $contract_operations[$key-1]->loan_percents_summ - $value->loan_percents_summ;
+                //             $prepayment_percents += $contract_operations[$key-1]->loan_peni_summ - $value->loan_peni_summ;
+                //         }
+                //         else{
+                //             $prepayment_body = $value->amount;
+                //         }
+                //     }
+                // }
+
+                if($contract->amount > $op->amount){
+                    $prepayment_percents = $op->amount;
                 }
+                else{
+                    $prepayment_body = $contract->amount;
+                    $prepayment_percents = $op->amount - $contract->amount;
+                }
+
                 $op->prepayment_body = $prepayment_body;
                 $op->prepayment_percents = $prepayment_percents;
 

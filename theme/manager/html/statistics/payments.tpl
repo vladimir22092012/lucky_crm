@@ -362,9 +362,9 @@ console.log(_table)
                                         </a>
                                     </td>
                                     <td>{$operation->contract_number}</td>
-                                    <td>{$operation->loan_body_summ}</td>
-                                    <td>{$operation->loan_percents_summ}</td>
-                                    <td>{$operation->loan_peni_summ}</td>
+                                    <td>{$operation->prepayment_body}</td>
+                                    <td>{$operation->prepayment_percents}</td>
+                                    <td>0</td>
                                     <td>{$operation->prepayment_body + $operation->prepayment_percents}</td>
                                     <td>0</td>
                                     <td>0</td>
