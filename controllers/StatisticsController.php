@@ -546,6 +546,55 @@ class StatisticsController extends Controller
         return $this->design->fetch('statistics/contracts.tpl');
     }
 
+    private function payment_split($contract_id , $date_to)
+    {
+        
+        $query = $this->db->placehold("
+            SELECT *
+            FROM __operations        AS o
+            WHERE o.contract_id = ?
+            AND (o.type = 'P2P' OR o.type = 'PERCENTS' OR o.type = 'PENI')
+            AND DATE(o.created) >= ?
+            AND DATE(o.created) <= ?
+            ORDER BY order_id, created, id
+        ", $contract_id , $date_to, $date_to);
+
+        $this->db->query($query);
+
+        $od = 0;
+        $percents = 0;
+        $peni = 0;
+        $od_client = 0;
+        $percents_client = 0;
+        $peni_client = 0;
+        $order_id = 0;
+
+        foreach ($this->db->results() as $op) {
+            if($order_id != $op->order_id){
+                $order_id = $op->order_id;
+                $od += $od_client;
+                $percents += $percents_client;
+                $peni += $peni_client;
+                $od_client = 0;
+                $percents_client = 0;
+                $peni_client = 0;
+            }
+            if($op->type == 'P2P'){
+                $od_client = $op->amount;
+            }
+            else{
+                $od_client = $op->loan_body_summ;
+                $percents_client = $op->loan_percents_summ;
+                $peni_client = $op->loan_peni_summ;
+            }
+        }
+        $od += $od_client;
+        $percents += $percents_client;
+        $peni += $peni_client;
+        return [$od, $percents, $peni];
+
+    }
+
     private function action_payments()
     {
         if ($operation_id = $this->request->get('operation_id', 'integer')) {
@@ -683,32 +732,11 @@ class StatisticsController extends Controller
 
                 $prepayment_body = 0;
                 $prepayment_percents = 0;
-                // foreach ($contract_operations as $key => $value) {
-                    
-                //     // if($value->type == 'PAY'){
-                //     if($op->id == $value->id){
-                        
-                //         if ($key > 0) {
-                //             $prepayment_body += $contract_operations[$key-1]->loan_body_summ - $value->loan_body_summ;
-                //             $prepayment_percents += $contract_operations[$key-1]->loan_percents_summ - $value->loan_percents_summ;
-                //             $prepayment_percents += $contract_operations[$key-1]->loan_peni_summ - $value->loan_peni_summ;
-                //         }
-                //         else{
-                //             $prepayment_body = $value->amount;
-                //         }
-                //     }
-                // }
 
-                if($contract->amount > $op->amount){
-                    $prepayment_percents = $op->amount;
-                }
-                else{
-                    $prepayment_body = $contract->amount;
-                    $prepayment_percents = $op->amount - $contract->amount;
-                }
+                $ret = $this->payment_split($op->contract_id, date('Y-m-d', strtotime($op->created)));
 
-                $op->prepayment_body = $prepayment_body;
-                $op->prepayment_percents = $prepayment_percents;
+                $op->prepayment_body = $ret[0];
+                $op->prepayment_percents = $ret[1];
 
                 $operations[$op->id] = $op;
             }
