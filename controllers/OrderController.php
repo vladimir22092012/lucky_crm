@@ -971,10 +971,12 @@ class OrderController extends Controller
 //        текст: текст - полное сообщение, как в смс.
         $this->notify->email('sale@nalichnoeplus.com', 'Подтверждение выдачи', $msg);
 
+        if(strpos(__DIR__, 'lucky-crm-prod'))
+            $this->Leadfinances->send_lead($order_id);
+        
         $equiReport = EquifaxFactory::get('approve');
         $equiReport->processing($order_id);
 
-        $this->Leadfinances->send_lead($order_id);
 
         return array('success' => 1, 'status' => 2);
 
@@ -1092,10 +1094,11 @@ class OrderController extends Controller
             'user_id' => $order->user_id,
         ));
 
+        if(strpos(__DIR__, 'lucky-crm-prod'))
+            $this->Leadfinances->send_lead($order_id);
+
         $equiReport = EquifaxFactory::get('cancelled');
         $equiReport->processing($order_id);
-
-        $this->Leadfinances->send_lead($order_id);
 
         return array('success' => 1, 'status' => $status);
     }

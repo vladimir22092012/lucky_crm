@@ -175,7 +175,7 @@ console.log(_table)
             <div class="col-12">
                 <!-- Column -->
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body" style="overflow-x: auto;">
                         <h4 class="card-title">Отчет по оплатам за период {if $date_from}{$date_from|date} - {$date_to|date}{/if}</h4>
                         <form>
                             <div class="row">
@@ -205,6 +205,7 @@ console.log(_table)
                         
                         {if $from}                   
                         <table class="table table-hover" id="basicgrid">
+                            {*}
                             <thead>
                             <tr>
                                 <th>#</th>
@@ -318,7 +319,66 @@ console.log(_table)
                                 </tr>
                                 {/foreach}
                             </tbody>
-                            
+                            {*}
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Дата</th>
+                                    <th>Клиент</th>
+                                    <th>Контракт №</th>
+                                    <th>ОС</th>
+                                    <th>%</th>
+                                    <th>Штрафы</th>
+                                    <th>Сборы</th>
+                                    <th>Переплата</th>
+                                    <th>Предоплата по ОС</th>
+                                    <th>Предоплата по %</th>
+                                    <th>Итого</th>
+                                    <th>Способ оплаты</th>
+                                    <th>Касса/банк</th>
+                                    <th>Кол-во дней просрочки (фактическое)</th>
+                                    <th>Описание</th>
+                                    <th>B2P OrderID</th>
+                                    <th>B2P OperationID</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table_content">
+                                {foreach $operations as $operation}
+                                <tr>
+                                    <td>{$operation@iteration}</td>
+                                    <td>
+                                        {$operation->created|date} 
+                                        <br />
+                                        {$operation->created|time}
+                                    </td>
+                                    <td>
+                                        <a href="client/{$operation->user_id}" target="_blank">
+                                            <strong>
+                                            {$operation->lastname|escape} 
+                                            {$operation->firstname|escape} 
+                                            {$operation->patronymic|escape}
+                                            </strong><br />
+                                            {$operation->birth|escape}
+                                        </a>
+                                    </td>
+                                    <td>{$operation->contract_number}</td>
+                                    <td>{$operation->prepayment_body}</td>
+                                    <td>{$operation->prepayment_percents}</td>
+                                    <td>0</td>
+                                    <td>{$operation->prepayment_body + $operation->prepayment_percents}</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>{$operation->prepayment_body + $operation->prepayment_percents}</td>
+                                    <td>Личный кабинет</td>
+                                    <td></td>
+                                    <td>---</td>
+                                    <td>{$operation->description}</td>
+                                    <td>{$operation->register_id}</td>
+                                    <td>{$operation->operation}</td>
+                                </tr>
+                                {/foreach}
+                            </tbody>
                         </table>
                         {else}
                             <div class="alert alert-info">

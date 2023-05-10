@@ -12,7 +12,7 @@ class InsurancesORM extends \Illuminate\Database\Eloquent\Model
         $number .= date('y'); // год выпуска полиса
         $number .= '0H3'; // код подразделения выпустившего полис (не меняется)
         $number .= 'FIM'; // код продукта (не меняется)
-        $number .= '361'; // код партнера (не меняется)
+        $number .= '459'; // код партнера (не меняется)
 
         $polis_number = str_pad($id, 9, '0', STR_PAD_LEFT);
 

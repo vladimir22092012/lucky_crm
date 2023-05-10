@@ -156,7 +156,7 @@ class Leadfinances extends Core
     }
 
     public function send_lead_to_leadfinance($order) {
-        $token = '97d5488adca24070b182b441e4295dc3';
+        $token = '142d54e5e3144055a4606809b1672d53';
 
         $phone = $order->phone_mobile;
         $name = $order->firstname;

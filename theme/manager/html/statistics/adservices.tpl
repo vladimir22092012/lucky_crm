@@ -229,7 +229,7 @@ console.log(_table)
                             <tbody id="table_content">
                             {foreach $ad_services as $ad_service}
                                 <tr>
-                                    <td>{$ad_service->created} <p>{$ad_service->contract_id}</p></td>
+                                    <td>{$ad_service->created|date:'d.m.Y H:i:s'} <p>{$ad_service->contract_id}</p></td>
                                     <td>{$ad_service->user_id}</td>
                                     <td>{$ad_service->number}</td>
                                     <td>{$op_type[$ad_service->type]}</td>
@@ -241,8 +241,8 @@ console.log(_table)
                                     <td>{$ad_service->passport_serial}</td>
                                     <td>{$ad_service->Regindex} {if $ad_service->Regcity}{$ad_service->Regcity}{else}{$ad_service->Reglocality}{/if}{$ad_service->Regstreet_shorttype} {$ad_service->Regstreet}
                                         {$ad_service->Reghousing} {$ad_service->Regroom}</td>
-                                    {if $ad_service->start_date}
-                                        <td>{$ad_service->start_date} / {$ad_service->end_date} </td>
+                                    {if $ad_service->start_date|date:'d.m.Y'}
+                                        <td>{$ad_service->start_date|date:'d.m.Y'} / {$ad_service->end_date|date:'d.m.Y'} </td>
                                         {else}
                                         <td></td>
                                     {/if}
