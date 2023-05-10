@@ -728,6 +728,8 @@ class OrderController extends Controller
                 'user_id' => $contract->user_id,
             ));
 
+
+
             return array('success' => 1, 'status' => 4, 'manager' => $this->manager->name);
 
         }
