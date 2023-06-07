@@ -2,8 +2,8 @@
 
 class Nbki_report extends Core
 {
-    private $username = '9J01RR000001';
-    private $authorization_code = 'um4K8Pak';
+    private $username = 'DL01NN_admin';
+    private $authorization_code = 'iK0SEYv3m20zSC';
 
 
     public function send_operations($operations)
