@@ -692,6 +692,10 @@ class StatisticsController extends Controller
                     t.insurance_id,
                     t.description,
                     t.callback_response,
+                    t.loan_body_summ,
+                    t.loan_percents_summ,
+                    t.loan_percents_summ,
+                    t.loan_peni_summ,
                     i.number AS insurance_number,
                     i.amount AS insurance_amount,
                     t.sector
@@ -733,10 +737,24 @@ class StatisticsController extends Controller
                 $prepayment_body = 0;
                 $prepayment_percents = 0;
 
-                $ret = $this->payment_split($op->contract_id, date('Y-m-d', strtotime($op->created)));
+                if ($op->type == 'PAY') {
+                    $op->prepayment_body = $op->loan_body_summ;
+                    $op->prepayment_percents = $op->loan_percents_summ;
+                    $op->prepayment_peni = $op->loan_peni_summ;
+                }
+                else if ($op->type == 'PAY-REC') {
+                    $op->prepayment_body = $op->amount;
+                    $op->prepayment_percents = 0;
+                    $op->prepayment_peni = 0;
+                }
+                else {
+                    $ret = $this->payment_split($op->contract_id, date('Y-m-d', strtotime($op->created)));
+                    $op->prepayment_body = $ret[0];
+                    $op->prepayment_percents = $ret[1];
+                    $op->prepayment_peni = 0;
+                }
 
-                $op->prepayment_body = $ret[0];
-                $op->prepayment_percents = $ret[1];
+                
 
                 $operations[$op->id] = $op;
             }

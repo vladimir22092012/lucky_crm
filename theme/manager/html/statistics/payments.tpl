@@ -364,7 +364,7 @@ console.log(_table)
                                     <td>{$operation->contract_number}</td>
                                     <td>{$operation->prepayment_body}</td>
                                     <td>{$operation->prepayment_percents}</td>
-                                    <td>0</td>
+                                    <td>{$operation->prepayment_peni}</td>
                                     <td>{$operation->prepayment_body + $operation->prepayment_percents}</td>
                                     <td>0</td>
                                     <td>0</td>
