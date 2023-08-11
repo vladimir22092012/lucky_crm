@@ -777,7 +777,7 @@ class StatisticsController extends Controller
                 $active_sheet->getColumnDimension('H')->setWidth(30);
                 $active_sheet->getColumnDimension('I')->setWidth(10);
 
-                $active_sheet->setCellValue('A1', 'Дата.');
+                $active_sheet->setCellValue('A1', 'Дата');
                 $active_sheet->setCellValue('B1', 'Договор');
                 $active_sheet->setCellValue('C1', 'ФИО');
                 $active_sheet->setCellValue('D1', 'Сумма');
