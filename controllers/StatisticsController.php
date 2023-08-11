@@ -790,10 +790,12 @@ class StatisticsController extends Controller
                 $active_sheet->getColumnDimension('C')->setWidth(45);
                 $active_sheet->getColumnDimension('D')->setWidth(20);
                 $active_sheet->getColumnDimension('E')->setWidth(20);
-                $active_sheet->getColumnDimension('F')->setWidth(10);
-                $active_sheet->getColumnDimension('G')->setWidth(10);
-                $active_sheet->getColumnDimension('H')->setWidth(30);
+                $active_sheet->getColumnDimension('F')->setWidth(20);
+                $active_sheet->getColumnDimension('G')->setWidth(20);
+                $active_sheet->getColumnDimension('H')->setWidth(10);
                 $active_sheet->getColumnDimension('I')->setWidth(10);
+                $active_sheet->getColumnDimension('J')->setWidth(30);
+                $active_sheet->getColumnDimension('K')->setWidth(10);
 
                 $active_sheet->setCellValue('A1', 'Дата');
                 $active_sheet->setCellValue('B1', 'Договор');
