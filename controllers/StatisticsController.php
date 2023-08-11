@@ -798,6 +798,8 @@ class StatisticsController extends Controller
                 $active_sheet->setCellValue('A1', 'Дата');
                 $active_sheet->setCellValue('B1', 'Договор');
                 $active_sheet->setCellValue('C1', 'ФИО');
+                $active_sheet->setCellValue('D1', 'Ос');
+                $active_sheet->setCellValue('D1', '%');
                 $active_sheet->setCellValue('D1', 'Сумма');
                 $active_sheet->setCellValue('E1', 'Карта');
                 $active_sheet->setCellValue('F1', 'Описание');
@@ -811,6 +813,8 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('A' . $i, date('d.m.Y', strtotime($contract->created)));
                     $active_sheet->setCellValue('B' . $i, $contract->contract_number . ' ' . ($contract->sector == '7036' ? 'ЮК' : 'МКК'));
                     $active_sheet->setCellValue('C' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic . ' ' . $contract->birth);
+                    $active_sheet->setCellValue('D' . $i, $contract->prepayment_body);
+                    $active_sheet->setCellValue('D' . $i, $contract->prepayment_percents);
                     $active_sheet->setCellValue('D' . $i, $contract->amount);
                     $active_sheet->setCellValue('E' . $i, $contract->pan);
                     $active_sheet->setCellValue('F' . $i, $contract->description . ' ' . ($contract->prolongation ? '(пролонгация)' : ''));
