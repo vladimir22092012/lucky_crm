@@ -468,7 +468,7 @@ class StatisticsController extends Controller
                 $active_sheet->setCellValue('N1', 'Статус');
                 $active_sheet->setCellValue('O1', 'Источник');
                 $active_sheet->setCellValue('P1', 'Поступление заявки');
-                $active_sheet->setCellValue('Q1', 'Дата окончания договора');
+                $active_sheet->setCellValue('Q1', 'Дата закрытия договора');
                 $active_sheet->setCellValue('R1', 'Паспортные данные');
                 $active_sheet->setCellValue('S1', 'Контакты 3-х лиц');
                 $active_sheet->setCellValue('T1', 'Адрес проживания');
@@ -522,7 +522,7 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('N' . $i, $status);
                     $active_sheet->setCellValue('O' . $i, $contract->utm_source);
                     $active_sheet->setCellValue('P' . $i, date('d.m.Y H:i:s', strtotime($contract->order_date)));
-                    $active_sheet->setCellValue('Q' . $i, $contract->return_date);
+                    $active_sheet->setCellValue('Q' . $i, $contract->close_date);
                     $active_sheet->setCellValue('R' . $i, $passport);
                     $active_sheet->setCellValue('S' . $i, $contacts);
                     $active_sheet->setCellValue('T' . $i, $contract->FaktRegion);
