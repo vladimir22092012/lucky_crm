@@ -813,8 +813,8 @@ class StatisticsController extends Controller
                 foreach ($operations as $contract) {
 
                     $active_sheet->setCellValue('A' . $i, date('d.m.Y', strtotime($contract->created)));
-                    $active_sheet->setCellValue('B' . $i, $contract->contract_number . ' ' . ($contract->sector == '7036' ? 'ЮК' : 'МКК'));
-                    $active_sheet->setCellValue('C' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic . ' ' . $contract->birth);
+                    $active_sheet->setCellValue('B' . $i, $contract->contract_number);
+                    $active_sheet->setCellValue('C' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic);
                     $active_sheet->setCellValue('D' . $i, $contract->prepayment_body);
                     $active_sheet->setCellValue('E' . $i, $contract->prepayment_percents);
                     $active_sheet->setCellValue('F' . $i, $contract->amount);
