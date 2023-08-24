@@ -743,8 +743,8 @@ class StatisticsController extends Controller
                     $op->prepayment_peni = $op->loan_peni_summ;
                 }
                 else if ($op->type == 'PAY-REC') {
-                    $op->prepayment_body = $op->amount;
-                    $op->prepayment_percents = 0;
+                    $op->prepayment_body = 0;
+                    $op->prepayment_percents = $op->amount;
                     $op->prepayment_peni = 0;
                 }
                 else {
