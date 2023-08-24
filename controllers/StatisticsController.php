@@ -553,11 +553,11 @@ class StatisticsController extends Controller
             SELECT *
             FROM __operations        AS o
             WHERE o.contract_id = ?
-            AND (o.type = 'P2P' OR o.type = 'PERCENTS' OR o.type = 'PENI')
+            #AND (o.type = 'P2P' OR o.type = 'PERCENTS' OR o.type = 'PENI' OR o.type = 'PAY' OR o.type = 'PAY-REC')
             AND DATE(o.created) >= ?
-            AND DATE(o.created) <= ?
+            AND o.created <= ?
             ORDER BY order_id, created, id
-        ", $contract_id , $date_to, $date_to);
+        ", $contract_id , date('Y-m-d', strtotime($date_to)), date('Y-m-d H:i:s', strtotime($date_to)));
 
         $this->db->query($query);
 
@@ -567,32 +567,26 @@ class StatisticsController extends Controller
         $od_client = 0;
         $percents_client = 0;
         $peni_client = 0;
-        $order_id = 0;
 
         foreach ($this->db->results() as $op) {
-            if($order_id != $op->order_id){
-                $order_id = $op->order_id;
-                $od += $od_client;
-                $percents += $percents_client;
-                $peni += $peni_client;
-                $od_client = 0;
-                $percents_client = 0;
-                $peni_client = 0;
-            }
-            if($op->type == 'P2P'){
-                $od_client = $op->amount;
-            }
-            else{
-                $od_client = $op->loan_body_summ;
-                $percents_client = $op->loan_percents_summ;
-                $peni_client = $op->loan_peni_summ;
+            $od = $od_client;
+            $percents = $percents_client;
+            $peni = $peni_client;
+
+            $od_client = $op->loan_body_summ;
+            $percents_client = $op->loan_percents_summ;
+            $peni_client = $op->loan_peni_summ;
+            if($op->created == date('Y-m-d H:i:s', strtotime($date_to))){
+                $od1 = $od - $od_client;
+                $percents1 = $percents - $percents_client;
+                $peni1 = $peni - $peni_client;
+                return [$od1, $percents1, $peni1];
             }
         }
-        $od += $od_client;
-        $percents += $percents_client;
-        $peni += $peni_client;
-        return [$od, $percents, $peni];
-
+        $od1 = $od - $od_client;
+        $percents1 = $percents - $percents_client;
+        $peni1 = $peni - $peni_client;
+        return [$od1, $percents1, $peni1];
     }
 
     private function action_payments()
@@ -743,9 +737,12 @@ class StatisticsController extends Controller
                     $op->prepayment_peni = $op->loan_peni_summ;
                 }
                 else if ($op->type == 'PAY-REC') {
-                    $op->prepayment_body = 0;
-                    $op->prepayment_percents = $op->amount;
+                    $ret = $this->payment_split($op->contract_id, $op->created);
+
+                    $op->prepayment_body = $ret[0];
+                    $op->prepayment_percents = $ret[1];
                     $op->prepayment_peni = 0;
+                    $op->sas = $ret[3];
                 }
                 else {
                     $ret = $this->payment_split($op->contract_id, date('Y-m-d', strtotime($op->created)));
