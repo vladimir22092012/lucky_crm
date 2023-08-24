@@ -32,28 +32,32 @@ class RfmController extends Controller
 
                 $success = true;
 
-                foreach ($xml['АктуальныйПеречень']['Субъект'] as $value) {
-                    if(!array_key_exists('ФЛ', $value)){
-                        continue;
+                if(isset($xml['АктуальныйПеречень']['Субъект'])){
+                    foreach ($xml['АктуальныйПеречень']['Субъект'] as $value) {
+                        if(!array_key_exists('ФЛ', $value)){
+                            continue;
+                        }
+                        $prepare_item['fio'] = $value['ФЛ']['ФИО'];
+                        $result = $this->Rfmlist->add_person($prepare_item);
+    
+                        if(!$result)
+                            $success = false;
                     }
-                    $prepare_item['fio'] = $value['ФЛ']['ФИО'];
-                    $result = $this->Rfmlist->add_person($prepare_item);
-
-                    if(!$result)
-                        $success = false;
+                }
+                else{
+                    foreach ($xml['TERRORISTS'] as $value) {
+    
+                        $string = str_replace(['<![CDATA[', ']]', '*', '>'], '', (string) $value['TERRORISTS_NAME']);
+    
+                        $prepare_item['fio'] = mb_strtolower($string);
+    
+                        $result = $this->Rfmlist->add_person($prepare_item);
+    
+                        if(!$result)
+                            $success = false;
+                    }
                 }
 
-                // foreach ($xml['TERRORISTS'] as $value) {
-
-                //     $string = str_replace(['<![CDATA[', ']]', '*', '>'], '', (string) $value['TERRORISTS_NAME']);
-
-                //     $prepare_item['fio'] = mb_strtolower($string);
-
-                //     $result = $this->Rfmlist->add_person($prepare_item);
-
-                //     if(!$result)
-                //         $success = false;
-                // }
 
                 $this->design->assign('success', $success);
 
