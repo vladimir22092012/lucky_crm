@@ -102,7 +102,7 @@
                                         <br/>
                                         Договор
                                     </th>
-                                    <th>Дата окончания договора</th>
+                                    <th>Дата закрытия договора</th>
                                     <th>ФИО</th>
                                     <th>Дата рождения</th>
                                     <th>Место рождения</th>
@@ -142,7 +142,12 @@
                                                href="order/{$contract->order_id}"><strong>{$contract->number}</strong></a>
                                         </td>
                                         <td>
-                                            {$contract->return_date|date}
+                                            {if $contract->close_date == false}
+                                                не закрыт
+                                            {/if}
+                                            {if $contract->close_date == true}
+                                                {$contract->close_date|date}
+                                            {/if}
                                         </td>
                                         <td>
                                             <a href="client/{$contract->user_id}" target="_blank">

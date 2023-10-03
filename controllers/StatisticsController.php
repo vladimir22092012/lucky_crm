@@ -468,7 +468,7 @@ class StatisticsController extends Controller
                 $active_sheet->setCellValue('N1', 'Статус');
                 $active_sheet->setCellValue('O1', 'Источник');
                 $active_sheet->setCellValue('P1', 'Поступление заявки');
-                $active_sheet->setCellValue('Q1', 'Дата окончания договора');
+                $active_sheet->setCellValue('Q1', 'Дата закрытия договора');
                 $active_sheet->setCellValue('R1', 'Паспортные данные');
                 $active_sheet->setCellValue('S1', 'Контакты 3-х лиц');
                 $active_sheet->setCellValue('T1', 'Адрес проживания');
@@ -522,7 +522,7 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('N' . $i, $status);
                     $active_sheet->setCellValue('O' . $i, $contract->utm_source);
                     $active_sheet->setCellValue('P' . $i, date('d.m.Y H:i:s', strtotime($contract->order_date)));
-                    $active_sheet->setCellValue('Q' . $i, $contract->return_date);
+                    $active_sheet->setCellValue('Q' . $i, $contract->close_date);
                     $active_sheet->setCellValue('R' . $i, $passport);
                     $active_sheet->setCellValue('S' . $i, $contacts);
                     $active_sheet->setCellValue('T' . $i, $contract->FaktRegion);
@@ -553,11 +553,11 @@ class StatisticsController extends Controller
             SELECT *
             FROM __operations        AS o
             WHERE o.contract_id = ?
-            AND (o.type = 'P2P' OR o.type = 'PERCENTS' OR o.type = 'PENI')
+            #AND (o.type = 'P2P' OR o.type = 'PERCENTS' OR o.type = 'PENI' OR o.type = 'PAY' OR o.type = 'PAY-REC')
             AND DATE(o.created) >= ?
-            AND DATE(o.created) <= ?
+            AND o.created <= ?
             ORDER BY order_id, created, id
-        ", $contract_id , $date_to, $date_to);
+        ", $contract_id , date('Y-m-d', strtotime($date_to)), date('Y-m-d H:i:s', strtotime($date_to)));
 
         $this->db->query($query);
 
@@ -567,32 +567,26 @@ class StatisticsController extends Controller
         $od_client = 0;
         $percents_client = 0;
         $peni_client = 0;
-        $order_id = 0;
 
         foreach ($this->db->results() as $op) {
-            if($order_id != $op->order_id){
-                $order_id = $op->order_id;
-                $od += $od_client;
-                $percents += $percents_client;
-                $peni += $peni_client;
-                $od_client = 0;
-                $percents_client = 0;
-                $peni_client = 0;
-            }
-            if($op->type == 'P2P'){
-                $od_client = $op->amount;
-            }
-            else{
-                $od_client = $op->loan_body_summ;
-                $percents_client = $op->loan_percents_summ;
-                $peni_client = $op->loan_peni_summ;
+            $od = $od_client;
+            $percents = $percents_client;
+            $peni = $peni_client;
+
+            $od_client = $op->loan_body_summ;
+            $percents_client = $op->loan_percents_summ;
+            $peni_client = $op->loan_peni_summ;
+            if($op->created == date('Y-m-d H:i:s', strtotime($date_to))){
+                $od1 = $od - $od_client;
+                $percents1 = $percents - $percents_client;
+                $peni1 = $peni - $peni_client;
+                return [$od1, $percents1, $peni1];
             }
         }
-        $od += $od_client;
-        $percents += $percents_client;
-        $peni += $peni_client;
-        return [$od, $percents, $peni];
-
+        $od1 = $od - $od_client;
+        $percents1 = $percents - $percents_client;
+        $peni1 = $peni - $peni_client;
+        return [$od1, $percents1, $peni1];
     }
 
     private function action_payments()
@@ -692,6 +686,10 @@ class StatisticsController extends Controller
                     t.insurance_id,
                     t.description,
                     t.callback_response,
+                    t.loan_body_summ,
+                    t.loan_percents_summ,
+                    t.loan_percents_summ,
+                    t.loan_peni_summ,
                     i.number AS insurance_number,
                     i.amount AS insurance_amount,
                     t.sector
@@ -733,10 +731,27 @@ class StatisticsController extends Controller
                 $prepayment_body = 0;
                 $prepayment_percents = 0;
 
-                $ret = $this->payment_split($op->contract_id, date('Y-m-d', strtotime($op->created)));
+                if ($op->type == 'PAY') {
+                    $op->prepayment_body = $op->loan_body_summ;
+                    $op->prepayment_percents = $op->loan_percents_summ;
+                    $op->prepayment_peni = $op->loan_peni_summ;
+                }
+                else if ($op->type == 'PAY-REC') {
+                    $ret = $this->payment_split($op->contract_id, $op->created);
 
-                $op->prepayment_body = $ret[0];
-                $op->prepayment_percents = $ret[1];
+                    $op->prepayment_body = $ret[0];
+                    $op->prepayment_percents = $ret[1];
+                    $op->prepayment_peni = 0;
+                    $op->sas = $ret[3];
+                }
+                else {
+                    $ret = $this->payment_split($op->contract_id, date('Y-m-d', strtotime($op->created)));
+                    $op->prepayment_body = $ret[0];
+                    $op->prepayment_percents = $ret[1];
+                    $op->prepayment_peni = 0;
+                }
+
+                
 
                 $operations[$op->id] = $op;
             }
@@ -772,33 +787,39 @@ class StatisticsController extends Controller
                 $active_sheet->getColumnDimension('C')->setWidth(45);
                 $active_sheet->getColumnDimension('D')->setWidth(20);
                 $active_sheet->getColumnDimension('E')->setWidth(20);
-                $active_sheet->getColumnDimension('F')->setWidth(10);
-                $active_sheet->getColumnDimension('G')->setWidth(10);
-                $active_sheet->getColumnDimension('H')->setWidth(30);
+                $active_sheet->getColumnDimension('F')->setWidth(20);
+                $active_sheet->getColumnDimension('G')->setWidth(20);
+                $active_sheet->getColumnDimension('H')->setWidth(10);
                 $active_sheet->getColumnDimension('I')->setWidth(10);
+                $active_sheet->getColumnDimension('J')->setWidth(30);
+                $active_sheet->getColumnDimension('K')->setWidth(10);
 
-                $active_sheet->setCellValue('A1', 'Дата');
+                $active_sheet->setCellValue('A1', 'Дата/');
                 $active_sheet->setCellValue('B1', 'Договор');
                 $active_sheet->setCellValue('C1', 'ФИО');
-                $active_sheet->setCellValue('D1', 'Сумма');
-                $active_sheet->setCellValue('E1', 'Карта');
-                $active_sheet->setCellValue('F1', 'Описание');
-                $active_sheet->setCellValue('G1', 'B2P OrderID');
-                $active_sheet->setCellValue('H1', 'B2P OperationID');
-                $active_sheet->setCellValue('I1', 'Страховка');
+                $active_sheet->setCellValue('D1', 'Ос');
+                $active_sheet->setCellValue('E1', '%');
+                $active_sheet->setCellValue('F1', 'Сумма');
+                $active_sheet->setCellValue('G1', 'Карта');
+                $active_sheet->setCellValue('H1', 'Описание');
+                $active_sheet->setCellValue('I1', 'B2P OrderID');
+                $active_sheet->setCellValue('J1', 'B2P OperationID');
+                $active_sheet->setCellValue('K1', 'Страховка');
 
                 $i = 2;
                 foreach ($operations as $contract) {
 
                     $active_sheet->setCellValue('A' . $i, date('d.m.Y', strtotime($contract->created)));
-                    $active_sheet->setCellValue('B' . $i, $contract->contract_number . ' ' . ($contract->sector == '7036' ? 'ЮК' : 'МКК'));
-                    $active_sheet->setCellValue('C' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic . ' ' . $contract->birth);
-                    $active_sheet->setCellValue('D' . $i, $contract->amount);
-                    $active_sheet->setCellValue('E' . $i, $contract->pan);
-                    $active_sheet->setCellValue('F' . $i, $contract->description . ' ' . ($contract->prolongation ? '(пролонгация)' : ''));
-                    $active_sheet->setCellValue('G' . $i, $contract->register_id);
-                    $active_sheet->setCellValue('H' . $i, $contract->operation);//--
-                    $active_sheet->setCellValue('I' . $i, $contract->insurance_number . ' ' . ($contract->insurance_amount ? $contract->insurance_amount . ' руб' : ''));
+                    $active_sheet->setCellValue('B' . $i, $contract->contract_number);
+                    $active_sheet->setCellValue('C' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic);
+                    $active_sheet->setCellValue('D' . $i, $contract->prepayment_body);
+                    $active_sheet->setCellValue('E' . $i, $contract->prepayment_percents);
+                    $active_sheet->setCellValue('F' . $i, $contract->amount);
+                    $active_sheet->setCellValue('G' . $i, $contract->pan);
+                    $active_sheet->setCellValue('H' . $i, $contract->description . ' ' . ($contract->prolongation ? '(пролонгация)' : ''));
+                    $active_sheet->setCellValue('I' . $i, $contract->register_id);
+                    $active_sheet->setCellValue('J' . $i, $contract->operation);//--
+                    $active_sheet->setCellValue('K' . $i, $contract->insurance_number . ' ' . ($contract->insurance_amount ? $contract->insurance_amount . ' руб' : ''));
 
                     $i++;
                 }
